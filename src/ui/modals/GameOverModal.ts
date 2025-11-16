@@ -318,6 +318,33 @@ export class GameOverModal extends BaseModal {
   }
 
   /**
+   * Customize View 재생성 (점수 갱신 후 잠금 상태 업데이트)
+   */
+  private refreshCustomizeView(): void {
+    // 기존 customizeView 제거
+    if (this.customizeView && this.customizeView.parentElement) {
+      this.customizeView.remove();
+    }
+
+    // 새로운 customizeView 생성 (현재 bestScore 기준으로)
+    this.customizeView = this.createCustomizeView();
+    this.customizeView.classList.add('hidden'); // 초기에는 숨김
+
+    // gameOverView 다음에 추가
+    const contentArea = this.gameOverView.parentElement;
+    if (contentArea) {
+      contentArea.appendChild(this.customizeView);
+    }
+
+    // ViewManager에 재등록
+    this.viewManager.registerView('customize', {
+      element: this.customizeView,
+      title: '테마 변경',
+      showBackButton: true
+    });
+  }
+
+  /**
    * 점수 업데이트 (모달이 열리기 전에 호출 가능)
    */
   updateScore(score: number): void {
@@ -340,6 +367,9 @@ export class GameOverModal extends BaseModal {
    * 모달 열린 후 처리
    */
   protected onAfterOpen(): void {
+    // CustomizeView 재생성 (최신 bestScore 기준으로 잠금 상태 업데이트)
+    this.refreshCustomizeView();
+
     // Game Over 뷰로 리셋
     this.viewManager.switchTo('gameOver');
   }
