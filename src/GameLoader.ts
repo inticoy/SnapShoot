@@ -433,6 +433,22 @@ export function loadGame(params?: { score?: number }) {
   // TODO: game.ts에서 게임오버 이벤트 발생 시 continueModal.open() 호출
   // 예시: game.onGameOver(() => continueModal.open());
 
+  // Page Visibility API: 백그라운드 전환 시 사운드 자동 제어
+  // 앱인토스 가이드라인: "백그라운드로 전환 시 사운드가 계속 재생이 되지 않는지 확인"
+  const handleVisibilityChange = () => {
+    if (document.hidden) {
+      // 백그라운드로 전환 시 (랭킹보기, 고객센터 등) -> 사운드 일시정지
+      console.log('🔇 백그라운드 전환: 사운드 일시정지');
+      game.pauseAudio();
+    } else {
+      // 포그라운드로 복귀 시 -> 사운드 재개
+      console.log('🔊 포그라운드 복귀: 사운드 재개');
+      game.resumeAudio();
+    }
+  };
+
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+
   // 임시 테스트: 키보드 'C' 키로 Continue Modal 열기
   window.addEventListener('keydown', (e) => {
     if (e.key === 'c' || e.key === 'C') {
