@@ -235,41 +235,44 @@ export class PauseModal extends BaseModal {
     const topButtonsWrapper = document.createElement('div');
     topButtonsWrapper.className = 'flex gap-4 w-full justify-center';
 
-    const customizeButton = this.createSquareIconButton(
-      'pause-customize-btn',
-      `<i class="ph-fill ph-palette text-4xl text-white"></i>`,
-      '테마 변경'
-    );
     const rankingButton = this.createSquareIconButton(
       'pause-ranking-btn',
       `<i class="ph-fill ph-ranking text-4xl text-white"></i>`,
-      '랭킹보기'
+      '랭킹보기',
+      'ranking'
+    );
+    const customizeButton = this.createSquareIconButton(
+      'pause-customize-btn',
+      `<i class="ph-fill ph-palette text-4xl text-white"></i>`,
+      '테마 변경',
+      'theme'
     );
     const settingsButton = this.createSquareIconButton(
       'pause-settings-btn',
       `<i class="ph-fill ph-gear text-4xl text-white"></i>`,
-      '설정'
+      '설정',
+      'settings'
     );
 
-    this.addPressEffect(customizeButton);
     this.addPressEffect(rankingButton);
+    this.addPressEffect(customizeButton);
     this.addPressEffect(settingsButton);
 
-    customizeButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.viewManager.switchTo('customize');
-    });
     rankingButton.addEventListener('click', () => {
       console.log('랭킹보기 버튼 클릭');
       this.callbacks.onRanking?.();
+    });
+    customizeButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.viewManager.switchTo('customize');
     });
     settingsButton.addEventListener('click', (e) => {
       e.stopPropagation();
       this.viewManager.switchTo('settings');
     });
 
-    topButtonsWrapper.appendChild(customizeButton);
     topButtonsWrapper.appendChild(rankingButton);
+    topButtonsWrapper.appendChild(customizeButton);
     topButtonsWrapper.appendChild(settingsButton);
 
     // 하단 버튼
@@ -414,24 +417,79 @@ export class PauseModal extends BaseModal {
     const button = document.createElement('button');
     button.id = id;
     button.type = 'button';
-
-    const baseClass = isLarge
-      ? `bg-white/20 border-2 border-white/25 shadow-[0_12px_28px_rgba(0,0,0,0.3)]
-         hover:bg-white/25 hover:border-white/35 hover:shadow-[0_16px_32px_rgba(0,0,0,0.35)]
-         active:bg-white/15 active:shadow-[0_4px_12px_rgba(0,0,0,0.25)]`
-      : `bg-white/12 border border-white/15 shadow-[0_8px_20px_rgba(0,0,0,0.2)]
-         hover:bg-white/16 hover:border-white/25 hover:shadow-[0_10px_24px_rgba(0,0,0,0.24)]
-         active:bg-white/10 active:shadow-[0_2px_8px_rgba(0,0,0,0.15)]`;
-
     button.className = `
       ${sizeClass}
       flex items-center justify-center
       rounded-full
-      ${baseClass}
       transition-all duration-150
+      relative overflow-hidden
     `.trim().replace(/\s+/g, ' ');
 
-    button.innerHTML = innerHTML;
+    // 하이라이트 레이어
+    const highlight = document.createElement('div');
+    highlight.className = 'absolute inset-0 rounded-full pointer-events-none';
+    highlight.style.zIndex = '1';
+
+    if (isLarge) {
+      // 재생 버튼 (크고 중요한 파란색)
+      button.style.background = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)';
+      button.style.border = '3px solid rgba(79, 172, 254, 0.8)';
+      button.style.boxShadow = '0 8px 20px rgba(79, 172, 254, 0.5), inset 0 2px 0 rgba(255, 255, 255, 0.5), inset 0 -3px 8px rgba(0, 0, 0, 0.2)';
+
+      highlight.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 60%)';
+
+      button.addEventListener('pointerdown', () => {
+        button.style.transform = 'scale(0.90)';
+        button.style.boxShadow = '0 3px 8px rgba(79, 172, 254, 0.35), inset 0 4px 12px rgba(0, 0, 0, 0.4)';
+      });
+      button.addEventListener('pointerup', () => {
+        button.style.transform = '';
+        button.style.boxShadow = '0 8px 20px rgba(79, 172, 254, 0.5), inset 0 2px 0 rgba(255, 255, 255, 0.5), inset 0 -3px 8px rgba(0, 0, 0, 0.2)';
+      });
+    } else {
+      // 다시하기 버튼 (작은 유리 효과)
+      button.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%)';
+      button.style.border = '2px solid rgba(255, 255, 255, 0.35)';
+      button.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -2px 6px rgba(0, 0, 0, 0.15)';
+
+      highlight.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 60%)';
+
+      button.addEventListener('pointerdown', () => {
+        button.style.transform = 'scale(0.90)';
+        button.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.2), inset 0 3px 10px rgba(0, 0, 0, 0.3)';
+      });
+      button.addEventListener('pointerup', () => {
+        button.style.transform = '';
+        button.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -2px 6px rgba(0, 0, 0, 0.15)';
+      });
+    }
+
+    button.appendChild(highlight);
+
+    // 아이콘 추가
+    const iconWrapper = document.createElement('div');
+    iconWrapper.className = 'relative z-[2]';
+    iconWrapper.innerHTML = innerHTML;
+    button.appendChild(iconWrapper);
+
+    // 아이콘 필터
+    const icon = iconWrapper.querySelector('i');
+    if (icon) {
+      (icon as HTMLElement).style.filter = 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))';
+      (icon as HTMLElement).style.color = 'white';
+
+      // 클릭 시 아이콘 축소
+      button.addEventListener('pointerdown', () => {
+        (icon as HTMLElement).style.transform = 'scale(0.85)';
+      });
+      button.addEventListener('pointerup', () => {
+        (icon as HTMLElement).style.transform = '';
+      });
+      button.addEventListener('pointercancel', () => {
+        (icon as HTMLElement).style.transform = '';
+      });
+    }
+
     return button;
   }
 

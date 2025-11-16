@@ -142,25 +142,39 @@ export class ContinueModal extends BaseModal {
       w-[180px] h-[180px]
       flex flex-col items-center justify-center gap-3
       rounded-full
-      bg-gradient-to-br from-white/25 to-white/15
-      border-2 border-white/40
-      shadow-[0_12px_32px_rgba(0,0,0,0.4)]
-      backdrop-blur-sm
       transition-all duration-200
-      hover:scale-105 hover:border-white/60 hover:shadow-[0_16px_40px_rgba(0,0,0,0.5)]
-      active:scale-95
+      overflow-hidden
     `.trim().replace(/\s+/g, ' ');
 
+    // 황금색 그라데이션 배경
+    this.continueButton.style.background = 'linear-gradient(135deg, #ffd700 0%, #ffb800 25%, #ffa500 50%, #ff8c00 75%, #ff6b35 100%)';
+    this.continueButton.style.border = '3px solid rgba(255, 193, 7, 0.8)';
+    this.continueButton.style.boxShadow = '0 12px 32px rgba(255, 140, 0, 0.5), 0 0 30px rgba(255, 193, 7, 0.3), inset 0 2px 0 rgba(255, 255, 255, 0.5), inset 0 -3px 8px rgba(0, 0, 0, 0.2)';
+    this.continueButton.style.animation = 'ad-glow 2s ease-in-out infinite';
+
+    // 하이라이트 레이어
+    const highlight = document.createElement('div');
+    highlight.className = 'absolute inset-0 rounded-full pointer-events-none';
+    highlight.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 60%)';
+    highlight.style.zIndex = '1';
+    this.continueButton.appendChild(highlight);
+
+    // 컨텐츠 컨테이너
+    const contentWrapper = document.createElement('div');
+    contentWrapper.className = 'relative z-[2] flex flex-col items-center justify-center gap-3';
+
     const icon = document.createElement('i');
-    icon.className = 'ph-fill ph-play-circle text-5xl text-white drop-shadow-lg';
+    icon.className = 'ph-fill ph-play-circle text-5xl text-white';
+    icon.style.filter = 'drop-shadow(0 2px 6px rgba(0,0,0,0.5))';
 
     const text = document.createElement('span');
     text.className = 'text-white font-bold text-sm px-4 text-center leading-tight';
+    text.style.textShadow = '0 2px 4px rgba(0, 0, 0, 0.4)';
     text.textContent = '광고보고 이어하기';
 
     // 타이머 표시
     this.timerText = document.createElement('span');
-    this.timerText.className = 'text-white/90 font-black text-3xl font-russo';
+    this.timerText.className = 'text-white font-black text-3xl font-russo';
     this.timerText.textContent = this.timeoutSeconds.toString();
 
     // 퍼센트 표시 (작게)
@@ -168,10 +182,11 @@ export class ContinueModal extends BaseModal {
     this.percentageText.className = 'text-white/60 font-semibold text-xs';
     this.percentageText.textContent = '';
 
-    this.continueButton.appendChild(icon);
-    this.continueButton.appendChild(text);
-    this.continueButton.appendChild(this.timerText);
-    this.continueButton.appendChild(this.percentageText);
+    contentWrapper.appendChild(icon);
+    contentWrapper.appendChild(text);
+    contentWrapper.appendChild(this.timerText);
+    contentWrapper.appendChild(this.percentageText);
+    this.continueButton.appendChild(contentWrapper);
 
     this.addPressEffect(this.continueButton);
 
@@ -194,15 +209,45 @@ export class ContinueModal extends BaseModal {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = `
-      px-8 py-3 rounded-xl
-      bg-white/8 border border-white/20
-      shadow-[0_4px_12px_rgba(0,0,0,0.2)]
-      text-white/70 font-medium text-sm
-      transition-all duration-200
-      hover:bg-white/12 hover:border-white/30 hover:text-white/90
-      active:bg-white/6 active:scale-95
+      px-12 py-3 rounded-full
+      backdrop-blur-sm
+      text-white/80 font-semibold text-sm
+      transition-all duration-150
+      relative overflow-hidden
     `.trim().replace(/\s+/g, ' ');
-    button.textContent = '포기하기';
+
+    // 스타일 적용
+    button.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%)';
+    button.style.border = '1px solid rgba(255, 255, 255, 0.25)';
+    button.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -2px 6px rgba(0, 0, 0, 0.15)';
+
+    // 하이라이트 레이어
+    const highlight = document.createElement('div');
+    highlight.className = 'absolute inset-0 rounded-full pointer-events-none';
+    highlight.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 60%)';
+    highlight.style.zIndex = '1';
+
+    // 텍스트 컨테이너
+    const content = document.createElement('span');
+    content.className = 'relative z-[2]';
+    content.textContent = '포기하기';
+
+    button.appendChild(highlight);
+    button.appendChild(content);
+
+    // 클릭 효과
+    button.addEventListener('pointerdown', () => {
+      button.style.transform = 'scale(0.95)';
+      button.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.2), inset 0 3px 10px rgba(0, 0, 0, 0.3)';
+    });
+    button.addEventListener('pointerup', () => {
+      button.style.transform = '';
+      button.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -2px 6px rgba(0, 0, 0, 0.15)';
+    });
+    button.addEventListener('pointercancel', () => {
+      button.style.transform = '';
+      button.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -2px 6px rgba(0, 0, 0, 0.15)';
+    });
 
     this.addPressEffect(button);
 
@@ -240,18 +285,37 @@ export class ContinueModal extends BaseModal {
       // 타이머 텍스트 업데이트 (남은 시간)
       this.timerText.textContent = Math.ceil(remaining).toString();
 
-      // 색상 변화 (시간이 줄어들면 빨간색으로)
-      if (remaining <= 2) {
-        this.progressCircle.setAttribute('stroke', '#ff6b6b');
-        this.timerText.style.color = '#ff6b6b';
+      // 색상 변화 (버튼 배경 + 진행바 + 텍스트 모두)
+      if (remaining <= 1) {
+        // 레드 단계 (부드러운 레드)
+        this.continueButton.style.background = 'linear-gradient(135deg, #ff7b7b 0%, #ff6b6b 50%, #ff5252 100%)';
+        this.continueButton.style.borderColor = 'rgba(255, 107, 107, 0.8)';
+        this.continueButton.style.boxShadow = '0 12px 32px rgba(255, 82, 82, 0.6), 0 0 40px rgba(255, 107, 107, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.5), inset 0 -3px 8px rgba(0, 0, 0, 0.2)';
+        this.progressCircle.setAttribute('stroke', '#ffffff');
+        this.timerText.style.color = '#ffffff';
+      } else if (remaining <= 2) {
+        // 오렌지-레드 중간 단계
+        this.continueButton.style.background = 'linear-gradient(135deg, #ff8c5a 0%, #ff7043 50%, #ff5722 100%)';
+        this.continueButton.style.borderColor = 'rgba(255, 112, 67, 0.8)';
+        this.continueButton.style.boxShadow = '0 12px 32px rgba(255, 87, 34, 0.6), 0 0 40px rgba(255, 112, 67, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.5), inset 0 -3px 8px rgba(0, 0, 0, 0.2)';
+        this.progressCircle.setAttribute('stroke', '#ffffff');
+        this.timerText.style.color = '#ffffff';
       } else if (remaining <= 3) {
-        this.progressCircle.setAttribute('stroke', '#ffd93d');
-        this.timerText.style.color = '#ffd93d';
+        // 오렌지 단계
+        this.continueButton.style.background = 'linear-gradient(135deg, #ffa500 0%, #ff8c00 50%, #ff6b35 100%)';
+        this.continueButton.style.borderColor = 'rgba(255, 140, 0, 0.8)';
+        this.continueButton.style.boxShadow = '0 12px 32px rgba(255, 140, 0, 0.6), 0 0 40px rgba(255, 165, 0, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.5), inset 0 -3px 8px rgba(0, 0, 0, 0.2)';
+        this.progressCircle.setAttribute('stroke', '#ffffff');
+        this.timerText.style.color = '#ffffff';
+      } else {
+        // 노랑 단계 (기본)
+        this.progressCircle.setAttribute('stroke', '#ffffff');
+        this.timerText.style.color = '#ffffff';
       }
 
-      // 버튼 펄스 애니메이션 (마지막 3초)
+      // 버튼 펄스 애니메이션 (마지막 3초) - 더 강한 효과
       if (remaining <= 3 && remaining > 0) {
-        const pulseScale = 1 + Math.sin(elapsed * 0.008) * 0.03;
+        const pulseScale = 1 + Math.sin(elapsed * 0.008) * 0.08;
         this.continueButton.style.transform = `scale(${pulseScale})`;
       }
 
@@ -302,10 +366,14 @@ export class ContinueModal extends BaseModal {
   private resetTimer(): void {
     this.stopTimer();
 
+    // 노랑 초기 상태로 리셋
+    this.continueButton.style.background = 'linear-gradient(135deg, #ffd700 0%, #ffb800 25%, #ffa500 50%, #ff8c00 75%, #ff6b35 100%)';
+    this.continueButton.style.borderColor = 'rgba(255, 193, 7, 0.8)';
+    this.continueButton.style.boxShadow = '0 12px 32px rgba(255, 140, 0, 0.5), 0 0 30px rgba(255, 193, 7, 0.3), inset 0 2px 0 rgba(255, 255, 255, 0.5), inset 0 -3px 8px rgba(0, 0, 0, 0.2)';
     this.progressCircle.setAttribute('stroke-dashoffset', '0');
     this.progressCircle.setAttribute('stroke', '#ffffff');
     this.timerText.textContent = this.timeoutSeconds.toString();
-    this.timerText.style.color = '';
+    this.timerText.style.color = '#ffffff';
     this.percentageText.textContent = '';
     this.continueButton.style.transform = '';
   }

@@ -172,17 +172,20 @@ export class GameOverModal extends BaseModal {
     const rankingButton = this.createSquareIconButton(
       'gameover-ranking-btn',
       `<i class="ph-fill ph-ranking text-4xl text-white"></i>`,
-      '랭킹보기'
+      '랭킹보기',
+      'ranking'
     );
     const customizeButton = this.createSquareIconButton(
       'gameover-customize-btn',
       `<i class="ph-fill ph-palette text-4xl text-white"></i>`,
-      '테마 변경'
+      '테마 변경',
+      'theme'
     );
     const shareButton = this.createSquareIconButton(
       'gameover-share-btn',
       `<i class="ph-fill ph-share-network text-4xl text-white"></i>`,
-      '공유하기'
+      '공유하기',
+      'share'
     );
 
     this.addPressEffect(rankingButton);
@@ -219,19 +222,63 @@ export class GameOverModal extends BaseModal {
     restartButton.className = `
       flex items-center gap-2
       px-16 py-4 rounded-full
-      bg-gradient-to-br from-white/25 to-white/15
-      border-2 border-white/40
-      shadow-[0_12px_32px_rgba(0,0,0,0.4)]
       backdrop-blur-sm
       text-white font-bold text-lg
-      transition-all duration-200
-      hover:scale-105 hover:border-white/60 hover:shadow-[0_16px_40px_rgba(0,0,0,0.5)]
-      active:scale-95
+      transition-all duration-150
+      relative overflow-hidden
     `.trim().replace(/\s+/g, ' ');
-    restartButton.innerHTML = `
+
+    // 스타일 적용
+    restartButton.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%)';
+    restartButton.style.border = '2px solid rgba(255, 255, 255, 0.4)';
+    restartButton.style.boxShadow = '0 12px 32px rgba(0, 0, 0, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.5), inset 0 -3px 8px rgba(0, 0, 0, 0.2)';
+
+    // 하이라이트 레이어
+    const highlight = document.createElement('div');
+    highlight.className = 'absolute inset-0 rounded-full pointer-events-none';
+    highlight.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 60%)';
+    highlight.style.zIndex = '1';
+
+    // 아이콘과 텍스트 컨테이너
+    const content = document.createElement('div');
+    content.className = 'relative z-[2] flex items-center gap-2';
+    content.innerHTML = `
       <i class="ph-fill ph-arrow-clockwise text-2xl"></i>
       <span>다시하기</span>
     `;
+
+    restartButton.appendChild(highlight);
+    restartButton.appendChild(content);
+
+    // 아이콘에 필터 적용
+    const icon = content.querySelector('i');
+    if (icon) {
+      (icon as HTMLElement).style.filter = 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))';
+      (icon as HTMLElement).style.transition = 'transform 0.15s ease';
+    }
+
+    // 클릭 효과
+    restartButton.addEventListener('pointerdown', () => {
+      restartButton.style.transform = 'scale(0.95)';
+      restartButton.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3), inset 0 4px 12px rgba(0, 0, 0, 0.4)';
+      if (icon) {
+        (icon as HTMLElement).style.transform = 'scale(0.85)';
+      }
+    });
+    restartButton.addEventListener('pointerup', () => {
+      restartButton.style.transform = '';
+      restartButton.style.boxShadow = '0 12px 32px rgba(0, 0, 0, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.5), inset 0 -3px 8px rgba(0, 0, 0, 0.2)';
+      if (icon) {
+        (icon as HTMLElement).style.transform = '';
+      }
+    });
+    restartButton.addEventListener('pointercancel', () => {
+      restartButton.style.transform = '';
+      restartButton.style.boxShadow = '0 12px 32px rgba(0, 0, 0, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.5), inset 0 -3px 8px rgba(0, 0, 0, 0.2)';
+      if (icon) {
+        (icon as HTMLElement).style.transform = '';
+      }
+    });
 
     this.addPressEffect(restartButton);
 
