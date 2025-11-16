@@ -56,7 +56,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
   },
   {
     threshold: 1,
-    name: '1-0-top-woodHorizontal',
+    name: '1-0-bottom-woodHorizontal',
     obstacles: [
       {
         blueprintId: 'woodHorizontal',
@@ -148,11 +148,11 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
   },
   {
     threshold: 6,
-    name: '1-0-diganonal-woodVertical',
+    name: '1-0-diagonal-woodVertical',
     obstacles: [
       {
         blueprintId: 'woodVertical',
-        transform: { 
+        transform: {
           position: { z: -5.4 },
           positionRange : { x: [-1.5, 1.5] },
           rotationRange : { z: [0, Math.PI] }
@@ -163,11 +163,11 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
   },
   {
     threshold: 6,
-    name: '1-0-diganonal-keeperWall',
+    name: '1-0-diagonal-keeperWall',
     obstacles: [
       {
         blueprintId: 'keeperWall',
-        transform: { 
+        transform: {
           position: { z: -5.4 },
           positionRange : { x: [-1.5, 1.5] },
           rotationRange : { z: [0, Math.PI] }
@@ -178,11 +178,11 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
   },
   {
     threshold: 6,
-    name: '1-0-diganonal-drum',
+    name: '1-0-diagonal-drum',
     obstacles: [
       {
         blueprintId: 'drum',
-        transform: { 
+        transform: {
           position: { z: -5.0 },
           positionRange : { x: [-1.5, 1.5], y: [0.5, 1.5] },
           rotationRange : { z: [0, Math.PI] }
