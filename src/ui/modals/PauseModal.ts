@@ -336,14 +336,6 @@ export class PauseModal extends BaseModal {
     view.appendChild(topContent);
     view.appendChild(bottomButtonsWrapper);
 
-    // 빈 공간 클릭 시 닫기
-    view.addEventListener('click', (e) => {
-      const target = e.target as HTMLElement;
-      if (target === view || target.classList.contains('flex-col')) {
-        this.close();
-      }
-    });
-
     return view;
   }
 
