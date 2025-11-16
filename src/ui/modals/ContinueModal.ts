@@ -63,10 +63,14 @@ export class ContinueModal extends BaseModal {
 
     const contentWrapper = document.createElement('div');
     contentWrapper.className = `
-      w-full max-w-md
-      flex flex-col items-center justify-center
-      gap-8
+      flex-1 w-full max-w-lg
+      flex flex-col items-center justify-between
+      pt-[2vh] pb-[8vh] gap-4
     `.trim().replace(/\s+/g, ' ');
+
+    // 상단 콘텐츠 컨테이너
+    const topContent = document.createElement('div');
+    topContent.className = 'flex flex-col items-center w-full gap-4';
 
     // 타이틀
     const title = document.createElement('div');
@@ -80,12 +84,18 @@ export class ContinueModal extends BaseModal {
     // 원형 버튼 + 진행바
     const continueButtonWrapper = this.createContinueButton();
 
-    // 포기하기 버튼
-    this.giveUpButton = this.createGiveUpButton();
+    topContent.appendChild(title);
+    topContent.appendChild(continueButtonWrapper);
 
-    contentWrapper.appendChild(title);
-    contentWrapper.appendChild(continueButtonWrapper);
-    contentWrapper.appendChild(this.giveUpButton);
+    // 하단 버튼 (포기하기)
+    const bottomButtonsWrapper = document.createElement('div');
+    bottomButtonsWrapper.className = 'flex items-center justify-center w-full';
+
+    this.giveUpButton = this.createGiveUpButton();
+    bottomButtonsWrapper.appendChild(this.giveUpButton);
+
+    contentWrapper.appendChild(topContent);
+    contentWrapper.appendChild(bottomButtonsWrapper);
 
     this.content.appendChild(contentWrapper);
   }

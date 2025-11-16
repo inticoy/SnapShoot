@@ -146,6 +146,10 @@ export class GameOverModal extends BaseModal {
     const view = document.createElement('div');
     view.className = 'flex-1 flex flex-col items-center justify-between w-full max-w-lg pt-[2vh] pb-[8vh] gap-4';
 
+    // 상단 콘텐츠 컨테이너
+    const topContent = document.createElement('div');
+    topContent.className = 'flex flex-col items-center w-full gap-4';
+
     // 점수 표시
     const scoreWrapper = document.createElement('div');
     scoreWrapper.className = `
@@ -290,8 +294,10 @@ export class GameOverModal extends BaseModal {
 
     bottomButtonsWrapper.appendChild(restartButton);
 
-    view.appendChild(scoreWrapper);
-    view.appendChild(topButtonsWrapper);
+    // 레이아웃 구성
+    topContent.appendChild(scoreWrapper);
+    topContent.appendChild(topButtonsWrapper);
+    view.appendChild(topContent);
     view.appendChild(bottomButtonsWrapper);
 
     return view;
