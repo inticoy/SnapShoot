@@ -284,6 +284,11 @@ export class SnapShoot {
   private attachEventListeners() {
     window.addEventListener('resize', this.handleResizeBound);
     // InputController가 입력 이벤트를 관리
+
+    // 인게임 첫 터치에서 AudioContext unlock (Safari autoplay policy 우회)
+    this.renderer.domElement.addEventListener('pointerdown', () => {
+      void this.audio.unlockAudioContext();
+    }, { once: true });
   }
 
   private handleResize() {

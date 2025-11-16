@@ -436,15 +436,12 @@ export class LoadingScreen {
    * 1단계 → 2단계 전환 (프로그레스 바 숨기고 축구공 표시)
    */
   private transitionToStage2() {
-    // BG 음악 시작
-    this.onLoadingComplete?.();
-
     // 스테이지 1 컨테이너를 페이드아웃
     if (this.stage1Container) {
         this.stage1Container.style.opacity = '0';
     }
 
-    // 0.8초 후 축구공을 페이드인
+    // 0.2초 후 축구공을 페이드인하고 BG 음악 시작
     setTimeout(() => {
       if (this.soccerBallContainer) {
         this.soccerBallContainer.style.opacity = '1';
@@ -454,6 +451,9 @@ export class LoadingScreen {
       if (this.swipeCanvas) {
         this.swipeCanvas.style.pointerEvents = 'auto';
       }
+
+      // BG 음악 시작 (swipeCanvas 활성화 후에 호출하여 pointerdown 리스너가 준비된 상태에서 실행)
+      this.onLoadingComplete?.();
 
       // 게임 진입 체크
       this.checkAndEnterGame();
