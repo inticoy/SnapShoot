@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Professional Button Design Sample - Mobile Optimized</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.0.3/src/fill/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      padding: 1rem;
+      gap: 2rem;
+    }
+
+    /* 저전력 모드 대응 - 애니메이션 및 무거운 효과 비활성화 */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition-duration: 0.01ms !important;
+      }
+
+      /* 무거운 box-shadow 단순화 */
+      .btn-ranking, .btn-theme, .btn-share {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+      }
+
+      /* filter 제거 (GPU 부하) */
+      .btn-theme i {
+        filter: none !important;
+      }
+    }
+
+    /* 컨테이너 */
+    .button-container {
+      background: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      border-radius: 1.5rem;
+      padding: 2rem 1.5rem;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+      width: 100%;
+    }
+
+    .section-title {
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 1rem;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    /* ======================
+       정사각형 버튼 (랭킹, 테마, 공유)
+       ====================== */
+    .btn-square {
+      flex: 1;
+      aspect-ratio: 0.85;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      border-radius: 1rem;
+      max-width: 120px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-square i {
+      transition: transform 0.15s ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    .btn-square:active i {
+      transform: scale(0.85);
+    }
+
+    .btn-square span {
+      color: rgba(255, 255, 255, 0.95);
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+      position: relative;
+      z-index: 2;
+    }
+
+    /* 랭킹 버튼 - Bright Gold */
+    .btn-ranking {
+      background: linear-gradient(135deg,
+        #ffd700 0%,
+        #ffcc00 20%,
+        #ffb800 40%,
+        #ffa500 60%,
+        #ff9500 80%,
+        #ff8c00 100%
+      );
+      border: 2px solid rgba(255, 215, 0, 0.8);
+      box-shadow:
+        0 6px 20px rgba(255, 193, 7, 0.5),
+        0 0 30px rgba(255, 215, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -2px 8px rgba(0, 0, 0, 0.25);
+      animation: gold-glow 2s ease-in-out infinite;
+    }
+
+    .btn-ranking::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(255, 255, 255, 0) 60%
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .btn-ranking i {
+      color: white !important;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5)) drop-shadow(0 0 4px rgba(255, 255, 255, 0.3));
+    }
+
+    .btn-ranking:active {
+      transform: scale(0.92);
+      box-shadow:
+        0 2px 6px rgba(255, 193, 7, 0.3),
+        inset 0 3px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    @keyframes gold-glow {
+      0%, 100% {
+        box-shadow:
+          0 6px 20px rgba(255, 193, 7, 0.5),
+          0 0 30px rgba(255, 215, 0, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.5),
+          inset 0 -2px 8px rgba(0, 0, 0, 0.25);
+      }
+      50% {
+        box-shadow:
+          0 6px 20px rgba(255, 193, 7, 0.6),
+          0 0 40px rgba(255, 215, 0, 0.5),
+          inset 0 1px 0 rgba(255, 255, 255, 0.5),
+          inset 0 -2px 8px rgba(0, 0, 0, 0.25);
+      }
+    }
+
+    /* 테마 버튼 - Creative Rainbow Gradient */
+    .btn-theme {
+      background: #000;
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      box-shadow:
+        0 6px 20px rgba(255, 0, 128, 0.4),
+        0 0 30px rgba(128, 0, 255, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -2px 8px rgba(0, 0, 0, 0.3);
+      animation: theme-glow 2s ease-in-out infinite;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-theme::before {
+      content: '';
+      position: absolute;
+      inset: -200%;
+      background: conic-gradient(from 0deg,
+        #ff0080,
+        #ff8c00,
+        #ffd700,
+        #00ff00,
+        #00d4ff,
+        #0080ff,
+        #8000ff,
+        #ff0080
+      );
+      animation: rainbow-spin 4s linear infinite;
+      z-index: 0;
+    }
+
+    .btn-theme::after {
+      content: '';
+      position: absolute;
+      inset: 2px;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.3) 0%,
+        rgba(255, 255, 255, 0.05) 50%,
+        rgba(255, 255, 255, 0.2) 100%
+      );
+      border-radius: calc(1rem - 2px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .btn-theme i {
+      color: white !important;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+      animation: icon-pulse 2s ease-in-out infinite;
+    }
+
+    .btn-theme:active {
+      transform: scale(0.92);
+      box-shadow:
+        0 2px 8px rgba(255, 0, 128, 0.3),
+        0 0 20px rgba(128, 0, 255, 0.2),
+        inset 0 3px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .btn-theme:active::after {
+      opacity: 0.3;
+    }
+
+    @keyframes rainbow-spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes theme-glow {
+      0%, 100% {
+        box-shadow:
+          0 6px 20px rgba(255, 0, 128, 0.4),
+          0 0 30px rgba(128, 0, 255, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.5),
+          inset 0 -2px 8px rgba(0, 0, 0, 0.3);
+      }
+      50% {
+        box-shadow:
+          0 6px 20px rgba(255, 0, 128, 0.5),
+          0 0 40px rgba(128, 0, 255, 0.5),
+          inset 0 1px 0 rgba(255, 255, 255, 0.5),
+          inset 0 -2px 8px rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    @keyframes icon-pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    /* 공유 버튼 - Social Green */
+    .btn-share {
+      background: linear-gradient(135deg,
+        #2ecc71 0%,
+        #27ae60 50%,
+        #229954 100%
+      );
+      border: 2px solid rgba(46, 204, 113, 0.7);
+      box-shadow:
+        0 6px 16px rgba(46, 204, 113, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4),
+        inset 0 -2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-share::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(255, 255, 255, 0) 60%
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .btn-share i {
+      color: white !important;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    .btn-share:active {
+      transform: scale(0.92);
+      box-shadow:
+        0 2px 6px rgba(46, 204, 113, 0.3),
+        inset 0 3px 10px rgba(0, 0, 0, 0.35);
+    }
+
+    /* ======================
+       원형 버튼 (재생, 다시하기)
+       ====================== */
+    .btn-circle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-circle i {
+      transition: transform 0.15s ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    .btn-circle:active i {
+      transform: scale(0.85);
+    }
+
+    /* 재생 버튼 (크고 중요) */
+    .btn-play {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg,
+        #4facfe 0%,
+        #00f2fe 100%
+      );
+      border: 3px solid rgba(79, 172, 254, 0.8);
+      box-shadow:
+        0 8px 20px rgba(79, 172, 254, 0.5),
+        inset 0 2px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -3px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-play::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.5) 0%,
+        rgba(255, 255, 255, 0) 60%
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .btn-play i {
+      color: white !important;
+      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
+      font-size: 2.5rem;
+    }
+
+    .btn-play:active {
+      transform: scale(0.90);
+      box-shadow:
+        0 3px 8px rgba(79, 172, 254, 0.35),
+        inset 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    /* 다시하기 버튼 (작음) */
+    .btn-restart {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.25) 0%,
+        rgba(255, 255, 255, 0.15) 100%
+      );
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      box-shadow:
+        0 6px 16px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4),
+        inset 0 -2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-restart::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.3) 0%,
+        rgba(255, 255, 255, 0) 60%
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .btn-restart i {
+      color: rgba(255, 255, 255, 0.95) !important;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+      font-size: 1.875rem;
+    }
+
+    .btn-restart:active {
+      transform: scale(0.90);
+      box-shadow:
+        0 2px 6px rgba(0, 0, 0, 0.2),
+        inset 0 3px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    /* ======================
+       큰 다시하기 버튼 (GameOverModal용)
+       ====================== */
+    .btn-restart-large {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1rem 4rem;
+      border-radius: 9999px;
+      background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.25) 0%,
+        rgba(255, 255, 255, 0.15) 100%
+      );
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      box-shadow:
+        0 12px 32px rgba(0, 0, 0, 0.4),
+        inset 0 2px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -3px 8px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(4px);
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-restart-large::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 9999px;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.3) 0%,
+        rgba(255, 255, 255, 0) 60%
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .btn-restart-large i {
+      color: white !important;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+      font-size: 1.5rem;
+      transition: transform 0.15s ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    .btn-restart-large span {
+      color: white;
+      font-weight: 700;
+      font-size: 1.125rem;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+      position: relative;
+      z-index: 2;
+    }
+
+    .btn-restart-large:active {
+      transform: scale(0.95);
+      box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.3),
+        inset 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    .btn-restart-large:active i {
+      transform: scale(0.85);
+    }
+
+    /* ======================
+       광고보기 버튼 (Continue Modal용) - 원본 기반
+       ====================== */
+    .ad-watch-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ad-progress-svg {
+      position: absolute;
+      transform: rotate(-90deg);
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+    }
+
+    .ad-progress-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.2);
+      stroke-width: 6;
+    }
+
+    .ad-progress-ring {
+      fill: none;
+      stroke: #ffffff;
+      stroke-width: 6;
+      stroke-linecap: round;
+      /* stroke-dasharray와 stroke-dashoffset은 HTML에서 직접 설정 */
+    }
+
+    .btn-ad-watch {
+      position: relative;
+      z-index: 10;
+      width: 180px;
+      height: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg,
+        #ffd700 0%,
+        #ffb800 25%,
+        #ffa500 50%,
+        #ff8c00 75%,
+        #ff6b35 100%
+      );
+      border: 3px solid rgba(255, 193, 7, 0.8);
+      box-shadow:
+        0 12px 32px rgba(255, 140, 0, 0.5),
+        0 0 30px rgba(255, 193, 7, 0.3),
+        inset 0 2px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -3px 8px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      user-select: none;
+      overflow: hidden;
+      transition: all 0.2s ease;
+      animation: ad-glow 2s ease-in-out infinite;
+    }
+
+    .btn-ad-watch::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(255, 255, 255, 0) 60%
+      );
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .btn-ad-watch:hover {
+      transform: scale(1.05);
+      border-color: rgba(255, 193, 7, 1);
+      box-shadow:
+        0 16px 40px rgba(255, 140, 0, 0.6),
+        0 0 40px rgba(255, 193, 7, 0.5),
+        inset 0 2px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -3px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-ad-watch:active {
+      transform: scale(0.95);
+      box-shadow:
+        0 8px 20px rgba(255, 140, 0, 0.4),
+        inset 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    @keyframes ad-glow {
+      0%, 100% {
+        box-shadow:
+          0 12px 32px rgba(255, 140, 0, 0.5),
+          0 0 30px rgba(255, 193, 7, 0.3),
+          inset 0 2px 0 rgba(255, 255, 255, 0.5),
+          inset 0 -3px 8px rgba(0, 0, 0, 0.2);
+      }
+      50% {
+        box-shadow:
+          0 12px 32px rgba(255, 140, 0, 0.6),
+          0 0 40px rgba(255, 193, 7, 0.5),
+          inset 0 2px 0 rgba(255, 255, 255, 0.5),
+          inset 0 -3px 8px rgba(0, 0, 0, 0.2);
+      }
+    }
+
+    .btn-ad-watch i {
+      color: white !important;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+      font-size: 3rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .btn-ad-watch .ad-text {
+      color: white;
+      font-weight: 700;
+      font-size: 0.875rem;
+      padding: 0 1rem;
+      text-align: center;
+      line-height: 1.2;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+      position: relative;
+      z-index: 2;
+    }
+
+    .btn-ad-watch .ad-timer {
+      color: rgba(255,255,255,0.9);
+      font-weight: 900;
+      font-size: 3rem;
+      font-family: 'Russo One', sans-serif;
+      transition: color 0.3s ease;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* 버튼 그룹 레이아웃 */
+    .square-buttons {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .circle-buttons {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .info-text {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.8rem;
+      text-align: center;
+      line-height: 1.6;
+      padding: 0 1rem;
+    }
+
+    .divider {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin: 1.5rem 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- 정사각형 버튼 섹션 -->
+  <div class="button-container">
+    <div class="section-title">정사각형 버튼 (모달 상단)</div>
+
+    <div class="square-buttons">
+      <!-- 랭킹보기 -->
+      <button class="btn-square btn-ranking">
+        <i class="ph-fill ph-trophy" style="font-size: 2.5rem;"></i>
+        <span>랭킹보기</span>
+      </button>
+
+      <!-- 테마변경 -->
+      <button class="btn-square btn-theme">
+        <i class="ph-fill ph-palette" style="font-size: 2.5rem;"></i>
+        <span>테마 변경</span>
+      </button>
+
+      <!-- 공유하기 -->
+      <button class="btn-square btn-share">
+        <i class="ph-fill ph-share-network" style="font-size: 2.5rem;"></i>
+        <span>공유하기</span>
+      </button>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="info-text">
+      ✨ <strong>랭킹:</strong> Metallic gold with dark icon<br>
+      🎨 <strong>테마:</strong> Animated gradient (4 colors)<br>
+      💚 <strong>공유:</strong> Social green gradient
+    </p>
+  </div>
+
+  <!-- 원형 버튼 섹션 (PauseModal용) -->
+  <div class="button-container">
+    <div class="section-title">원형 버튼 (PauseModal 하단)</div>
+
+    <div class="circle-buttons">
+      <!-- 다시하기 (작음) -->
+      <button class="btn-circle btn-restart">
+        <i class="ph-fill ph-arrow-clockwise"></i>
+      </button>
+
+      <!-- 재생/이어하기 (크고 중요) -->
+      <button class="btn-circle btn-play">
+        <i class="ph-fill ph-play"></i>
+      </button>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="info-text">
+      ▶️ <strong>재생:</strong> Large blue gradient (primary action)<br>
+      🔄 <strong>다시하기:</strong> Small glass button (secondary)
+    </p>
+  </div>
+
+  <!-- 큰 다시하기 버튼 섹션 (GameOverModal용) -->
+  <div class="button-container">
+    <div class="section-title">큰 다시하기 버튼 (GameOverModal 하단)</div>
+
+    <div style="display: flex; justify-content: center; margin-bottom: 2rem;">
+      <button class="btn-restart-large">
+        <i class="ph-fill ph-arrow-clockwise"></i>
+        <span>다시하기</span>
+      </button>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="info-text">
+      🔄 <strong>다시하기:</strong> Large pill button with glass effect<br>
+      GameOverModal에서 유일한 액션 버튼으로 사용
+    </p>
+  </div>
+
+  <!-- 광고보기 버튼 섹션 (Continue Modal용) -->
+  <div class="button-container">
+    <div class="section-title">광고보기 버튼 (Continue Modal)</div>
+
+    <div style="display: flex; justify-content: center; margin-bottom: 2rem;">
+      <div class="ad-watch-wrapper">
+        <!-- SVG Progress Ring -->
+        <svg class="ad-progress-svg" width="200" height="200" viewBox="0 0 200 200">
+          <!-- Background Circle -->
+          <circle class="ad-progress-bg" cx="100" cy="100" r="97"></circle>
+          <!-- Progress Circle -->
+          <circle class="ad-progress-ring" id="progress-circle" cx="100" cy="100" r="97"
+                  stroke-dasharray="609.4689" stroke-dashoffset="0"></circle>
+        </svg>
+
+        <!-- Button with content inside -->
+        <button class="btn-ad-watch" id="ad-watch-btn">
+          <i class="ph-fill ph-play-circle"></i>
+          <span class="ad-text">광고보고 이어하기</span>
+          <span class="ad-timer" id="ad-timer">5</span>
+        </button>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem;">
+      <button onclick="startCountdown()" style="padding: 0.5rem 1.5rem; border-radius: 0.5rem; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; cursor: pointer;">
+        시작
+      </button>
+      <button onclick="resetCountdown()" style="padding: 0.5rem 1.5rem; border-radius: 0.5rem; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; cursor: pointer;">
+        리셋
+      </button>
+    </div>
+
+    <div class="divider"></div>
+
+    <p class="info-text">
+      🎬 <strong>광고보기:</strong> Glass morphism with countdown<br>
+      ⏱️ <strong>5초 게이지:</strong> Smooth requestAnimationFrame<br>
+      🌈 <strong>색상 변화:</strong> 흰색 → 노랑(3초) → 빨강(2초)<br>
+      💓 <strong>펄스:</strong> 마지막 3초 동안 sin 기반 펄스
+    </p>
+  </div>
+
+  <!-- 특징 설명 -->
+  <div class="button-container">
+    <div class="section-title">모바일 최적화 특징</div>
+    <p class="info-text">
+      📱 <strong>탭 인터랙션:</strong> Strong scale feedback (0.92x)<br>
+      🔋 <strong>저전력 모드:</strong> prefers-reduced-motion 지원<br>
+      🎯 <strong>아이콘 가시성:</strong> 배경과 명확한 대비<br>
+      ⚡ <strong>성능:</strong> GPU 가속, 최소한의 애니메이션<br>
+      💎 <strong>깊이감:</strong> Layered shadows & highlights
+    </p>
+  </div>
+
+  <script>
+    // 모바일에서 더 나은 터치 피드백
+    document.querySelectorAll('button').forEach(button => {
+      button.addEventListener('touchstart', () => {
+        if (button.classList.contains('btn-square')) {
+          button.style.transform = 'scale(0.92)';
+        } else if (button.classList.contains('btn-restart-large')) {
+          button.style.transform = 'scale(0.95)';
+        } else {
+          button.style.transform = 'scale(0.90)';
+        }
+      });
+
+      button.addEventListener('touchend', () => {
+        button.style.transform = '';
+      });
+
+      button.addEventListener('touchcancel', () => {
+        button.style.transform = '';
+      });
+    });
+
+    // 광고보기 카운트다운 (원본 ContinueModal.ts 기반)
+    let animationFrameId = null;
+    let fallbackInterval = null;
+    let startTime = null;
+    const timeoutSeconds = 5;
+    const size = 200;
+    const strokeWidth = 6;
+    const radius = (size - strokeWidth) / 2;
+    const circumference = 2 * Math.PI * radius;
+
+    function startCountdown() {
+      if (animationFrameId) return; // 이미 실행 중이면 무시
+
+      const btn = document.getElementById('ad-watch-btn');
+      const progressCircle = document.getElementById('progress-circle');
+      const timerText = document.getElementById('ad-timer');
+
+      startTime = Date.now();
+      const duration = timeoutSeconds * 1000;
+
+      const updateProgress = () => {
+        if (!startTime) return;
+
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const remaining = Math.max(0, timeoutSeconds - elapsed / 1000);
+
+        // 진행바 업데이트 (시계방향으로 진행)
+        const offset = circumference * progress;
+        progressCircle.setAttribute('stroke-dashoffset', offset.toString());
+
+        // 타이머 텍스트 업데이트 (남은 시간)
+        timerText.textContent = Math.ceil(remaining).toString();
+
+        // 색상 변화 (버튼 배경 + 진행바 + 텍스트 모두)
+        if (remaining <= 1) {
+          // 레드 단계 (부드러운 레드)
+          btn.style.background = 'linear-gradient(135deg, #ff7b7b 0%, #ff6b6b 50%, #ff5252 100%)';
+          btn.style.borderColor = 'rgba(255, 107, 107, 0.8)';
+          btn.style.boxShadow = `
+            0 12px 32px rgba(255, 82, 82, 0.6),
+            0 0 40px rgba(255, 107, 107, 0.4),
+            inset 0 2px 0 rgba(255, 255, 255, 0.5),
+            inset 0 -3px 8px rgba(0, 0, 0, 0.2)
+          `;
+          progressCircle.setAttribute('stroke', '#ffffff');
+          timerText.style.color = '#ffffff';
+        } else if (remaining <= 2) {
+          // 오렌지-레드 중간 단계
+          btn.style.background = 'linear-gradient(135deg, #ff8c5a 0%, #ff7043 50%, #ff5722 100%)';
+          btn.style.borderColor = 'rgba(255, 112, 67, 0.8)';
+          btn.style.boxShadow = `
+            0 12px 32px rgba(255, 87, 34, 0.6),
+            0 0 40px rgba(255, 112, 67, 0.4),
+            inset 0 2px 0 rgba(255, 255, 255, 0.5),
+            inset 0 -3px 8px rgba(0, 0, 0, 0.2)
+          `;
+          progressCircle.setAttribute('stroke', '#ffffff');
+          timerText.style.color = '#ffffff';
+        } else if (remaining <= 3) {
+          // 오렌지 단계
+          btn.style.background = 'linear-gradient(135deg, #ffa500 0%, #ff8c00 50%, #ff6b35 100%)';
+          btn.style.borderColor = 'rgba(255, 140, 0, 0.8)';
+          btn.style.boxShadow = `
+            0 12px 32px rgba(255, 140, 0, 0.6),
+            0 0 40px rgba(255, 165, 0, 0.4),
+            inset 0 2px 0 rgba(255, 255, 255, 0.5),
+            inset 0 -3px 8px rgba(0, 0, 0, 0.2)
+          `;
+          progressCircle.setAttribute('stroke', '#ffffff');
+          timerText.style.color = '#ffffff';
+        } else {
+          // 노랑 단계 (기본)
+          progressCircle.setAttribute('stroke', '#ffffff');
+          timerText.style.color = '#ffffff';
+        }
+
+        // 버튼 펄스 애니메이션 (마지막 3초) - 더 강한 효과
+        if (remaining <= 3 && remaining > 0) {
+          const pulseScale = 1 + Math.sin(elapsed * 0.008) * 0.08;
+          btn.style.transform = `scale(${pulseScale})`;
+        }
+
+        if (progress >= 1) {
+          // 타임아웃 완료
+          stopCountdown();
+          timerText.textContent = '0';
+          return;
+        }
+
+        // requestAnimationFrame으로 계속 실행
+        animationFrameId = requestAnimationFrame(updateProgress);
+      };
+
+      // requestAnimationFrame으로 부드러운 애니메이션
+      animationFrameId = requestAnimationFrame(updateProgress);
+
+      // Fallback: 모바일 절전 모드 대비 (1초마다 강제 업데이트)
+      fallbackInterval = setInterval(() => {
+        if (startTime) {
+          const elapsed = Date.now() - startTime;
+          const remaining = Math.max(0, timeoutSeconds - elapsed / 1000);
+          timerText.textContent = Math.ceil(remaining).toString();
+        }
+      }, 1000);
+    }
+
+    function stopCountdown() {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+      if (fallbackInterval) {
+        clearInterval(fallbackInterval);
+        fallbackInterval = null;
+      }
+      startTime = null;
+    }
+
+    function resetCountdown() {
+      stopCountdown();
+
+      const btn = document.getElementById('ad-watch-btn');
+      const progressCircle = document.getElementById('progress-circle');
+      const timerText = document.getElementById('ad-timer');
+
+      // 노랑 초기 상태로 리셋
+      btn.style.background = 'linear-gradient(135deg, #ffd700 0%, #ffb800 25%, #ffa500 50%, #ff8c00 75%, #ff6b35 100%)';
+      btn.style.borderColor = 'rgba(255, 193, 7, 0.8)';
+      btn.style.boxShadow = `
+        0 12px 32px rgba(255, 140, 0, 0.5),
+        0 0 30px rgba(255, 193, 7, 0.3),
+        inset 0 2px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -3px 8px rgba(0, 0, 0, 0.2)
+      `;
+      progressCircle.setAttribute('stroke-dashoffset', '0');
+      progressCircle.setAttribute('stroke', '#ffffff');
+      timerText.textContent = timeoutSeconds.toString();
+      timerText.style.color = '#ffffff';
+      btn.style.transform = '';
+    }
+
+    // 광고보기 버튼 클릭 시 카운트다운 시작
+    document.getElementById('ad-watch-btn')?.addEventListener('click', () => {
+      if (!animationFrameId) {
+        startCountdown();
+      }
+    });
+  </script>
+</body>
+</html>
