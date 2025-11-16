@@ -594,160 +594,62 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
   /* ============================================
    * 15-149점: 2-10개 장애물 (Composition)
    * 패턴: 각 장애물 개수당 3+3+4+5 = 15점 주기
+   * 각 구간의 시작 threshold만 정의 (나머지는 자동 적용)
    * ============================================ */
 
-  /* 15-29점: 2개 장애물 */
+  /* 15-29점: 2개 장애물 (3+3+4+5) */
   { threshold: 15, name: '2-0-composition', composition: { count: 2, from: ['1-0'], unique: true } },
-  { threshold: 16, name: '2-0-composition', composition: { count: 2, from: ['1-0'], unique: true } },
-  { threshold: 17, name: '2-0-composition', composition: { count: 2, from: ['1-0'], unique: true } },
   { threshold: 18, name: '2-1-composition', composition: { count: 2, from: ['1-1'], unique: true } },
-  { threshold: 19, name: '2-1-composition', composition: { count: 2, from: ['1-1'], unique: true } },
-  { threshold: 20, name: '2-1-composition', composition: { count: 2, from: ['1-1'], unique: true } },
   { threshold: 21, name: '2-2-composition', composition: { count: 2, from: ['1-2'], unique: true } },
-  { threshold: 22, name: '2-2-composition', composition: { count: 2, from: ['1-2'], unique: true } },
-  { threshold: 23, name: '2-2-composition', composition: { count: 2, from: ['1-2'], unique: true } },
-  { threshold: 24, name: '2-2-composition', composition: { count: 2, from: ['1-2'], unique: true } },
   { threshold: 25, name: '2-3-composition', composition: { count: 2, from: ['1-3'], unique: true } },
-  { threshold: 26, name: '2-3-composition', composition: { count: 2, from: ['1-3'], unique: true } },
-  { threshold: 27, name: '2-3-composition', composition: { count: 2, from: ['1-3'], unique: true } },
-  { threshold: 28, name: '2-3-composition', composition: { count: 2, from: ['1-3'], unique: true } },
-  { threshold: 29, name: '2-3-composition', composition: { count: 2, from: ['1-3'], unique: true } },
 
-  /* 30-44점: 3개 장애물 */
+  /* 30-44점: 3개 장애물 (3+3+4+5) */
   { threshold: 30, name: '3-0-composition', composition: { count: 3, from: ['1-0'], unique: true } },
-  { threshold: 31, name: '3-0-composition', composition: { count: 3, from: ['1-0'], unique: true } },
-  { threshold: 32, name: '3-0-composition', composition: { count: 3, from: ['1-0'], unique: true } },
   { threshold: 33, name: '3-1-composition', composition: { count: 3, from: ['1-1'], unique: true } },
-  { threshold: 34, name: '3-1-composition', composition: { count: 3, from: ['1-1'], unique: true } },
-  { threshold: 35, name: '3-1-composition', composition: { count: 3, from: ['1-1'], unique: true } },
   { threshold: 36, name: '3-2-composition', composition: { count: 3, from: ['1-2'], unique: true } },
-  { threshold: 37, name: '3-2-composition', composition: { count: 3, from: ['1-2'], unique: true } },
-  { threshold: 38, name: '3-2-composition', composition: { count: 3, from: ['1-2'], unique: true } },
-  { threshold: 39, name: '3-2-composition', composition: { count: 3, from: ['1-2'], unique: true } },
   { threshold: 40, name: '3-3-composition', composition: { count: 3, from: ['1-3'], unique: true } },
-  { threshold: 41, name: '3-3-composition', composition: { count: 3, from: ['1-3'], unique: true } },
-  { threshold: 42, name: '3-3-composition', composition: { count: 3, from: ['1-3'], unique: true } },
-  { threshold: 43, name: '3-3-composition', composition: { count: 3, from: ['1-3'], unique: true } },
-  { threshold: 44, name: '3-3-composition', composition: { count: 3, from: ['1-3'], unique: true } },
 
-  /* 45-59점: 4개 장애물 */
+  /* 45-59점: 4개 장애물 (3+3+4+5) */
   { threshold: 45, name: '4-0-composition', composition: { count: 4, from: ['1-0'], unique: true } },
-  { threshold: 46, name: '4-0-composition', composition: { count: 4, from: ['1-0'], unique: true } },
-  { threshold: 47, name: '4-0-composition', composition: { count: 4, from: ['1-0'], unique: true } },
   { threshold: 48, name: '4-1-composition', composition: { count: 4, from: ['1-1'], unique: true } },
-  { threshold: 49, name: '4-1-composition', composition: { count: 4, from: ['1-1'], unique: true } },
-  { threshold: 50, name: '4-1-composition', composition: { count: 4, from: ['1-1'], unique: true } },
   { threshold: 51, name: '4-2-composition', composition: { count: 4, from: ['1-2'], unique: true } },
-  { threshold: 52, name: '4-2-composition', composition: { count: 4, from: ['1-2'], unique: true } },
-  { threshold: 53, name: '4-2-composition', composition: { count: 4, from: ['1-2'], unique: true } },
-  { threshold: 54, name: '4-2-composition', composition: { count: 4, from: ['1-2'], unique: true } },
   { threshold: 55, name: '4-3-composition', composition: { count: 4, from: ['1-3'], unique: true } },
-  { threshold: 56, name: '4-3-composition', composition: { count: 4, from: ['1-3'], unique: true } },
-  { threshold: 57, name: '4-3-composition', composition: { count: 4, from: ['1-3'], unique: true } },
-  { threshold: 58, name: '4-3-composition', composition: { count: 4, from: ['1-3'], unique: true } },
-  { threshold: 59, name: '4-3-composition', composition: { count: 4, from: ['1-3'], unique: true } },
 
-  /* 60-74점: 5개 장애물 */
+  /* 60-74점: 5개 장애물 (3+3+4+5) */
   { threshold: 60, name: '5-0-composition', composition: { count: 5, from: ['1-0'], unique: true } },
-  { threshold: 61, name: '5-0-composition', composition: { count: 5, from: ['1-0'], unique: true } },
-  { threshold: 62, name: '5-0-composition', composition: { count: 5, from: ['1-0'], unique: true } },
   { threshold: 63, name: '5-1-composition', composition: { count: 5, from: ['1-1'], unique: true } },
-  { threshold: 64, name: '5-1-composition', composition: { count: 5, from: ['1-1'], unique: true } },
-  { threshold: 65, name: '5-1-composition', composition: { count: 5, from: ['1-1'], unique: true } },
   { threshold: 66, name: '5-2-composition', composition: { count: 5, from: ['1-2'], unique: true } },
-  { threshold: 67, name: '5-2-composition', composition: { count: 5, from: ['1-2'], unique: true } },
-  { threshold: 68, name: '5-2-composition', composition: { count: 5, from: ['1-2'], unique: true } },
-  { threshold: 69, name: '5-2-composition', composition: { count: 5, from: ['1-2'], unique: true } },
   { threshold: 70, name: '5-3-composition', composition: { count: 5, from: ['1-3'], unique: true } },
-  { threshold: 71, name: '5-3-composition', composition: { count: 5, from: ['1-3'], unique: true } },
-  { threshold: 72, name: '5-3-composition', composition: { count: 5, from: ['1-3'], unique: true } },
-  { threshold: 73, name: '5-3-composition', composition: { count: 5, from: ['1-3'], unique: true } },
-  { threshold: 74, name: '5-3-composition', composition: { count: 5, from: ['1-3'], unique: true } },
 
-  /* 75-89점: 6개 장애물 */
+  /* 75-89점: 6개 장애물 (3+3+4+5) */
   { threshold: 75, name: '6-0-composition', composition: { count: 6, from: ['1-0'], unique: true } },
-  { threshold: 76, name: '6-0-composition', composition: { count: 6, from: ['1-0'], unique: true } },
-  { threshold: 77, name: '6-0-composition', composition: { count: 6, from: ['1-0'], unique: true } },
   { threshold: 78, name: '6-1-composition', composition: { count: 6, from: ['1-1'], unique: true } },
-  { threshold: 79, name: '6-1-composition', composition: { count: 6, from: ['1-1'], unique: true } },
-  { threshold: 80, name: '6-1-composition', composition: { count: 6, from: ['1-1'], unique: true } },
   { threshold: 81, name: '6-2-composition', composition: { count: 6, from: ['1-2'], unique: true } },
-  { threshold: 82, name: '6-2-composition', composition: { count: 6, from: ['1-2'], unique: true } },
-  { threshold: 83, name: '6-2-composition', composition: { count: 6, from: ['1-2'], unique: true } },
-  { threshold: 84, name: '6-2-composition', composition: { count: 6, from: ['1-2'], unique: true } },
   { threshold: 85, name: '6-3-composition', composition: { count: 6, from: ['1-3'], unique: true } },
-  { threshold: 86, name: '6-3-composition', composition: { count: 6, from: ['1-3'], unique: true } },
-  { threshold: 87, name: '6-3-composition', composition: { count: 6, from: ['1-3'], unique: true } },
-  { threshold: 88, name: '6-3-composition', composition: { count: 6, from: ['1-3'], unique: true } },
-  { threshold: 89, name: '6-3-composition', composition: { count: 6, from: ['1-3'], unique: true } },
 
-  /* 90-104점: 7개 장애물 */
+  /* 90-104점: 7개 장애물 (3+3+4+5) */
   { threshold: 90, name: '7-0-composition', composition: { count: 7, from: ['1-0'], unique: true } },
-  { threshold: 91, name: '7-0-composition', composition: { count: 7, from: ['1-0'], unique: true } },
-  { threshold: 92, name: '7-0-composition', composition: { count: 7, from: ['1-0'], unique: true } },
   { threshold: 93, name: '7-1-composition', composition: { count: 7, from: ['1-1'], unique: true } },
-  { threshold: 94, name: '7-1-composition', composition: { count: 7, from: ['1-1'], unique: true } },
-  { threshold: 95, name: '7-1-composition', composition: { count: 7, from: ['1-1'], unique: true } },
   { threshold: 96, name: '7-2-composition', composition: { count: 7, from: ['1-2'], unique: true } },
-  { threshold: 97, name: '7-2-composition', composition: { count: 7, from: ['1-2'], unique: true } },
-  { threshold: 98, name: '7-2-composition', composition: { count: 7, from: ['1-2'], unique: true } },
-  { threshold: 99, name: '7-2-composition', composition: { count: 7, from: ['1-2'], unique: true } },
   { threshold: 100, name: '7-3-composition', composition: { count: 7, from: ['1-3'], unique: true } },
-  { threshold: 101, name: '7-3-composition', composition: { count: 7, from: ['1-3'], unique: true } },
-  { threshold: 102, name: '7-3-composition', composition: { count: 7, from: ['1-3'], unique: true } },
-  { threshold: 103, name: '7-3-composition', composition: { count: 7, from: ['1-3'], unique: true } },
-  { threshold: 104, name: '7-3-composition', composition: { count: 7, from: ['1-3'], unique: true } },
 
-  /* 105-119점: 8개 장애물 */
+  /* 105-119점: 8개 장애물 (3+3+4+5) */
   { threshold: 105, name: '8-0-composition', composition: { count: 8, from: ['1-0'], unique: true } },
-  { threshold: 106, name: '8-0-composition', composition: { count: 8, from: ['1-0'], unique: true } },
-  { threshold: 107, name: '8-0-composition', composition: { count: 8, from: ['1-0'], unique: true } },
   { threshold: 108, name: '8-1-composition', composition: { count: 8, from: ['1-1'], unique: true } },
-  { threshold: 109, name: '8-1-composition', composition: { count: 8, from: ['1-1'], unique: true } },
-  { threshold: 110, name: '8-1-composition', composition: { count: 8, from: ['1-1'], unique: true } },
   { threshold: 111, name: '8-2-composition', composition: { count: 8, from: ['1-2'], unique: true } },
-  { threshold: 112, name: '8-2-composition', composition: { count: 8, from: ['1-2'], unique: true } },
-  { threshold: 113, name: '8-2-composition', composition: { count: 8, from: ['1-2'], unique: true } },
-  { threshold: 114, name: '8-2-composition', composition: { count: 8, from: ['1-2'], unique: true } },
   { threshold: 115, name: '8-3-composition', composition: { count: 8, from: ['1-3'], unique: true } },
-  { threshold: 116, name: '8-3-composition', composition: { count: 8, from: ['1-3'], unique: true } },
-  { threshold: 117, name: '8-3-composition', composition: { count: 8, from: ['1-3'], unique: true } },
-  { threshold: 118, name: '8-3-composition', composition: { count: 8, from: ['1-3'], unique: true } },
-  { threshold: 119, name: '8-3-composition', composition: { count: 8, from: ['1-3'], unique: true } },
 
-  /* 120-134점: 9개 장애물 */
+  /* 120-134점: 9개 장애물 (3+3+4+5) */
   { threshold: 120, name: '9-0-composition', composition: { count: 9, from: ['1-0'], unique: true } },
-  { threshold: 121, name: '9-0-composition', composition: { count: 9, from: ['1-0'], unique: true } },
-  { threshold: 122, name: '9-0-composition', composition: { count: 9, from: ['1-0'], unique: true } },
   { threshold: 123, name: '9-1-composition', composition: { count: 9, from: ['1-1'], unique: true } },
-  { threshold: 124, name: '9-1-composition', composition: { count: 9, from: ['1-1'], unique: true } },
-  { threshold: 125, name: '9-1-composition', composition: { count: 9, from: ['1-1'], unique: true } },
   { threshold: 126, name: '9-2-composition', composition: { count: 9, from: ['1-2'], unique: true } },
-  { threshold: 127, name: '9-2-composition', composition: { count: 9, from: ['1-2'], unique: true } },
-  { threshold: 128, name: '9-2-composition', composition: { count: 9, from: ['1-2'], unique: true } },
-  { threshold: 129, name: '9-2-composition', composition: { count: 9, from: ['1-2'], unique: true } },
   { threshold: 130, name: '9-3-composition', composition: { count: 9, from: ['1-3'], unique: true } },
-  { threshold: 131, name: '9-3-composition', composition: { count: 9, from: ['1-3'], unique: true } },
-  { threshold: 132, name: '9-3-composition', composition: { count: 9, from: ['1-3'], unique: true } },
-  { threshold: 133, name: '9-3-composition', composition: { count: 9, from: ['1-3'], unique: true } },
-  { threshold: 134, name: '9-3-composition', composition: { count: 9, from: ['1-3'], unique: true } },
 
-  /* 135-149점: 10개 장애물 (최고 난이도) */
+  /* 135-149점: 10개 장애물 (최고 난이도, 3+3+4+5) */
   { threshold: 135, name: '10-0-composition', composition: { count: 10, from: ['1-0'], unique: true } },
-  { threshold: 136, name: '10-0-composition', composition: { count: 10, from: ['1-0'], unique: true } },
-  { threshold: 137, name: '10-0-composition', composition: { count: 10, from: ['1-0'], unique: true } },
   { threshold: 138, name: '10-1-composition', composition: { count: 10, from: ['1-1'], unique: true } },
-  { threshold: 139, name: '10-1-composition', composition: { count: 10, from: ['1-1'], unique: true } },
-  { threshold: 140, name: '10-1-composition', composition: { count: 10, from: ['1-1'], unique: true } },
   { threshold: 141, name: '10-2-composition', composition: { count: 10, from: ['1-2'], unique: true } },
-  { threshold: 142, name: '10-2-composition', composition: { count: 10, from: ['1-2'], unique: true } },
-  { threshold: 143, name: '10-2-composition', composition: { count: 10, from: ['1-2'], unique: true } },
-  { threshold: 144, name: '10-2-composition', composition: { count: 10, from: ['1-2'], unique: true } },
   { threshold: 145, name: '10-3-composition', composition: { count: 10, from: ['1-3'], unique: true } },
-  { threshold: 146, name: '10-3-composition', composition: { count: 10, from: ['1-3'], unique: true } },
-  { threshold: 147, name: '10-3-composition', composition: { count: 10, from: ['1-3'], unique: true } },
-  { threshold: 148, name: '10-3-composition', composition: { count: 10, from: ['1-3'], unique: true } },
-  { threshold: 149, name: '10-3-composition', composition: { count: 10, from: ['1-3'], unique: true } },
 
 ];
 
