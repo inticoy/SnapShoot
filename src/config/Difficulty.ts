@@ -585,7 +585,13 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
       },
     ]
   },
-  /* Level 2-0: Composition - 2 obstacles from level 1-0 */
+
+  /* ============================================
+   * COMPOSITION LEVELS (30-150)
+   * 2개씩 증가하며 점진적으로 난이도 상승
+   * ============================================ */
+
+  /* 30-50: 2개 composition */
   {
     threshold: 30,
     name: '2-0-composition',
@@ -595,9 +601,8 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
       unique: true
     }
   },
-  /* Level 2-1: Composition - 2 obstacles from level 1-1 */
   {
-    threshold: 40,
+    threshold: 35,
     name: '2-1-composition',
     composition: {
       count: 2,
@@ -605,9 +610,8 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
       unique: true
     }
   },
-  /* Level 2-2: Composition - 2 obstacles from level 1-2 */
   {
-    threshold: 50,
+    threshold: 40,
     name: '2-2-composition',
     composition: {
       count: 2,
@@ -615,9 +619,8 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
       unique: true
     }
   },
-  /* Level 2-3: Composition - 2 obstacles from level 1-3 */
   {
-    threshold: 60,
+    threshold: 45,
     name: '2-3-composition',
     composition: {
       count: 2,
@@ -625,14 +628,194 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
       unique: true
     }
   },
-  /* Level 5-3: Composition */
+
+  /* 50-70: 3개 composition */
+  {
+    threshold: 50,
+    name: '3-0-composition',
+    composition: {
+      count: 3,
+      from: ['1-0'],
+      unique: true
+    }
+  },
+  {
+    threshold: 55,
+    name: '3-1-composition',
+    composition: {
+      count: 3,
+      from: ['1-1'],
+      unique: true
+    }
+  },
   {
     threshold: 60,
+    name: '3-2-composition',
+    composition: {
+      count: 3,
+      from: ['1-2'],
+      unique: true
+    }
+  },
+  {
+    threshold: 65,
+    name: '3-3-composition',
+    composition: {
+      count: 3,
+      from: ['1-3'],
+      unique: true
+    }
+  },
+
+  /* 70-90: 4개 composition */
+  {
+    threshold: 70,
+    name: '4-0-composition',
+    composition: {
+      count: 4,
+      from: ['1-0'],
+      unique: true
+    }
+  },
+  {
+    threshold: 75,
+    name: '4-1-composition',
+    composition: {
+      count: 4,
+      from: ['1-1'],
+      unique: true
+    }
+  },
+  {
+    threshold: 80,
+    name: '4-2-composition',
+    composition: {
+      count: 4,
+      from: ['1-2'],
+      unique: true
+    }
+  },
+  {
+    threshold: 85,
+    name: '4-3-composition',
+    composition: {
+      count: 4,
+      from: ['1-3'],
+      unique: true
+    }
+  },
+
+  /* 90-110: 5개 composition */
+  {
+    threshold: 90,
+    name: '5-0-composition',
+    composition: {
+      count: 5,
+      from: ['1-0'],
+      unique: true
+    }
+  },
+  {
+    threshold: 95,
+    name: '5-1-composition',
+    composition: {
+      count: 5,
+      from: ['1-1'],
+      unique: true
+    }
+  },
+  {
+    threshold: 100,
+    name: '5-2-composition',
+    composition: {
+      count: 5,
+      from: ['1-2'],
+      unique: true
+    }
+  },
+  {
+    threshold: 105,
     name: '5-3-composition',
     composition: {
       count: 5,
       from: ['1-3'],
-      unique: false
+      unique: true
+    }
+  },
+
+  /* 110-130: 6개 composition */
+  {
+    threshold: 110,
+    name: '6-0-composition',
+    composition: {
+      count: 6,
+      from: ['1-0'],
+      unique: true
+    }
+  },
+  {
+    threshold: 115,
+    name: '6-1-composition',
+    composition: {
+      count: 6,
+      from: ['1-1'],
+      unique: true
+    }
+  },
+  {
+    threshold: 120,
+    name: '6-2-composition',
+    composition: {
+      count: 6,
+      from: ['1-2'],
+      unique: true
+    }
+  },
+  {
+    threshold: 125,
+    name: '6-3-composition',
+    composition: {
+      count: 6,
+      from: ['1-3'],
+      unique: true
+    }
+  },
+
+  /* 130-150: 7개 composition */
+  {
+    threshold: 130,
+    name: '7-0-composition',
+    composition: {
+      count: 7,
+      from: ['1-0'],
+      unique: true
+    }
+  },
+  {
+    threshold: 135,
+    name: '7-1-composition',
+    composition: {
+      count: 7,
+      from: ['1-1'],
+      unique: true
+    }
+  },
+  {
+    threshold: 140,
+    name: '7-2-composition',
+    composition: {
+      count: 7,
+      from: ['1-2'],
+      unique: true
+    }
+  },
+  {
+    threshold: 145,
+    name: '7-3-composition',
+    composition: {
+      count: 7,
+      from: ['1-3'],
+      unique: true
     }
   },
 
