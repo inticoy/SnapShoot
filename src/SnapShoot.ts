@@ -286,9 +286,10 @@ export class SnapShoot {
     // InputController가 입력 이벤트를 관리
 
     // 인게임 첫 터치에서 AudioContext unlock (Safari autoplay policy 우회)
+    // capture: true로 SwipeTracker의 preventDefault() 전에 실행
     this.renderer.domElement.addEventListener('pointerdown', () => {
       void this.audio.unlockAudioContext();
-    }, { once: true });
+    }, { once: true, capture: true });
   }
 
   private handleResize() {
