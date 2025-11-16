@@ -126,7 +126,8 @@ export class SnapShoot {
       () => {
         // 로딩 완료 시 게임플레이 음악 시작
         void this.audio.playMusic('gameplay');
-      }
+      },
+      this.audio // Safari autoplay policy 우회를 위해 audio 인스턴스 전달
     );
     this.loadingScreen.show();
     this.loadingScreen.setProgress(0);
@@ -283,6 +284,7 @@ export class SnapShoot {
   private attachEventListeners() {
     window.addEventListener('resize', this.handleResizeBound);
     // InputController가 입력 이벤트를 관리
+    // AudioContext unlock은 InputController의 SwipeTracker에서 처리
   }
 
   private handleResize() {
