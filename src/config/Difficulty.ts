@@ -382,7 +382,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
         behavior: {
           type: 'patrol',
           axis: 'y',
-          range: [0, 1.8],
+          range: [0, 2.0],
           speed: 2.0,
           waveform: 'sine'
         },
@@ -472,7 +472,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           speed: 2.0,
           orbit: {
             axis: 'x',
-            range: [-1.5, 1.5],
+            range: [-2.5, 2.5],
             speed: 2.0,
             startPhase: 0
           },
@@ -498,7 +498,32 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           speed: 2.0,
           orbit: {
             axis: 'x',
-            range: [-1.5, 1.5],
+            range: [-2.0, 2.0],
+            speed: 2.0,
+            startPhase: 0
+          },
+          radius: 0,
+          startAngle: 0,
+        }
+      },
+    ]
+  },
+  {
+    threshold: 20,
+    name: '1-3-vertical-shark',
+    obstacles: [
+      {
+        blueprintId: 'shark',
+        transform: { 
+          position: { z: -5.0 }, 
+        },
+        behavior: { 
+          type: 'spin',
+          axis: 'x',
+          speed: 2.0,
+          orbit: {
+            axis: 'y',
+            range: [0, 2.0],
             speed: 2.0,
             startPhase: 0
           },
