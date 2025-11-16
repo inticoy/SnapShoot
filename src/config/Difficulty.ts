@@ -20,22 +20,37 @@ export interface DifficultyLevelConfig {
 /**
  * 난이도 레벨 정의 (점수 오름차순)
  * 점수가 주어진 threshold 이상일 때 해당 레벨이 적용됨.
+ *
+ * 새로운 난이도 시스템:
+ * - 0점: 장애물 없음
+ * - 1-14점: 1개 장애물 (threshold 1, 2, 3, 4, 7, 10)
+ * - 15점 이상: 15점마다 장애물 1개씩 증가 (2개→3개→...→10개)
+ * - 각 장애물 개수당 3+3+4+5 = 15점 주기 (1-0, 1-1, 1-2, 1-3)
+ * - 145-149점: 10-3 최고 난이도
  */
 export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
+  /* ============================================
+   * 0점: 장애물 없음
+   * ============================================ */
   {
     threshold: 0,
     name: '0-0-no-obstacles',
     obstacles: []
   },
-  /* Level 1-0 fixed */
+
+  /* ============================================
+   * 1-14점: 1개 장애물
+   * ============================================ */
+
+  /* Threshold 1: 1-0 기본 고정 장애물 (8개 variation) */
   {
     threshold: 1,
     name: '1-0-left-woodVertical',
     obstacles: [
       {
         blueprintId: 'woodVertical',
-        transform: { 
-          position: { x: -1.1, z: -5.4 }, 
+        transform: {
+          position: { x: -1.1, z: -5.4 },
         },
         behavior: { type: 'static' }
       }
@@ -47,8 +62,8 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     obstacles: [
       {
         blueprintId: 'woodVertical',
-        transform: { 
-          position: { x: 1.1, z: -5.4 }, 
+        transform: {
+          position: { x: 1.1, z: -5.4 },
         },
         behavior: { type: 'static' }
       }
@@ -84,8 +99,8 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
         blueprintId: 'drum',
         transform: { position: {x: -0.8, y: 0.5, z: -5.0 }},
         behavior: {
-		  type: 'static',
-		}
+	  type: 'static',
+	}
       },
     ]
   },
@@ -97,8 +112,8 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
         blueprintId: 'drum',
         transform: { position: {x: 0.8, y: 0.5, z: -5.0 }},
         behavior: {
-		  type: 'static',
-		}
+	  type: 'static',
+	}
       },
     ]
   },
@@ -124,8 +139,10 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
       }
     ]
   },
+
+  /* Threshold 2: 1-0 중앙 고정 장애물 (3개 variation) */
   {
-    threshold: 5,
+    threshold: 2,
     name: '1-0-middle-woodVertical',
     obstacles: [
       {
@@ -136,7 +153,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     ]
   },
   {
-    threshold: 5,
+    threshold: 2,
     name: '1-0-middle-keeperWall',
     obstacles: [
       {
@@ -147,7 +164,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     ]
   },
   {
-    threshold: 5,
+    threshold: 2,
     name: '1-0-middle-drum',
     obstacles: [
       {
@@ -157,8 +174,10 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
       }
     ]
   },
+
+  /* Threshold 3: 1-0 대각선/랜덤 위치 (3개 variation) */
   {
-    threshold: 6,
+    threshold: 3,
     name: '1-0-diagonal-woodVertical',
     obstacles: [
       {
@@ -173,7 +192,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     ]
   },
   {
-    threshold: 6,
+    threshold: 3,
     name: '1-0-diagonal-keeperWall',
     obstacles: [
       {
@@ -188,7 +207,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     ]
   },
   {
-    threshold: 6,
+    threshold: 3,
     name: '1-0-diagonal-drum',
     obstacles: [
       {
@@ -202,9 +221,10 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
       }
     ]
   },
-  /* Level 1-1 patrol slow */
+
+  /* Threshold 4: 1-1 느린 patrol (5개 variation) */
   {
-    threshold: 10,
+    threshold: 4,
     name: '1-1-patrol-keeperWall',
     obstacles: [
       {
@@ -223,7 +243,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     ]
   },
   {
-    threshold: 10,
+    threshold: 4,
     name: '1-1-patrol-drum',
     obstacles: [
       {
@@ -242,7 +262,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     ]
   },
   {
-    threshold: 10,
+    threshold: 4,
     name: '1-1-patrol-whiteDrone',
     obstacles: [
       {
@@ -262,7 +282,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     ]
   },
   {
-    threshold: 10,
+    threshold: 4,
     name: '1-1-patrol-van',
     obstacles: [
       {
@@ -282,7 +302,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     ]
   },
   {
-    threshold: 10,
+    threshold: 4,
     name: '1-1-horizontal-shark',
     obstacles: [
       {
@@ -301,9 +321,10 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
       },
     ]
   },
-  /* Level 1-2 patrol fast */
+
+  /* Threshold 7: 1-2 빠른 patrol (6개 variation) */
   {
-    threshold: 15,
+    threshold: 7,
     name: '1-2-patrol-keeperWall',
     obstacles: [
       {
@@ -322,7 +343,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     ]
   },
   {
-    threshold: 15,
+    threshold: 7,
     name: '1-2-patrol-drum',
     obstacles: [
       {
@@ -341,7 +362,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     ]
   },
   {
-    threshold: 15,
+    threshold: 7,
     name: '1-2-patrol-whiteDrone',
     obstacles: [
       {
@@ -361,7 +382,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     ]
   },
   {
-    threshold: 15,
+    threshold: 7,
     name: '1-2-patrol-van',
     obstacles: [
       {
@@ -381,7 +402,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     ]
   },
   {
-    threshold: 15,
+    threshold: 7,
     name: '1-2-horizontal-shark',
     obstacles: [
       {
@@ -401,7 +422,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     ]
   },
   {
-    threshold: 15,
+    threshold: 7,
     name: '1-2-vertical-shark',
     obstacles: [
       {
@@ -419,9 +440,10 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
       },
     ]
   },
-  /* Level 1-3 orbit spining */
+
+  /* Threshold 10: 1-3 회전/spin (6개 variation) */
   {
-    threshold: 20,
+    threshold: 10,
     name: '1-3-spin-keeperWall',
     obstacles: [
       {
@@ -445,7 +467,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     ]
   },
   {
-    threshold: 20,
+    threshold: 10,
     name: '1-3-spin-drum',
     obstacles: [
       {
@@ -470,7 +492,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     ]
   },
   {
-    threshold: 20,
+    threshold: 10,
     name: '1-3-spin-whiteDrone',
     obstacles: [
       {
@@ -495,7 +517,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     ]
   },
   {
-    threshold: 20,
+    threshold: 10,
     name: '1-3-spin-van',
     obstacles: [
       {
@@ -520,7 +542,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     ]
   },
   {
-    threshold: 20,
+    threshold: 10,
     name: '1-3-spin-shark',
     obstacles: [
       {
@@ -545,7 +567,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     ]
   },
   {
-    threshold: 20,
+    threshold: 10,
     name: '1-3-vertical-shark',
     obstacles: [
       {
@@ -570,248 +592,64 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
   },
 
   /* ============================================
-   * COMPOSITION LEVELS (30-150)
-   * 2개씩 증가하며 점진적으로 난이도 상승
+   * 15-149점: 2-10개 장애물 (Composition)
+   * 패턴: 각 장애물 개수당 3+3+4+5 = 15점 주기
+   * 각 구간의 시작 threshold만 정의 (나머지는 자동 적용)
    * ============================================ */
 
-  /* 30-50: 2개 composition */
-  {
-    threshold: 30,
-    name: '2-0-composition',
-    composition: {
-      count: 2,
-      from: ['1-0'],
-      unique: true
-    }
-  },
-  {
-    threshold: 35,
-    name: '2-1-composition',
-    composition: {
-      count: 2,
-      from: ['1-1'],
-      unique: true
-    }
-  },
-  {
-    threshold: 40,
-    name: '2-2-composition',
-    composition: {
-      count: 2,
-      from: ['1-2'],
-      unique: true
-    }
-  },
-  {
-    threshold: 45,
-    name: '2-3-composition',
-    composition: {
-      count: 2,
-      from: ['1-3'],
-      unique: true
-    }
-  },
+  /* 15-29점: 2개 장애물 (3+3+4+5) */
+  { threshold: 15, name: '2-0-composition', composition: { count: 2, from: ['1-0'], unique: true } },
+  { threshold: 18, name: '2-1-composition', composition: { count: 2, from: ['1-1'], unique: true } },
+  { threshold: 21, name: '2-2-composition', composition: { count: 2, from: ['1-2'], unique: true } },
+  { threshold: 25, name: '2-3-composition', composition: { count: 2, from: ['1-3'], unique: true } },
 
-  /* 50-70: 3개 composition */
-  {
-    threshold: 50,
-    name: '3-0-composition',
-    composition: {
-      count: 3,
-      from: ['1-0'],
-      unique: true
-    }
-  },
-  {
-    threshold: 55,
-    name: '3-1-composition',
-    composition: {
-      count: 3,
-      from: ['1-1'],
-      unique: true
-    }
-  },
-  {
-    threshold: 60,
-    name: '3-2-composition',
-    composition: {
-      count: 3,
-      from: ['1-2'],
-      unique: true
-    }
-  },
-  {
-    threshold: 65,
-    name: '3-3-composition',
-    composition: {
-      count: 3,
-      from: ['1-3'],
-      unique: true
-    }
-  },
+  /* 30-44점: 3개 장애물 (3+3+4+5) */
+  { threshold: 30, name: '3-0-composition', composition: { count: 3, from: ['1-0'], unique: true } },
+  { threshold: 33, name: '3-1-composition', composition: { count: 3, from: ['1-1'], unique: true } },
+  { threshold: 36, name: '3-2-composition', composition: { count: 3, from: ['1-2'], unique: true } },
+  { threshold: 40, name: '3-3-composition', composition: { count: 3, from: ['1-3'], unique: true } },
 
-  /* 70-90: 4개 composition */
-  {
-    threshold: 70,
-    name: '4-0-composition',
-    composition: {
-      count: 4,
-      from: ['1-0'],
-      unique: true
-    }
-  },
-  {
-    threshold: 75,
-    name: '4-1-composition',
-    composition: {
-      count: 4,
-      from: ['1-1'],
-      unique: true
-    }
-  },
-  {
-    threshold: 80,
-    name: '4-2-composition',
-    composition: {
-      count: 4,
-      from: ['1-2'],
-      unique: true
-    }
-  },
-  {
-    threshold: 85,
-    name: '4-3-composition',
-    composition: {
-      count: 4,
-      from: ['1-3'],
-      unique: true
-    }
-  },
+  /* 45-59점: 4개 장애물 (3+3+4+5) */
+  { threshold: 45, name: '4-0-composition', composition: { count: 4, from: ['1-0'], unique: true } },
+  { threshold: 48, name: '4-1-composition', composition: { count: 4, from: ['1-1'], unique: true } },
+  { threshold: 51, name: '4-2-composition', composition: { count: 4, from: ['1-2'], unique: true } },
+  { threshold: 55, name: '4-3-composition', composition: { count: 4, from: ['1-3'], unique: true } },
 
-  /* 90-110: 5개 composition */
-  {
-    threshold: 90,
-    name: '5-0-composition',
-    composition: {
-      count: 5,
-      from: ['1-0'],
-      unique: true
-    }
-  },
-  {
-    threshold: 95,
-    name: '5-1-composition',
-    composition: {
-      count: 5,
-      from: ['1-1'],
-      unique: true
-    }
-  },
-  {
-    threshold: 100,
-    name: '5-2-composition',
-    composition: {
-      count: 5,
-      from: ['1-2'],
-      unique: true
-    }
-  },
-  {
-    threshold: 105,
-    name: '5-3-composition',
-    composition: {
-      count: 5,
-      from: ['1-3'],
-      unique: true
-    }
-  },
+  /* 60-74점: 5개 장애물 (3+3+4+5) */
+  { threshold: 60, name: '5-0-composition', composition: { count: 5, from: ['1-0'], unique: true } },
+  { threshold: 63, name: '5-1-composition', composition: { count: 5, from: ['1-1'], unique: true } },
+  { threshold: 66, name: '5-2-composition', composition: { count: 5, from: ['1-2'], unique: true } },
+  { threshold: 70, name: '5-3-composition', composition: { count: 5, from: ['1-3'], unique: true } },
 
-  /* 110-130: 6개 composition */
-  {
-    threshold: 110,
-    name: '6-0-composition',
-    composition: {
-      count: 6,
-      from: ['1-0'],
-      unique: true
-    }
-  },
-  {
-    threshold: 115,
-    name: '6-1-composition',
-    composition: {
-      count: 6,
-      from: ['1-1'],
-      unique: true
-    }
-  },
-  {
-    threshold: 120,
-    name: '6-2-composition',
-    composition: {
-      count: 6,
-      from: ['1-2'],
-      unique: true
-    }
-  },
-  {
-    threshold: 125,
-    name: '6-3-composition',
-    composition: {
-      count: 6,
-      from: ['1-3'],
-      unique: true
-    }
-  },
+  /* 75-89점: 6개 장애물 (3+3+4+5) */
+  { threshold: 75, name: '6-0-composition', composition: { count: 6, from: ['1-0'], unique: true } },
+  { threshold: 78, name: '6-1-composition', composition: { count: 6, from: ['1-1'], unique: true } },
+  { threshold: 81, name: '6-2-composition', composition: { count: 6, from: ['1-2'], unique: true } },
+  { threshold: 85, name: '6-3-composition', composition: { count: 6, from: ['1-3'], unique: true } },
 
-  /* 130-150: 7개 composition */
-  {
-    threshold: 130,
-    name: '7-0-composition',
-    composition: {
-      count: 7,
-      from: ['1-0'],
-      unique: true
-    }
-  },
-  {
-    threshold: 135,
-    name: '7-1-composition',
-    composition: {
-      count: 7,
-      from: ['1-1'],
-      unique: true
-    }
-  },
-  {
-    threshold: 140,
-    name: '7-2-composition',
-    composition: {
-      count: 7,
-      from: ['1-2'],
-      unique: true
-    }
-  },
-  {
-    threshold: 145,
-    name: '7-3-composition',
-    composition: {
-      count: 7,
-      from: ['1-3'],
-      unique: true
-    }
-  },
+  /* 90-104점: 7개 장애물 (3+3+4+5) */
+  { threshold: 90, name: '7-0-composition', composition: { count: 7, from: ['1-0'], unique: true } },
+  { threshold: 93, name: '7-1-composition', composition: { count: 7, from: ['1-1'], unique: true } },
+  { threshold: 96, name: '7-2-composition', composition: { count: 7, from: ['1-2'], unique: true } },
+  { threshold: 100, name: '7-3-composition', composition: { count: 7, from: ['1-3'], unique: true } },
 
-  /* 150: 10개 composition - 최고 난이도 */
-  {
-    threshold: 150,
-    name: '10-3-composition',
-    composition: {
-      count: 10,
-      from: ['1-3'],
-      unique: true
-    }
-  },
+  /* 105-119점: 8개 장애물 (3+3+4+5) */
+  { threshold: 105, name: '8-0-composition', composition: { count: 8, from: ['1-0'], unique: true } },
+  { threshold: 108, name: '8-1-composition', composition: { count: 8, from: ['1-1'], unique: true } },
+  { threshold: 111, name: '8-2-composition', composition: { count: 8, from: ['1-2'], unique: true } },
+  { threshold: 115, name: '8-3-composition', composition: { count: 8, from: ['1-3'], unique: true } },
+
+  /* 120-134점: 9개 장애물 (3+3+4+5) */
+  { threshold: 120, name: '9-0-composition', composition: { count: 9, from: ['1-0'], unique: true } },
+  { threshold: 123, name: '9-1-composition', composition: { count: 9, from: ['1-1'], unique: true } },
+  { threshold: 126, name: '9-2-composition', composition: { count: 9, from: ['1-2'], unique: true } },
+  { threshold: 130, name: '9-3-composition', composition: { count: 9, from: ['1-3'], unique: true } },
+
+  /* 135-149점: 10개 장애물 (최고 난이도, 3+3+4+5) */
+  { threshold: 135, name: '10-0-composition', composition: { count: 10, from: ['1-0'], unique: true } },
+  { threshold: 138, name: '10-1-composition', composition: { count: 10, from: ['1-1'], unique: true } },
+  { threshold: 141, name: '10-2-composition', composition: { count: 10, from: ['1-2'], unique: true } },
+  { threshold: 145, name: '10-3-composition', composition: { count: 10, from: ['1-3'], unique: true } },
 
 ];
 
