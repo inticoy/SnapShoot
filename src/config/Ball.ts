@@ -37,6 +37,7 @@ export interface BallTheme {
   modelUrl: string;  // 실제 URL을 저장
   imageUrl: string;  // 프리뷰 이미지 URL
   gltfScale: number;
+  unlockScore: number;  // 잠금 해제에 필요한 최고 점수 (0 = 기본 제공)
   material?: {
     roughness?: number;
     metalness?: number;
@@ -73,13 +74,15 @@ export const BALL_THEMES = {
     name: 'basic',
     modelUrl: basicBallModel,
     imageUrl: basicBallImage,
-    gltfScale: 1.3
+    gltfScale: 1.3,
+    unlockScore: 0  // 기본 제공
   } as BallTheme,
   MOON: {
     name: 'moon',
     modelUrl: moonBallModel,
     imageUrl: moonBallImage,
     gltfScale: 0.0048,
+    unlockScore: 60,  // 60골 달성 시 잠금 해제
 	material: {
 	  roughness: 0.,
 	  metalness: 0.3,
@@ -92,19 +95,22 @@ export const BALL_THEMES = {
 	name: 'basketball',
 	modelUrl: basketBallModel,
 	imageUrl: basketballBallImage,
-	gltfScale: 0.15
+	gltfScale: 0.15,
+	unlockScore: 15  // 15골 달성 시 잠금 해제
   } as BallTheme,
   VOLLEYBALL : {
 	name: 'volleyball',
 	modelUrl: volleyBallModel,
 	imageUrl: volleyballBallImage,
-	gltfScale: 1.3
+	gltfScale: 1.3,
+	unlockScore: 30  // 30골 달성 시 잠금 해제
   } as BallTheme,
   EARTH : {
 	name: 'earth',
 	modelUrl: earthBallModel,
 	imageUrl: earthBallImage,
 	gltfScale: 0.125,
+	unlockScore: 75,  // 75골 달성 시 잠금 해제
 	material: {
 	  roughness: 0.,
 	  metalness: 0.3,
@@ -114,25 +120,29 @@ export const BALL_THEMES = {
 	name: 'worldcup2010',
 	modelUrl: worldCup2010BallModel,
 	imageUrl: worldcup2010BallImage,
-	gltfScale: 0.4
+	gltfScale: 0.4,
+	unlockScore: 120  // 120골 달성 시 잠금 해제
   } as BallTheme,
   BEACHBALL : {
 	name: 'beachball',
 	modelUrl: beachBallModel,
 	imageUrl: beachballImage,
-	gltfScale: 0.14
+	gltfScale: 0.14,
+	unlockScore: 90  // 90골 달성 시 잠금 해제
   } as BallTheme,
   MONSTERBALL : {
 	name: 'monsterball',
 	modelUrl: monsterBallModel,
 	imageUrl: monsterballImage,
 	gltfScale: 0.04,
+	unlockScore: 105  // 105골 달성 시 잠금 해제
   } as BallTheme,
   SUN : {
 	name: 'sun',
 	modelUrl: sunBallModel,
 	imageUrl: sunBallImage,
-	gltfScale: 0.015
+	gltfScale: 0.015,
+	unlockScore: 45  // 45골 달성 시 잠금 해제
   } as BallTheme,
 } as const;
 

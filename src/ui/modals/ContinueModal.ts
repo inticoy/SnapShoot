@@ -54,25 +54,10 @@ export class ContinueModal extends BaseModal {
    * 모달 컨텐츠 생성
    */
   private createModalContent(): void {
-    // BaseModal의 content를 완전히 새로 구성
-    this.content.className = `
-      absolute inset-0
-      flex items-center justify-center
-      px-6
-    `.trim().replace(/\s+/g, ' ');
+    // Title Container (GameOverModal과 동일한 구조)
+    const titleContainer = document.createElement('div');
+    titleContainer.className = 'w-full flex items-center justify-center pointer-events-none py-4 pb-8';
 
-    const contentWrapper = document.createElement('div');
-    contentWrapper.className = `
-      flex-1 w-full max-w-lg
-      flex flex-col items-center justify-between
-      pt-[2vh] pb-[8vh] gap-4
-    `.trim().replace(/\s+/g, ' ');
-
-    // 상단 콘텐츠 컨테이너
-    const topContent = document.createElement('div');
-    topContent.className = 'flex flex-col items-center w-full gap-4';
-
-    // 타이틀
     const title = document.createElement('div');
     title.className = `
       font-russo text-white tracking-tight font-black text-center
@@ -81,23 +66,43 @@ export class ContinueModal extends BaseModal {
     title.style.fontSize = 'clamp(24px, 5vw, 32px)';
     title.textContent = '게임을 계속하시겠습니까?';
 
-    // 원형 버튼 + 진행바
+    titleContainer.appendChild(title);
+
+    // Content Area (GameOverModal과 동일: flex-auto로 남은 공간 모두 차지)
+    const contentArea = document.createElement('div');
+    contentArea.className = 'flex-auto flex flex-col items-center w-full px-6';
+
+    // Main View
+    const mainView = document.createElement('div');
+    mainView.className = 'flex-1 flex flex-col items-center justify-between w-full max-w-lg pt-2 pb-[8vh]';
+
+    // 상단 Spacer (광고 버튼을 아래로 밀기 위한 공간)
+    const topSpacer = document.createElement('div');
+    topSpacer.className = 'flex flex-col items-center gap-2 py-2';
+    topSpacer.style.minHeight = 'clamp(60px, 12vw, 100px)';
+
+    // 원형 버튼 + 진행바 (중앙)
+    const adButtonWrapper = document.createElement('div');
+    adButtonWrapper.className = 'flex items-center justify-center w-full';
+
     const continueButtonWrapper = this.createContinueButton();
+    adButtonWrapper.appendChild(continueButtonWrapper);
 
-    topContent.appendChild(title);
-    topContent.appendChild(continueButtonWrapper);
-
-    // 하단 버튼 (포기하기)
+    // 포기하기 버튼 (하단)
     const bottomButtonsWrapper = document.createElement('div');
     bottomButtonsWrapper.className = 'flex items-center justify-center w-full';
 
     this.giveUpButton = this.createGiveUpButton();
     bottomButtonsWrapper.appendChild(this.giveUpButton);
 
-    contentWrapper.appendChild(topContent);
-    contentWrapper.appendChild(bottomButtonsWrapper);
+    mainView.appendChild(topSpacer);
+    mainView.appendChild(adButtonWrapper);
+    mainView.appendChild(bottomButtonsWrapper);
 
-    this.content.appendChild(contentWrapper);
+    contentArea.appendChild(mainView);
+
+    this.content.appendChild(titleContainer);
+    this.content.appendChild(contentArea);
   }
 
   /**
@@ -137,7 +142,7 @@ export class ContinueModal extends BaseModal {
     this.progressCircle.setAttribute('fill', 'none');
     this.progressCircle.setAttribute('stroke', '#ffffff');
     this.progressCircle.setAttribute('stroke-width', strokeWidth.toString());
-    this.progressCircle.setAttribute('stroke-linecap', 'round');
+    this.progressCircle.setAttribute('stroke-linecap', 'butt');
     this.progressCircle.setAttribute('stroke-dasharray', circumference.toString());
     this.progressCircle.setAttribute('stroke-dashoffset', '0');
 

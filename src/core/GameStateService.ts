@@ -192,6 +192,16 @@ export class GameStateService {
     this.setItem(STORAGE_KEYS.BALL_THEME, themeName);
   }
 
+  /**
+   * 특정 테마가 잠금 해제되었는지 확인
+   * @param unlockScore 테마의 잠금 해제 필요 점수
+   * @returns 잠금 해제 여부
+   */
+  isThemeUnlocked(unlockScore: number): boolean {
+    const bestScore = this.getBestScore();
+    return bestScore >= unlockScore;
+  }
+
   // ==================== 유틸리티 ====================
 
   /**

@@ -21,8 +21,8 @@ export interface PauseModalCallbacks {
   onSelectTheme?: (themeName: string) => void;
   onRestart?: () => void;
   onRanking?: () => void;
-  onResumeAudio?: () => void; // 백그라운드 복귀 시 오디오 재개
-  onUnlockAudio?: () => void; // AudioContext unlock
+  onResumeAudio?: () => void; // 오디오 재개 (동기, 사용자 제스처 컨텍스트 유지)
+  onUnlockAudio?: () => void; // AudioContext unlock (동기)
 }
 
 type AudioSettingsState = {
@@ -50,7 +50,6 @@ export class PauseModal extends BaseModal {
   private backButton!: HTMLButtonElement;
   private callbacks: PauseModalCallbacks;
   private audioState: AudioSettingsState;
-  private fromBackground: boolean = false; // 백그라운드 복귀로 열렸는지 여부
 
   // UI 요소들
   private pauseView!: HTMLDivElement;
@@ -232,7 +231,7 @@ export class PauseModal extends BaseModal {
    */
   private createPauseView(): HTMLDivElement {
     const view = document.createElement('div');
-    view.className = 'flex-1 flex flex-col items-center justify-between w-full max-w-lg pt-[2vh] pb-[8vh] gap-4';
+    view.className = 'flex-1 flex flex-col items-center justify-between w-full max-w-lg pt-2 pb-[8vh] gap-4';
 
     // 상단 콘텐츠 컨테이너
     const topContent = document.createElement('div');
@@ -240,8 +239,8 @@ export class PauseModal extends BaseModal {
 
     // 점수 영역 spacer (GameOverModal과 높이 맞추기 위해)
     const scoreSpacer = document.createElement('div');
-    scoreSpacer.className = 'flex flex-col items-center gap-2 py-4';
-    scoreSpacer.style.minHeight = 'clamp(80px, 15vw, 120px)'; // 점수 영역과 동일한 높이
+    scoreSpacer.className = 'flex flex-col items-center gap-2 py-2';
+    scoreSpacer.style.minHeight = 'clamp(60px, 12vw, 100px)'; // 3개 버튼을 아래로 밀기 위한 spacer
 
     // 정사각형 3개 버튼
     const topButtonsWrapper = document.createElement('div');
@@ -314,15 +313,16 @@ export class PauseModal extends BaseModal {
     });
     continueButton.addEventListener('click', (e) => {
       e.stopPropagation();
-      console.log('이어하기 버튼 클릭, fromBackground:', this.fromBackground);
+      console.log('이어하기 버튼 클릭');
 
-      if (this.fromBackground) {
-        // 백그라운드에서 복귀한 경우: AudioContext unlock + 오디오 재개
-        console.log('🔓 백그라운드 복귀 모드: AudioContext unlock + 사운드 재개');
-        this.callbacks.onUnlockAudio?.();
-        this.callbacks.onResumeAudio?.();
-      }
-      // 일반 pause는 사운드가 계속 재생 중이므로 그냥 닫기만 하면 됨
+      // 사용자 제스처 컨텍스트를 유지하기 위해 모두 동기적으로 호출
+      console.log('🔓 AudioContext unlock + 사운드 재개');
+
+      // 1. AudioContext unlock (동기, 사용자 제스처 컨텍스트 내)
+      this.callbacks.onUnlockAudio?.();
+
+      // 2. 오디오 재개 (동기 핸들러 내에서 호출하여 제스처 컨텍스트 유지)
+      this.callbacks.onResumeAudio?.();
 
       this.close();
     });
@@ -335,14 +335,6 @@ export class PauseModal extends BaseModal {
     topContent.appendChild(topButtonsWrapper);
     view.appendChild(topContent);
     view.appendChild(bottomButtonsWrapper);
-
-    // 빈 공간 클릭 시 닫기
-    view.addEventListener('click', (e) => {
-      const target = e.target as HTMLElement;
-      if (target === view || target.classList.contains('flex-col')) {
-        this.close();
-      }
-    });
 
     return view;
   }
@@ -431,6 +423,33 @@ export class PauseModal extends BaseModal {
       onPressEffect: (button: HTMLButtonElement) => {
         this.addPressEffect(button);
       }
+    });
+  }
+
+  /**
+   * Customize View 재생성 (점수 갱신 후 잠금 상태 업데이트)
+   */
+  private refreshCustomizeView(): void {
+    // 기존 customizeView 제거
+    if (this.customizeView && this.customizeView.parentElement) {
+      this.customizeView.remove();
+    }
+
+    // 새로운 customizeView 생성 (현재 bestScore 기준으로)
+    this.customizeView = this.createCustomizeView();
+    this.customizeView.classList.add('hidden'); // 초기에는 숨김
+
+    // settingsView 다음에 추가
+    const contentArea = this.pauseView.parentElement;
+    if (contentArea) {
+      contentArea.appendChild(this.customizeView);
+    }
+
+    // ViewManager에 재등록
+    this.viewManager.registerView('customize', {
+      element: this.customizeView,
+      title: '테마 변경',
+      showBackButton: true
     });
   }
 
@@ -684,7 +703,6 @@ export class PauseModal extends BaseModal {
    */
   openFromBackground(): void {
     console.log('📱 백그라운드에서 복귀: PauseModal 자동 오픈');
-    this.fromBackground = true;
     this.open();
   }
 
@@ -692,6 +710,9 @@ export class PauseModal extends BaseModal {
    * 모달 열린 후 처리
    */
   protected onAfterOpen(): void {
+    // CustomizeView 재생성 (최신 bestScore 기준으로 잠금 상태 업데이트)
+    this.refreshCustomizeView();
+
     // Pause 뷰로 리셋
     this.viewManager.switchTo('pause');
   }
@@ -702,8 +723,6 @@ export class PauseModal extends BaseModal {
   protected onAfterClose(): void {
     // Pause 뷰로 리셋
     this.viewManager.switchTo('pause');
-    // 백그라운드 플래그 리셋
-    this.fromBackground = false;
   }
 
   /**

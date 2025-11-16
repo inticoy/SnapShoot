@@ -92,22 +92,30 @@ export class AudioManager {
    * iOS의 스와이프 제스처 문제:
    * - resume()만으로는 스와이프 중 unlock 실패 (움직임이 있는 제스처는 거부)
    * - 빈 버퍼 재생으로 강제 unlock (검증된 방법)
+   *
+   * 주의: 동기 함수로 구현하여 사용자 제스처 컨텍스트 유지
    */
   unlockAudioContext(): void {
-    const context = this.getContext();
+    const context = this.getContext(); // 이미 지역 변수
     if (context.state === 'suspended') {
       console.log('🔓 AudioContext unlocking...');
 
-      // iOS: 빈 버퍼를 재생하여 강제 unlock (스와이프에서도 작동)
-      // 이것이 resume()보다 더 확실한 방법 (Stack Overflow 검증됨)
       try {
+        // iOS: 빈 버퍼를 재생하여 강제 unlock (스와이프에서도 작동)
         const buffer = context.createBuffer(1, 1, 22050);
         const source = context.createBufferSource();
         source.buffer = buffer;
         source.connect(context.destination);
         source.start(0);
 
-        console.log('✅ AudioContext unlocked via dummy buffer, state:', context.state);
+        // 즉시 resume 호출 (사용자 제스처 컨텍스트 내에서)
+        void context.resume()
+          .then(() => {
+            console.log('✅ AudioContext unlocked and resumed, state:', context.state);
+          })
+          .catch((error) => {
+            console.warn('❌ AudioContext resume failed:', error);
+          });
       } catch (error) {
         console.warn('❌ AudioContext unlock failed:', error);
       }
@@ -377,20 +385,24 @@ export class AudioManager {
   /**
    * 모든 오디오 재개 (광고 종료 시)
    * AudioContext를 resume하여 일시정지된 사운드를 재개
+   *
+   * 주의: 사용자 제스처 컨텍스트를 유지하기 위해 동기 함수로 구현
+   * await를 사용하면 iOS Safari에서 제스처 컨텍스트가 끊김
    */
   resumeAll(): void {
     if (this.context) {
-      console.log(`🔊 resumeAll 호출됨, 현재 상태: ${this.context.state}`);
-      if (this.context.state === 'suspended') {
-        this.context.resume()
+      const context = this.context; // 지역 변수에 저장
+      console.log(`🔊 resumeAll 호출됨, 현재 상태: ${context.state}`);
+      if (context.state === 'suspended') {
+        context.resume()
           .then(() => {
-            console.log(`✅ AudioContext 재개 성공, 새 상태: ${this.context?.state}`);
+            console.log(`✅ AudioContext 재개 성공, 새 상태: ${context.state}`);
           })
           .catch((error) => {
             console.error('❌ Failed to resume AudioContext', error);
           });
       } else {
-        console.log(`ℹ️ AudioContext already ${this.context.state}, resume 불필요`);
+        console.log(`ℹ️ AudioContext already ${context.state}, resume 불필요`);
       }
     } else {
       console.warn('⚠️ AudioContext가 존재하지 않음');

@@ -110,7 +110,8 @@ export class SnapShoot {
     onScoreChange: (score: number) => void,
     onShowTouchGuide: (show: boolean) => void,
     scoreDisplay: ScoreDisplay,
-    onGameFailed?: (failCount: number) => void
+    onGameFailed?: (failCount: number) => void,
+    onGameStart?: () => void
   ) {
     this.onScoreChange = onScoreChange;
     this.onShowTouchGuide = onShowTouchGuide;
@@ -122,6 +123,10 @@ export class SnapShoot {
       () => {
         // 로딩 화면 스와이프 시 관중 함성 시작 (페이드인)
         void this.audio.playMusic('chant', { fadeIn: true });
+        // 게임 시작 콜백 호출
+        if (onGameStart) {
+          onGameStart();
+        }
       },
       () => {
         // 로딩 완료 시 게임플레이 음악 시작

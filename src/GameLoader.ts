@@ -57,6 +57,9 @@ export function loadGame(params?: { score?: number }) {
   // 광고 상태 관리
   let adLoadState: 'idle' | 'loading' | 'loaded' | 'failed' = 'idle';
 
+  // 게임 준비 상태 (로딩 완료 후 사용자가 스와이프하여 게임 시작했는지)
+  let isGameReady = false;
+
   /**
    * 환경변수에서 광고 ID 가져오기
    */
@@ -153,6 +156,11 @@ export function loadGame(params?: { score?: number }) {
         // 1번째 실패 -> Continue Modal
         continueModal.open();
       }
+    },
+    () => {
+      // 게임 시작 콜백 (로딩 화면 스와이프 후)
+      isGameReady = true;
+      console.log('✅ 게임 준비 완료 (로딩 화면 스와이프됨)');
     }
   );
 
@@ -444,9 +452,14 @@ export function loadGame(params?: { score?: number }) {
       game.pauseAudio();
     } else {
       // 포그라운드 복귀 시 -> PauseModal 자동 오픈
-      // (사용자가 "이어하기" 버튼을 터치하면 AudioContext unlock + 오디오 재개)
-      console.log('📱 포그라운드 복귀: PauseModal 자동 오픈');
-      pauseModal.openFromBackground();
+      // 단, 로딩 화면에서는 PauseModal을 열지 않음
+      if (isGameReady) {
+        // (사용자가 "이어하기" 버튼을 터치하면 AudioContext unlock + 오디오 재개)
+        console.log('📱 포그라운드 복귀: PauseModal 자동 오픈');
+        pauseModal.openFromBackground();
+      } else {
+        console.log('📱 포그라운드 복귀: 로딩 화면이므로 PauseModal 생략');
+      }
     }
   };
 
