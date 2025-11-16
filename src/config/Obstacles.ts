@@ -211,7 +211,7 @@ export const OBSTACLE_BLUEPRINTS: Record<string, ObstacleBlueprint> = {
     render: {
       kind: 'primitive',
       shape: 'plane',
-      size: { x: 3.0, y: 0.6 },
+      size: { x: 3.0, y: 0.4 },
       material: {
         textureUrl: woodTextureUrl,
         doubleSided: true,
@@ -222,7 +222,7 @@ export const OBSTACLE_BLUEPRINTS: Record<string, ObstacleBlueprint> = {
     },
     collider: {
       shape: 'box',
-      size: { x: 3.0, y: 0.6, z: 0.6 }
+      size: { x: 3.0, y: 0.4, z: 0.6 }
     },
     defaultTransform: {
       position: { y: 0.3 }

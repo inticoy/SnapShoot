@@ -10,7 +10,7 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
 import { Obstacle } from '../entities/Obstacle';
-import { getDifficultyForScore, type DifficultyLevelConfig } from '../config/Difficulty';
+import { getDifficultyForScore, composeObstacles, type DifficultyLevelConfig } from '../config/Difficulty';
 import { getObstacleBlueprint } from '../config/Obstacles';
 import type { ObstacleBlueprint, ObstacleInstanceConfig } from '../config/Obstacles';
 import { CategoryLogger } from '../utils/Logger';
@@ -63,7 +63,12 @@ export class DifficultyManager {
     const levelChanged = this.currentDifficulty !== nextDifficulty;
 
     if (forceRefresh || levelChanged) {
-      this.syncObstacles(nextDifficulty.obstacles);
+      // composition이 있으면 composeObstacles로 장애물 생성, 없으면 obstacles 사용
+      const obstacles = nextDifficulty.composition
+        ? composeObstacles(nextDifficulty.composition)
+        : (nextDifficulty.obstacles ?? []);
+
+      this.syncObstacles(obstacles);
       if (levelChanged) {
         this.gameLog.info(`🎯 난이도 변경: ${nextDifficulty.name} (score=${score})`);
       }
