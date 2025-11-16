@@ -692,8 +692,8 @@ export class SnapShoot {
   /**
    * 모든 오디오 재개 (광고 종료 시 사용)
    */
-  public async resumeAudio(): Promise<void> {
-    await this.audio.resumeAll();
+  public resumeAudio(): void {
+    this.audio.resumeAll();
   }
 
 }

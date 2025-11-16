@@ -21,7 +21,7 @@ export interface PauseModalCallbacks {
   onSelectTheme?: (themeName: string) => void;
   onRestart?: () => void;
   onRanking?: () => void;
-  onResumeAudio?: () => Promise<void>; // 오디오 재개 (비동기)
+  onResumeAudio?: () => void; // 오디오 재개 (동기, 사용자 제스처 컨텍스트 유지)
   onUnlockAudio?: () => void; // AudioContext unlock (동기)
 }
 
@@ -311,22 +311,18 @@ export class PauseModal extends BaseModal {
       this.close();
       this.callbacks.onRestart?.();
     });
-    continueButton.addEventListener('click', async (e) => {
+    continueButton.addEventListener('click', (e) => {
       e.stopPropagation();
       console.log('이어하기 버튼 클릭');
 
-      // 항상 unlock → 대기 → resume 시퀀스 실행
-      // (두 메서드 모두 idempotent하므로 안전)
-      console.log('🔓 AudioContext unlock + 사운드 재개 시퀀스 시작');
+      // 사용자 제스처 컨텍스트를 유지하기 위해 모두 동기적으로 호출
+      console.log('🔓 AudioContext unlock + 사운드 재개');
 
-      // 1. AudioContext unlock (동기)
+      // 1. AudioContext unlock (동기, 사용자 제스처 컨텍스트 내)
       this.callbacks.onUnlockAudio?.();
 
-      // 2. 50ms 대기 (unlock이 완료될 시간 확보)
-      await new Promise(resolve => setTimeout(resolve, 50));
-
-      // 3. 오디오 재개 (비동기)
-      await this.callbacks.onResumeAudio?.();
+      // 2. 오디오 재개 (동기 핸들러 내에서 호출하여 제스처 컨텍스트 유지)
+      this.callbacks.onResumeAudio?.();
 
       this.close();
     });
