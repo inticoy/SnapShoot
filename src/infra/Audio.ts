@@ -86,6 +86,21 @@ export class AudioManager {
   }
 
   /**
+   * 사용자 제스처 내에서 호출하여 AudioContext를 활성화
+   * Safari/iOS에서 autoplay policy를 우회하기 위해 필요
+   */
+  async unlockAudioContext(): Promise<void> {
+    const context = this.getContext();
+    if (context.state === 'suspended') {
+      console.log('🔓 AudioContext unlocking...');
+      await context.resume();
+      console.log('✅ AudioContext unlocked, state:', context.state);
+    } else {
+      console.log('ℹ️ AudioContext already running, state:', context.state);
+    }
+  }
+
+  /**
    * 효과음 재생
    */
   playSound(key: SoundKey, volumeOverride?: number): void {

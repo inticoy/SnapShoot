@@ -126,7 +126,8 @@ export class SnapShoot {
       () => {
         // 로딩 완료 시 게임플레이 음악 시작
         void this.audio.playMusic('gameplay');
-      }
+      },
+      this.audio // Safari autoplay policy 우회를 위해 audio 인스턴스 전달
     );
     this.loadingScreen.show();
     this.loadingScreen.setProgress(0);

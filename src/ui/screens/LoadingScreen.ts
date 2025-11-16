@@ -3,6 +3,7 @@ import logoUrl from '../../assets/Snapshoot!.png?url';
 import postUrl from '../../assets/post.svg?url';
 import gracAllUrl from '../../assets/GRAC_ALL.png?url';
 import { SwipeTracker } from '../../input/SwipeTracker';
+import type { AudioManager } from '../../infra/Audio';
 
 export interface LoadingItem {
   id: string;
@@ -34,6 +35,10 @@ export class LoadingScreen {
   // 콜백
   private onSwipe?: () => void;
   private onLoadingComplete?: () => void;
+
+  // 오디오 매니저 (Safari autoplay policy 우회용)
+  private audio?: AudioManager;
+  private audioUnlocked = false;
 
   // 축구 테마 로딩 메시지
   private readonly footballMessages: string[] = [
@@ -73,9 +78,10 @@ export class LoadingScreen {
     ratingBadge: 'loading-screen__rating-badge absolute right-[16px] bottom-[16px] w-[60px] h-[60px] opacity-90 animate-fade-in z-[25]'
   };
 
-  constructor(onSwipe?: () => void, onLoadingComplete?: () => void) {
+  constructor(onSwipe?: () => void, onLoadingComplete?: () => void, audio?: AudioManager) {
     this.onSwipe = onSwipe;
     this.onLoadingComplete = onLoadingComplete;
+    this.audio = audio;
 
     // HTML에 있는 로딩 화면 컨테이너 찾기
     const container = document.getElementById('loading-screen');
@@ -233,6 +239,18 @@ export class LoadingScreen {
 
       // SwipeTracker 초기화
       this.swipeTracker = new SwipeTracker(this.swipeCanvas, 10);
+
+      // 첫 터치에서 AudioContext unlock (Safari autoplay policy 우회)
+      const unlockAudio = () => {
+        if (!this.audioUnlocked && this.audio) {
+          console.log('🎵 첫 터치 감지 - AudioContext unlock 시도');
+          void this.audio.unlockAudioContext();
+          this.audioUnlocked = true;
+        }
+      };
+
+      // pointerdown에서 AudioContext unlock (가장 빠른 시점)
+      this.swipeCanvas.addEventListener('pointerdown', unlockAudio, { once: false });
 
       // 스와이프 이벤트 감지
       this.swipeCanvas.addEventListener('pointerup', () => {
