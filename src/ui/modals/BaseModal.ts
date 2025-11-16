@@ -63,6 +63,15 @@ export abstract class BaseModal {
         }
       }
 
+      @keyframes ad-glow {
+        0%, 100% {
+          box-shadow: 0 12px 32px rgba(255, 140, 0, 0.5), 0 0 30px rgba(255, 193, 7, 0.3), inset 0 2px 0 rgba(255, 255, 255, 0.5), inset 0 -3px 8px rgba(0, 0, 0, 0.2);
+        }
+        50% {
+          box-shadow: 0 12px 32px rgba(255, 140, 0, 0.6), 0 0 40px rgba(255, 193, 7, 0.5), inset 0 2px 0 rgba(255, 255, 255, 0.5), inset 0 -3px 8px rgba(0, 0, 0, 0.2);
+        }
+      }
+
       @keyframes rainbow-spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
