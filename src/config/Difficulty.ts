@@ -255,7 +255,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           type: 'patrol',
           axis: 'x',
           range: [-2.5, 2.5],
-          speed: 1.0,
+          speed: 0.5,
           waveform: 'sine'
         }
       },
@@ -344,7 +344,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           type: 'patrol',
           axis: 'x',
           range: [-2.5, 2.5],
-          speed: 2.0,
+          speed: 1.0,
           waveform: 'sine'
         }
       },
@@ -473,7 +473,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           orbit: {
             axis: 'x',
             range: [-2.5, 2.5],
-            speed: 2.0,
+            speed: 1.0,
             startPhase: 0
           },
           radius: 0,
