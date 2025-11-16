@@ -3,7 +3,7 @@ import './style.css';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-import { DIFFICULTY_LEVELS, type DifficultyLevelConfig } from '../config/Difficulty';
+import { DIFFICULTY_LEVELS, composeObstacles, type DifficultyLevelConfig } from '../config/Difficulty';
 import {
   OBSTACLE_BLUEPRINTS,
   type ObstacleBlueprint,
@@ -381,7 +381,7 @@ class PreviewObstacle {
 
 class LevelPreview {
   private readonly container: HTMLElement;
-  private readonly level: DifficultyLevelConfig;
+  private readonly obstacleConfigs: ObstacleInstanceConfig[];
   private readonly renderer: THREE.WebGLRenderer;
   private readonly scene: THREE.Scene;
   private readonly camera: THREE.PerspectiveCamera;
@@ -391,9 +391,9 @@ class LevelPreview {
 
   private isReady = false;
 
-  constructor(container: HTMLElement, level: DifficultyLevelConfig) {
+  constructor(container: HTMLElement, _level: DifficultyLevelConfig, obstacleConfigs?: ObstacleInstanceConfig[]) {
     this.container = container;
-    this.level = level;
+    this.obstacleConfigs = obstacleConfigs ?? _level.obstacles ?? [];
 
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(0x050a11);
@@ -526,7 +526,7 @@ class LevelPreview {
   }
 
   private async loadObstacles() {
-    const tasks = this.level.obstacles.map(async (config) => {
+    const tasks = this.obstacleConfigs.map(async (config) => {
       const blueprint = OBSTACLE_BLUEPRINTS[config.blueprintId];
       if (!blueprint) {
         console.warn(`[Admin] Unknown blueprint: ${config.blueprintId}`);
@@ -714,6 +714,149 @@ function renderIndexPage(groups: Map<string, DifficultyLevelConfig[]>) {
 }
 
 /**
+ * Render composition level with 3 samples and refresh button
+ */
+function renderCompositionLevel(
+  level: DifficultyLevelConfig,
+  grid: HTMLElement,
+  previews: LevelPreview[]
+) {
+  const card = document.createElement('section');
+  card.className = 'level-card composition-card';
+  card.style.cssText = `
+    grid-column: 1 / -1;
+    background: linear-gradient(135deg, #0a1929 0%, #1a2332 100%);
+    border: 2px solid #2196f3;
+  `;
+
+  const header = document.createElement('div');
+  header.style.cssText = `
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  `;
+
+  const titleSection = document.createElement('div');
+  const title = document.createElement('h2');
+  title.textContent = level.name;
+  title.style.color = '#64b5f6';
+  titleSection.appendChild(title);
+
+  const meta = document.createElement('div');
+  meta.className = 'level-meta';
+  meta.innerHTML = `
+    <span>Threshold · ${level.threshold}</span>
+    <span>Composition · ${level.composition!.count} from [${level.composition!.from.join(', ')}]</span>
+    <span>Unique · ${level.composition!.unique ?? true}</span>
+  `;
+  titleSection.appendChild(meta);
+  header.appendChild(titleSection);
+
+  const refreshButton = document.createElement('button');
+  refreshButton.textContent = '🔄 Refresh Samples';
+  refreshButton.style.cssText = `
+    padding: 0.75rem 1.5rem;
+    background: #2196f3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background 0.2s;
+  `;
+  refreshButton.onmouseenter = () => {
+    refreshButton.style.background = '#1976d2';
+  };
+  refreshButton.onmouseleave = () => {
+    refreshButton.style.background = '#2196f3';
+  };
+  header.appendChild(refreshButton);
+
+  card.appendChild(header);
+
+  const samplesContainer = document.createElement('div');
+  samplesContainer.style.cssText = `
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  `;
+  card.appendChild(samplesContainer);
+
+  grid.appendChild(card);
+
+  let currentSamplePreviews: LevelPreview[] = [];
+
+  function renderSamples() {
+    // Dispose old previews
+    currentSamplePreviews.forEach(preview => {
+      const index = previews.indexOf(preview);
+      if (index !== -1) {
+        previews.splice(index, 1);
+      }
+      preview.dispose();
+    });
+    currentSamplePreviews = [];
+    samplesContainer.innerHTML = '';
+
+    // Generate 3 new samples
+    for (let i = 0; i < 3; i++) {
+      const sampleObstacles = composeObstacles(level.composition!);
+
+      const sampleCard = document.createElement('div');
+      sampleCard.style.cssText = `
+        background: #0a1929;
+        border: 1px solid #1e3a5f;
+        border-radius: 8px;
+        padding: 1rem;
+      `;
+
+      const sampleTitle = document.createElement('h3');
+      sampleTitle.textContent = `Sample ${i + 1}`;
+      sampleTitle.style.cssText = `
+        margin: 0 0 0.5rem 0;
+        color: #e8f0ff;
+        font-size: 1rem;
+      `;
+      sampleCard.appendChild(sampleTitle);
+
+      const previewContainer = document.createElement('div');
+      previewContainer.style.width = '100%';
+      sampleCard.appendChild(previewContainer);
+
+      const obstacleList = document.createElement('div');
+      obstacleList.className = 'obstacle-list';
+      obstacleList.style.marginTop = '0.5rem';
+
+      if (sampleObstacles.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-message';
+        empty.textContent = '장애물 없음';
+        obstacleList.appendChild(empty);
+      } else {
+        sampleObstacles.forEach((instance) => {
+          const pill = document.createElement('div');
+          pill.className = 'obstacle-pill';
+          pill.textContent = createObstacleSummary(instance);
+          obstacleList.appendChild(pill);
+        });
+      }
+
+      sampleCard.appendChild(obstacleList);
+      samplesContainer.appendChild(sampleCard);
+
+      const preview = new LevelPreview(previewContainer, level, sampleObstacles);
+      previews.push(preview);
+      currentSamplePreviews.push(preview);
+    }
+  }
+
+  refreshButton.onclick = renderSamples;
+  renderSamples(); // Initial render
+}
+
+/**
  * Render specific level group page
  */
 function renderLevelGroupPage(groupId: string, levels: DifficultyLevelConfig[]) {
@@ -758,47 +901,54 @@ function renderLevelGroupPage(groupId: string, levels: DifficultyLevelConfig[]) 
   const previews: LevelPreview[] = [];
 
   levels.forEach((level) => {
-    const card = document.createElement('section');
-    card.className = 'level-card';
-
-    const title = document.createElement('h2');
-    title.textContent = level.name;
-    card.appendChild(title);
-
-    const meta = document.createElement('div');
-    meta.className = 'level-meta';
-    meta.innerHTML = `
-      <span>Threshold · ${level.threshold}</span>
-      <span>Obstacles · ${level.obstacles.length}</span>
-    `;
-    card.appendChild(meta);
-
-    const previewContainer = document.createElement('div');
-    previewContainer.style.width = '100%';
-    card.appendChild(previewContainer);
-
-    const obstacleList = document.createElement('div');
-    obstacleList.className = 'obstacle-list';
-
-    if (level.obstacles.length === 0) {
-      const empty = document.createElement('div');
-      empty.className = 'empty-message';
-      empty.textContent = '배치된 장애물이 없습니다.';
-      obstacleList.appendChild(empty);
+    if (level.composition) {
+      // Composition level: render 3 samples with refresh button
+      renderCompositionLevel(level, grid, previews);
     } else {
-      level.obstacles.forEach((instance) => {
-        const pill = document.createElement('div');
-        pill.className = 'obstacle-pill';
-        pill.textContent = createObstacleSummary(instance);
-        obstacleList.appendChild(pill);
-      });
+      // Normal level: render single preview
+      const card = document.createElement('section');
+      card.className = 'level-card';
+
+      const title = document.createElement('h2');
+      title.textContent = level.name;
+      card.appendChild(title);
+
+      const meta = document.createElement('div');
+      meta.className = 'level-meta';
+      const obstacleCount = level.obstacles?.length ?? 0;
+      meta.innerHTML = `
+        <span>Threshold · ${level.threshold}</span>
+        <span>Obstacles · ${obstacleCount}</span>
+      `;
+      card.appendChild(meta);
+
+      const previewContainer = document.createElement('div');
+      previewContainer.style.width = '100%';
+      card.appendChild(previewContainer);
+
+      const obstacleList = document.createElement('div');
+      obstacleList.className = 'obstacle-list';
+
+      if (obstacleCount === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-message';
+        empty.textContent = '배치된 장애물이 없습니다.';
+        obstacleList.appendChild(empty);
+      } else {
+        level.obstacles!.forEach((instance) => {
+          const pill = document.createElement('div');
+          pill.className = 'obstacle-pill';
+          pill.textContent = createObstacleSummary(instance);
+          obstacleList.appendChild(pill);
+        });
+      }
+
+      card.appendChild(obstacleList);
+      grid.appendChild(card);
+
+      const preview = new LevelPreview(previewContainer, level);
+      previews.push(preview);
     }
-
-    card.appendChild(obstacleList);
-    grid.appendChild(card);
-
-    const preview = new LevelPreview(previewContainer, level);
-    previews.push(preview);
   });
 
   const clock = new THREE.Clock();

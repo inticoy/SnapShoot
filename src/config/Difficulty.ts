@@ -1,10 +1,20 @@
 import type { ObstacleInstanceConfig } from './Obstacles';
 
+export interface CompositionConfig {
+  /** 선택할 장애물 개수 */
+  count: number;
+  /** 선택할 그룹 (예: ['1-0', '1-1']) */
+  from: string[];
+  /** 중복 방지 여부 (기본값: true) */
+  unique?: boolean;
+}
+
 export interface DifficultyLevelConfig {
   /** 이 난이도가 적용되는 최소 점수 */
   threshold: number;
   name: string;
-  obstacles: ObstacleInstanceConfig[];
+  obstacles?: ObstacleInstanceConfig[];
+  composition?: CompositionConfig;
 }
 
 /**
@@ -533,6 +543,46 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
       },
     ]
   },
+  /* Level 2-0: Composition - 2 obstacles from level 1-0 */
+  {
+    threshold: 30,
+    name: '2-0-composition',
+    composition: {
+      count: 2,
+      from: ['1-0'],
+      unique: true
+    }
+  },
+  /* Level 2-1: Composition - 2 obstacles from level 1-1 */
+  {
+    threshold: 40,
+    name: '2-1-composition',
+    composition: {
+      count: 2,
+      from: ['1-1'],
+      unique: true
+    }
+  },
+  /* Level 2-2: Composition - 2 obstacles from level 1-2 */
+  {
+    threshold: 50,
+    name: '2-2-composition',
+    composition: {
+      count: 2,
+      from: ['1-2'],
+      unique: true
+    }
+  },
+  /* Level 2-3: Composition - 2 obstacles from level 1-3 */
+  {
+    threshold: 60,
+    name: '2-3-composition',
+    composition: {
+      count: 2,
+      from: ['1-3'],
+      unique: true
+    }
+  },
 
 
 ];
@@ -567,4 +617,64 @@ export function getDifficultyForScore(score: number): DifficultyLevelConfig {
 
   const index = Math.floor(Math.random() * candidates.length);
   return candidates[index];
+}
+
+/**
+ * composition 설정으로부터 장애물 배열을 생성한다.
+ */
+export function composeObstacles(composition: CompositionConfig): ObstacleInstanceConfig[] {
+  const { count, from, unique = true } = composition;
+
+  // from 그룹에 속하는 모든 레벨 수집
+  const pool: DifficultyLevelConfig[] = [];
+  for (const level of DIFFICULTY_LEVELS) {
+    if (!level.obstacles || level.obstacles.length === 0) continue;
+
+    // 레벨 이름이 from 그룹 중 하나로 시작하는지 확인 (예: '1-0-left-woodVertical'은 '1-0' 그룹에 속함)
+    const matchesGroup = from.some(groupPrefix => level.name.startsWith(groupPrefix));
+    if (matchesGroup) {
+      pool.push(level);
+    }
+  }
+
+  if (pool.length === 0) {
+    console.warn(`No levels found for groups: ${from.join(', ')}`);
+    return [];
+  }
+
+  const result: ObstacleInstanceConfig[] = [];
+  const used = new Set<number>();
+
+  for (let i = 0; i < count; i++) {
+    let selectedLevel: DifficultyLevelConfig;
+
+    if (unique && pool.length > used.size) {
+      // unique 모드: 사용하지 않은 레벨 중에서 선택
+      let attempts = 0;
+      do {
+        const index = Math.floor(Math.random() * pool.length);
+        if (!used.has(index)) {
+          selectedLevel = pool[index];
+          used.add(index);
+          break;
+        }
+        attempts++;
+      } while (attempts < 100); // 무한 루프 방지
+
+      if (!selectedLevel!) {
+        // 실패 시 풀에서 랜덤 선택
+        selectedLevel = pool[Math.floor(Math.random() * pool.length)];
+      }
+    } else {
+      // non-unique 모드 또는 풀이 부족할 때: 중복 허용
+      selectedLevel = pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    // 선택된 레벨의 모든 장애물 추가
+    if (selectedLevel.obstacles) {
+      result.push(...selectedLevel.obstacles);
+    }
+  }
+
+  return result;
 }
