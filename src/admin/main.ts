@@ -27,10 +27,10 @@ const GOAL_Z = GOAL_DEPTH;
 const GOAL_REAR_Z = GOAL_DEPTH - GOAL_NET_CONFIG.layout.depthBottom;
 const CARD_ASPECT = 16 / 10;
 
-function centreOf(range?: RangeValue): number {
+function randomInRange(range?: RangeValue): number {
   if (!range) return 0;
   const [min, max] = range;
-  return (min + max) * 0.5;
+  return min + Math.random() * (max - min);
 }
 
 function toVector3(init?: Vector3Init, defaultValue = 0): THREE.Vector3 {
@@ -238,15 +238,15 @@ class PreviewObstacle {
     const combined = mergeTransforms(blueprint.defaultTransform, instance.transform);
 
     const position = toVector3(combined.position, 0);
-    position.x += centreOf(combined.positionRange.x);
-    position.y += centreOf(combined.positionRange.y);
-    position.z += centreOf(combined.positionRange.z);
+    position.x += randomInRange(combined.positionRange.x);
+    position.y += randomInRange(combined.positionRange.y);
+    position.z += randomInRange(combined.positionRange.z);
     this.basePosition.copy(position);
 
     const rotation = new THREE.Euler(
-      (combined.rotation.x ?? 0) + centreOf(combined.rotationRange.x),
-      (combined.rotation.y ?? 0) + centreOf(combined.rotationRange.y),
-      (combined.rotation.z ?? 0) + centreOf(combined.rotationRange.z)
+      (combined.rotation.x ?? 0) + randomInRange(combined.rotationRange.x),
+      (combined.rotation.y ?? 0) + randomInRange(combined.rotationRange.y),
+      (combined.rotation.z ?? 0) + randomInRange(combined.rotationRange.z)
     );
     this.baseQuaternion.setFromEuler(rotation);
 
