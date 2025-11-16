@@ -677,8 +677,7 @@ function renderIndexPage(groups: Map<string, DifficultyLevelConfig[]>) {
       card.style.transform = 'translateY(0)';
     };
     card.onclick = () => {
-      window.history.pushState({}, '', `/admin/${prefix}`);
-      renderLevelGroupPage(prefix, levels);
+      window.location.hash = `/${prefix}`;
     };
 
     const title = document.createElement('h2');
@@ -748,9 +747,7 @@ function renderLevelGroupPage(groupId: string, levels: DifficultyLevelConfig[]) 
     backButton.style.background = '#1e3a5f';
   };
   backButton.onclick = () => {
-    window.history.pushState({}, '', '/admin');
-    const groups = groupLevelsByPrefix(DIFFICULTY_LEVELS);
-    renderIndexPage(groups);
+    window.location.hash = '/';
   };
   root.appendChild(backButton);
 
@@ -813,32 +810,32 @@ function renderLevelGroupPage(groupId: string, levels: DifficultyLevelConfig[]) 
   tick();
 }
 
-// Routing logic
+// Hash-based routing logic
 function initRouter() {
   const groups = groupLevelsByPrefix(DIFFICULTY_LEVELS);
-  const path = window.location.pathname;
 
-  if (path === '/admin' || path === '/admin/') {
-    renderIndexPage(groups);
-  } else {
-    const match = path.match(/^\/admin\/(.+)$/);
-    if (match) {
-      const groupId = match[1];
+  function handleRoute() {
+    const hash = window.location.hash.slice(1); // Remove '#'
+
+    if (!hash || hash === '/' || hash === '') {
+      renderIndexPage(groups);
+    } else {
+      // Remove leading slash if present
+      const groupId = hash.startsWith('/') ? hash.slice(1) : hash;
       const levels = groups.get(groupId);
       if (levels) {
         renderLevelGroupPage(groupId, levels);
       } else {
         renderIndexPage(groups);
       }
-    } else {
-      renderIndexPage(groups);
     }
   }
 
-  // Handle browser back/forward
-  window.addEventListener('popstate', () => {
-    initRouter();
-  });
+  // Handle hash changes
+  window.addEventListener('hashchange', handleRoute);
+
+  // Initial route
+  handleRoute();
 }
 
 initRouter();

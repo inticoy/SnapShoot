@@ -15,6 +15,7 @@ export default defineConfig(() => {
 
   return {
     base: envBase ?? (isGithubActions ? repoBase ?? '/' : '/'),
+    appType: 'mpa',
     build: {
       rollupOptions: {
         input: {
