@@ -84,10 +84,13 @@ function createMaterial(
 ): THREE.Material {
   const textureLoader = new THREE.TextureLoader(loadingManager);
   const params: THREE.MeshStandardMaterialParameters = {
-    color: config?.color ? new THREE.Color(config.color as THREE.ColorRepresentation) : undefined,
     transparent: config?.transparent,
     opacity: config?.opacity
   };
+
+  if (config?.color) {
+    params.color = new THREE.Color(config.color as THREE.ColorRepresentation);
+  }
 
   if (config?.textureUrl) {
     const texture = textureLoader.load(config.textureUrl);
@@ -587,7 +590,36 @@ function ensureRoot(): HTMLElement {
   return root;
 }
 
-function renderAdminPage(levels: DifficultyLevelConfig[]) {
+/**
+ * Extract level prefix from name (e.g., "1-0-left-woodVertical" → "1-0")
+ */
+function getLevelPrefix(name: string): string {
+  // Match "0" or patterns like "1-0", "1-1", "1-2", etc.
+  const match = name.match(/^(\d+(?:-\d+)?)/);
+  return match ? match[1] : '0';
+}
+
+/**
+ * Group levels by their prefix
+ */
+function groupLevelsByPrefix(levels: DifficultyLevelConfig[]): Map<string, DifficultyLevelConfig[]> {
+  const groups = new Map<string, DifficultyLevelConfig[]>();
+
+  levels.forEach(level => {
+    const prefix = getLevelPrefix(level.name);
+    if (!groups.has(prefix)) {
+      groups.set(prefix, []);
+    }
+    groups.get(prefix)!.push(level);
+  });
+
+  return groups;
+}
+
+/**
+ * Render index page with group buttons
+ */
+function renderIndexPage(groups: Map<string, DifficultyLevelConfig[]>) {
   const root = ensureRoot();
   root.innerHTML = '';
 
@@ -595,9 +627,132 @@ function renderAdminPage(levels: DifficultyLevelConfig[]) {
   header.className = 'page-header';
   header.innerHTML = `
     <h1>Difficulty Preview Admin</h1>
-    <p>모든 난이도 레벨의 장애물 배치를 한눈에 확인하세요. 각 카드는 Three.js 미리보기와 구성 요약을 제공합니다.</p>
+    <p>난이도 그룹별로 장애물 배치를 확인하세요.</p>
   `;
   root.appendChild(header);
+
+  const groupList = document.createElement('div');
+  groupList.className = 'group-list';
+  groupList.style.cssText = `
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    padding: 2rem;
+  `;
+
+  // Sort groups by prefix
+  const sortedGroups = Array.from(groups.entries()).sort((a, b) => {
+    const parsePrefix = (p: string) => {
+      const parts = p.split('-').map(n => parseInt(n, 10));
+      return parts;
+    };
+    const aNum = parsePrefix(a[0]);
+    const bNum = parsePrefix(b[0]);
+
+    for (let i = 0; i < Math.max(aNum.length, bNum.length); i++) {
+      const aPart = aNum[i] || 0;
+      const bPart = bNum[i] || 0;
+      if (aPart !== bPart) return aPart - bPart;
+    }
+    return 0;
+  });
+
+  sortedGroups.forEach(([prefix, levels]) => {
+    const card = document.createElement('div');
+    card.className = 'group-card';
+    card.style.cssText = `
+      background: #0a1929;
+      border: 1px solid #1e3a5f;
+      border-radius: 8px;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    `;
+    card.onmouseenter = () => {
+      card.style.borderColor = '#3b82f6';
+      card.style.transform = 'translateY(-2px)';
+    };
+    card.onmouseleave = () => {
+      card.style.borderColor = '#1e3a5f';
+      card.style.transform = 'translateY(0)';
+    };
+    card.onclick = () => {
+      window.history.pushState({}, '', `/admin/${prefix}`);
+      renderLevelGroupPage(prefix, levels);
+    };
+
+    const title = document.createElement('h2');
+    title.textContent = `Level ${prefix}`;
+    title.style.cssText = `
+      margin: 0 0 0.5rem 0;
+      color: #e8f0ff;
+      font-size: 1.5rem;
+    `;
+
+    const count = document.createElement('p');
+    count.textContent = `${levels.length} variant${levels.length > 1 ? 's' : ''}`;
+    count.style.cssText = `
+      margin: 0;
+      color: #64b5f6;
+      font-size: 0.875rem;
+    `;
+
+    const threshold = document.createElement('p');
+    threshold.textContent = `Threshold: ${levels[0].threshold}`;
+    threshold.style.cssText = `
+      margin: 0.5rem 0 0 0;
+      color: #90caf9;
+      font-size: 0.75rem;
+    `;
+
+    card.appendChild(title);
+    card.appendChild(count);
+    card.appendChild(threshold);
+    groupList.appendChild(card);
+  });
+
+  root.appendChild(groupList);
+}
+
+/**
+ * Render specific level group page
+ */
+function renderLevelGroupPage(groupId: string, levels: DifficultyLevelConfig[]) {
+  const root = ensureRoot();
+  root.innerHTML = '';
+
+  const header = document.createElement('div');
+  header.className = 'page-header';
+  header.innerHTML = `
+    <h1>Level ${groupId}</h1>
+    <p>${levels.length}개의 난이도 변형이 있습니다.</p>
+  `;
+  root.appendChild(header);
+
+  const backButton = document.createElement('button');
+  backButton.textContent = '← 목록으로';
+  backButton.style.cssText = `
+    margin: 0 2rem 1rem 2rem;
+    padding: 0.5rem 1rem;
+    background: #1e3a5f;
+    color: #e8f0ff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.875rem;
+  `;
+  backButton.onmouseenter = () => {
+    backButton.style.background = '#2c5282';
+  };
+  backButton.onmouseleave = () => {
+    backButton.style.background = '#1e3a5f';
+  };
+  backButton.onclick = () => {
+    window.history.pushState({}, '', '/admin');
+    const groups = groupLevelsByPrefix(DIFFICULTY_LEVELS);
+    renderIndexPage(groups);
+  };
+  root.appendChild(backButton);
 
   const grid = document.createElement('div');
   grid.className = 'levels-grid';
@@ -658,4 +813,32 @@ function renderAdminPage(levels: DifficultyLevelConfig[]) {
   tick();
 }
 
-renderAdminPage(DIFFICULTY_LEVELS);
+// Routing logic
+function initRouter() {
+  const groups = groupLevelsByPrefix(DIFFICULTY_LEVELS);
+  const path = window.location.pathname;
+
+  if (path === '/admin' || path === '/admin/') {
+    renderIndexPage(groups);
+  } else {
+    const match = path.match(/^\/admin\/(.+)$/);
+    if (match) {
+      const groupId = match[1];
+      const levels = groups.get(groupId);
+      if (levels) {
+        renderLevelGroupPage(groupId, levels);
+      } else {
+        renderIndexPage(groups);
+      }
+    } else {
+      renderIndexPage(groups);
+    }
+  }
+
+  // Handle browser back/forward
+  window.addEventListener('popstate', () => {
+    initRouter();
+  });
+}
+
+initRouter();
