@@ -162,8 +162,8 @@ export function loadGame(params?: { score?: number }) {
   game.setSfxEnabled(audioSettings.sfxEnabled);
   game.setMasterVolume(audioSettings.masterVolume);
 
-  // Pause Modal 생성
-  new PauseModal(uiContainer, {
+  // Pause Modal 생성 (백그라운드 복귀 시 사용하기 위해 변수로 저장)
+  const pauseModal = new PauseModal(uiContainer, {
     onToggleDebug: () => game.toggleDebugMode(),
     onSetMusicEnabled: (enabled: boolean) => game.setMusicEnabled(enabled),
     onSetSfxEnabled: (enabled: boolean) => game.setSfxEnabled(enabled),
@@ -171,6 +171,8 @@ export function loadGame(params?: { score?: number }) {
     onNextTheme: () => void game.switchToNextTheme(),
     onSelectTheme: (themeName: string) => void game.switchToTheme(themeName),
     onRestart: () => game.restartGame(),
+    onUnlockAudio: () => game.audio.unlockAudioContext(),
+    onResumeAudio: () => game.resumeAudio(),
     onRanking: async () => {
       // 게임센터가 비활성화되어 있으면 안내 메시지 표시
       if (!TOSS_CONFIG.GAME_CENTER_ENABLED) {
@@ -435,43 +437,20 @@ export function loadGame(params?: { score?: number }) {
 
   // Page Visibility API: 백그라운드 전환 시 사운드 자동 제어
   // 앱인토스 가이드라인: "백그라운드로 전환 시 사운드가 계속 재생이 되지 않는지 확인"
-  let needsAudioResume = false;
-
   const handleVisibilityChange = () => {
     if (document.hidden) {
-      // 백그라운드로 전환 시 (랭킹보기, 고객센터 등) -> 즉시 사운드 일시정지
+      // 백그라운드로 전환 시 (랭킹보기, 고객센터, 다른 앱으로 이동 등)
       console.log('🔇 백그라운드 전환: 사운드 일시정지');
       game.pauseAudio();
-      needsAudioResume = false; // 명시적으로 일시정지한 경우 재개 플래그 해제
     } else {
-      // 포그라운드 복귀 시 -> 재개 플래그만 설정 (모바일 Autoplay Policy 우회)
-      console.log('👆 포그라운드 복귀: 다음 터치 시 사운드 재개 예정 (needsAudioResume=true)');
-      needsAudioResume = true;
-    }
-  };
-
-  // 사용자 제스처 시 오디오 재개 (모바일 브라우저 Autoplay Policy 준수)
-  const handleUserGesture = (e: Event) => {
-    console.log(`👆 사용자 제스처 감지: ${e.type}, needsAudioResume=${needsAudioResume}`);
-    if (needsAudioResume) {
-      console.log('🔊 사운드 재개 시도...');
-      game.resumeAudio();
-      needsAudioResume = false;
+      // 포그라운드 복귀 시 -> PauseModal 자동 오픈
+      // (사용자가 "이어하기" 버튼을 터치하면 AudioContext unlock + 오디오 재개)
+      console.log('📱 포그라운드 복귀: PauseModal 자동 오픈');
+      pauseModal.openFromBackground();
     }
   };
 
   document.addEventListener('visibilitychange', handleVisibilityChange);
-
-  // 사용자 제스처 감지: 게임 캔버스에 직접 등록 (이벤트 전파 문제 회피)
-  // 게임 플레이는 항상 캔버스를 터치하므로 이 방법이 가장 확실함
-  canvas.addEventListener('touchstart', handleUserGesture, { passive: true });
-  canvas.addEventListener('pointerdown', handleUserGesture);
-  canvas.addEventListener('click', handleUserGesture);
-
-  // document 레벨에도 등록 (UI 버튼 클릭 시에도 작동하도록)
-  document.addEventListener('touchstart', handleUserGesture, { passive: true });
-  document.addEventListener('pointerdown', handleUserGesture);
-  document.addEventListener('click', handleUserGesture);
 
   // 임시 테스트: 키보드 'C' 키로 Continue Modal 열기
   window.addEventListener('keydown', (e) => {
