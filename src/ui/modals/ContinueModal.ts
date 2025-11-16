@@ -136,7 +136,7 @@ export class ContinueModal extends BaseModal {
     this.progressCircle.setAttribute('fill', 'none');
     this.progressCircle.setAttribute('stroke', '#ffffff');
     this.progressCircle.setAttribute('stroke-width', strokeWidth.toString());
-    this.progressCircle.setAttribute('stroke-linecap', 'round');
+    this.progressCircle.setAttribute('stroke-linecap', 'butt');
     this.progressCircle.setAttribute('stroke-dasharray', circumference.toString());
     this.progressCircle.setAttribute('stroke-dashoffset', '0');
 
