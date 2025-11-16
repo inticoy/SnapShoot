@@ -625,6 +625,16 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
       unique: true
     }
   },
+  /* Level 5-3: Composition */
+  {
+    threshold: 60,
+    name: '5-3-composition',
+    composition: {
+      count: 5,
+      from: ['1-3'],
+      unique: false
+    }
+  },
 
 
 ];
