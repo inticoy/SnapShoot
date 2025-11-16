@@ -240,7 +240,7 @@ export class PauseModal extends BaseModal {
     // 점수 영역 spacer (GameOverModal과 높이 맞추기 위해)
     const scoreSpacer = document.createElement('div');
     scoreSpacer.className = 'flex flex-col items-center gap-2 py-2';
-    scoreSpacer.style.minHeight = 'clamp(40px, 8vw, 80px)'; // 점수 영역과 동일한 높이 (축소)
+    scoreSpacer.style.minHeight = 'clamp(60px, 12vw, 100px)'; // 3개 버튼을 아래로 밀기 위한 spacer
 
     // 정사각형 3개 버튼
     const topButtonsWrapper = document.createElement('div');

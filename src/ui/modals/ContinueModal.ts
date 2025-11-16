@@ -76,6 +76,11 @@ export class ContinueModal extends BaseModal {
     const mainView = document.createElement('div');
     mainView.className = 'flex-1 flex flex-col items-center justify-between w-full max-w-lg pt-2 pb-[8vh]';
 
+    // 상단 Spacer (광고 버튼을 아래로 밀기 위한 공간)
+    const topSpacer = document.createElement('div');
+    topSpacer.className = 'flex flex-col items-center gap-2 py-2';
+    topSpacer.style.minHeight = 'clamp(60px, 12vw, 100px)';
+
     // 원형 버튼 + 진행바 (중앙)
     const adButtonWrapper = document.createElement('div');
     adButtonWrapper.className = 'flex items-center justify-center w-full';
@@ -90,6 +95,7 @@ export class ContinueModal extends BaseModal {
     this.giveUpButton = this.createGiveUpButton();
     bottomButtonsWrapper.appendChild(this.giveUpButton);
 
+    mainView.appendChild(topSpacer);
     mainView.appendChild(adButtonWrapper);
     mainView.appendChild(bottomButtonsWrapper);
 
