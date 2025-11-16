@@ -217,8 +217,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           axis: 'x',
           range: [-1.2, 1.2],
           speed: 1.0,
-          waveform: 'sine',
-          startPhase: Math.random() * Math.PI * 2
+          waveform: 'sine'
         }
       }
     ]
@@ -237,8 +236,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           axis: 'x',
           range: [-1.1, 1.1],
           speed: 1.0,
-          waveform: 'sine',
-          startPhase: Math.random() * Math.PI * 2
+          waveform: 'sine'
         }
       }
     ]
@@ -258,8 +256,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           axis: 'x',
           range: [-1.0, 1.0],
           speed: 1.0,
-          waveform: 'sine',
-          startPhase: Math.random() * Math.PI * 2
+          waveform: 'sine'
         }
       },
     ]
@@ -279,8 +276,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           axis: 'x',
           range: [-2.5, 2.5],
           speed: 0.5,
-          waveform: 'sine',
-          startPhase: Math.random() * Math.PI * 2
+          waveform: 'sine'
         }
       },
     ]
@@ -300,8 +296,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           axis: 'x',
           range: [-2.0, 2.0],
           speed: 1.0,
-          waveform: 'sine',
-          startPhase: Math.random() * Math.PI * 2
+          waveform: 'sine'
         },
       },
     ]
@@ -321,8 +316,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           axis: 'x',
           range: [-1.2, 1.2],
           speed: 2.0,
-          waveform: 'sine',
-          startPhase: Math.random() * Math.PI * 2
+          waveform: 'sine'
         }
       }
     ]
@@ -341,8 +335,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           axis: 'x',
           range: [-1.1, 1.1],
           speed: 2.0,
-          waveform: 'sine',
-          startPhase: Math.random() * Math.PI * 2
+          waveform: 'sine'
         }
       }
     ]
@@ -362,8 +355,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           axis: 'x',
           range: [-1.0, 1.0],
           speed: 2.0,
-          waveform: 'sine',
-          startPhase: Math.random() * Math.PI * 2
+          waveform: 'sine'
         }
       },
     ]
@@ -383,8 +375,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           axis: 'x',
           range: [-2.5, 2.5],
           speed: 1.0,
-          waveform: 'sine',
-          startPhase: Math.random() * Math.PI * 2
+          waveform: 'sine'
         }
       },
     ]
@@ -404,8 +395,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           axis: 'x',
           range: [-2.0, 2.0],
           speed: 2.0,
-          waveform: 'sine',
-          startPhase: Math.random() * Math.PI * 2
+          waveform: 'sine'
         },
       },
     ]
@@ -424,8 +414,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           axis: 'y',
           range: [0, 2.0],
           speed: 2.0,
-          waveform: 'sine',
-          startPhase: Math.random() * Math.PI * 2
+          waveform: 'sine'
         },
       },
     ]
@@ -447,8 +436,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           orbit: {
             axis: 'x',
             range: [-1.5, 1.5],
-            speed: 2.0,
-            startPhase: Math.random() * Math.PI * 2
+            speed: 2.0
           },
           radius: 0,
           startAngle: 0,
@@ -473,8 +461,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           orbit: {
             axis: 'x',
             range: [-1.5, 1.5],
-            speed: 2.0,
-            startPhase: Math.random() * Math.PI * 2
+            speed: 2.0
           },
           radius: 0,
           startAngle: 0,
@@ -499,8 +486,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           orbit: {
             axis: 'x',
             range: [-1.5, 1.5],
-            speed: 2.0,
-            startPhase: Math.random() * Math.PI * 2
+            speed: 2.0
           },
           radius: 0,
           startAngle: 0,
@@ -525,8 +511,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           orbit: {
             axis: 'x',
             range: [-2.5, 2.5],
-            speed: 1.0,
-            startPhase: Math.random() * Math.PI * 2
+            speed: 1.0
           },
           radius: 0,
           startAngle: 0,
@@ -551,8 +536,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           orbit: {
             axis: 'x',
             range: [-2.0, 2.0],
-            speed: 2.0,
-            startPhase: Math.random() * Math.PI * 2
+            speed: 2.0
           },
           radius: 0,
           startAngle: 0,
@@ -576,8 +560,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           orbit: {
             axis: 'y',
             range: [0, 2.0],
-            speed: 2.0,
-            startPhase: Math.random() * Math.PI * 2
+            speed: 2.0
           },
           radius: 0,
           startAngle: 0,
