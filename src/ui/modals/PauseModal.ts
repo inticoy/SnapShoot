@@ -235,15 +235,15 @@ export class PauseModal extends BaseModal {
     const topButtonsWrapper = document.createElement('div');
     topButtonsWrapper.className = 'flex gap-4 w-full justify-center';
 
-    const customizeButton = this.createSquareIconButton(
-      'pause-customize-btn',
-      `<i class="ph-fill ph-palette text-4xl text-white"></i>`,
-      '테마 변경'
-    );
     const rankingButton = this.createSquareIconButton(
       'pause-ranking-btn',
       `<i class="ph-fill ph-ranking text-4xl text-white"></i>`,
       '랭킹보기'
+    );
+    const customizeButton = this.createSquareIconButton(
+      'pause-customize-btn',
+      `<i class="ph-fill ph-palette text-4xl text-white"></i>`,
+      '테마 변경'
     );
     const settingsButton = this.createSquareIconButton(
       'pause-settings-btn',
@@ -251,25 +251,25 @@ export class PauseModal extends BaseModal {
       '설정'
     );
 
-    this.addPressEffect(customizeButton);
     this.addPressEffect(rankingButton);
+    this.addPressEffect(customizeButton);
     this.addPressEffect(settingsButton);
 
-    customizeButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      this.viewManager.switchTo('customize');
-    });
     rankingButton.addEventListener('click', () => {
       console.log('랭킹보기 버튼 클릭');
       this.callbacks.onRanking?.();
+    });
+    customizeButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.viewManager.switchTo('customize');
     });
     settingsButton.addEventListener('click', (e) => {
       e.stopPropagation();
       this.viewManager.switchTo('settings');
     });
 
-    topButtonsWrapper.appendChild(customizeButton);
     topButtonsWrapper.appendChild(rankingButton);
+    topButtonsWrapper.appendChild(customizeButton);
     topButtonsWrapper.appendChild(settingsButton);
 
     // 하단 버튼
