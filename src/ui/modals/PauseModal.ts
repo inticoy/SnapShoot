@@ -21,8 +21,8 @@ export interface PauseModalCallbacks {
   onSelectTheme?: (themeName: string) => void;
   onRestart?: () => void;
   onRanking?: () => void;
-  onResumeAudio?: () => void; // 백그라운드 복귀 시 오디오 재개
-  onUnlockAudio?: () => void; // AudioContext unlock
+  onResumeAudio?: () => Promise<void>; // 오디오 재개 (비동기)
+  onUnlockAudio?: () => void; // AudioContext unlock (동기)
 }
 
 type AudioSettingsState = {
@@ -50,7 +50,6 @@ export class PauseModal extends BaseModal {
   private backButton!: HTMLButtonElement;
   private callbacks: PauseModalCallbacks;
   private audioState: AudioSettingsState;
-  private fromBackground: boolean = false; // 백그라운드 복귀로 열렸는지 여부
 
   // UI 요소들
   private pauseView!: HTMLDivElement;
@@ -312,17 +311,22 @@ export class PauseModal extends BaseModal {
       this.close();
       this.callbacks.onRestart?.();
     });
-    continueButton.addEventListener('click', (e) => {
+    continueButton.addEventListener('click', async (e) => {
       e.stopPropagation();
-      console.log('이어하기 버튼 클릭, fromBackground:', this.fromBackground);
+      console.log('이어하기 버튼 클릭');
 
-      if (this.fromBackground) {
-        // 백그라운드에서 복귀한 경우: AudioContext unlock + 오디오 재개
-        console.log('🔓 백그라운드 복귀 모드: AudioContext unlock + 사운드 재개');
-        this.callbacks.onUnlockAudio?.();
-        this.callbacks.onResumeAudio?.();
-      }
-      // 일반 pause는 사운드가 계속 재생 중이므로 그냥 닫기만 하면 됨
+      // 항상 unlock → 대기 → resume 시퀀스 실행
+      // (두 메서드 모두 idempotent하므로 안전)
+      console.log('🔓 AudioContext unlock + 사운드 재개 시퀀스 시작');
+
+      // 1. AudioContext unlock (동기)
+      this.callbacks.onUnlockAudio?.();
+
+      // 2. 50ms 대기 (unlock이 완료될 시간 확보)
+      await new Promise(resolve => setTimeout(resolve, 50));
+
+      // 3. 오디오 재개 (비동기)
+      await this.callbacks.onResumeAudio?.();
 
       this.close();
     });
@@ -676,7 +680,6 @@ export class PauseModal extends BaseModal {
    */
   openFromBackground(): void {
     console.log('📱 백그라운드에서 복귀: PauseModal 자동 오픈');
-    this.fromBackground = true;
     this.open();
   }
 
@@ -694,8 +697,6 @@ export class PauseModal extends BaseModal {
   protected onAfterClose(): void {
     // Pause 뷰로 리셋
     this.viewManager.switchTo('pause');
-    // 백그라운드 플래그 리셋
-    this.fromBackground = false;
   }
 
   /**

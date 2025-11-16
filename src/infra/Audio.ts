@@ -378,17 +378,16 @@ export class AudioManager {
    * 모든 오디오 재개 (광고 종료 시)
    * AudioContext를 resume하여 일시정지된 사운드를 재개
    */
-  resumeAll(): void {
+  async resumeAll(): Promise<void> {
     if (this.context) {
       console.log(`🔊 resumeAll 호출됨, 현재 상태: ${this.context.state}`);
       if (this.context.state === 'suspended') {
-        this.context.resume()
-          .then(() => {
-            console.log(`✅ AudioContext 재개 성공, 새 상태: ${this.context?.state}`);
-          })
-          .catch((error) => {
-            console.error('❌ Failed to resume AudioContext', error);
-          });
+        try {
+          await this.context.resume();
+          console.log(`✅ AudioContext 재개 성공, 새 상태: ${this.context.state}`);
+        } catch (error) {
+          console.error('❌ Failed to resume AudioContext', error);
+        }
       } else {
         console.log(`ℹ️ AudioContext already ${this.context.state}, resume 불필요`);
       }
