@@ -17,6 +17,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     name: '0-0-no-obstacles',
     obstacles: []
   },
+  /* Level 1-0 fixed */
   {
     threshold: 1,
     name: '1-0-left-woodVertical',
@@ -191,6 +192,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
       }
     ]
   },
+  /* Level 1-1 patrol slow */
   {
     threshold: 10,
     name: '1-1-patrol-keeperWall',
@@ -243,7 +245,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     ]
   },
   {
-    threshold: 15,
+    threshold: 10,
     name: '1-1-patrol-van',
     obstacles: [
       {
@@ -260,7 +262,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     ]
   },
   {
-    threshold: 15,
+    threshold: 10,
     name: '1-1-horizontal-shark',
     obstacles: [
       {
@@ -279,9 +281,98 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
       },
     ]
   },
+  /* Level 1-2 patrol fast */
   {
     threshold: 15,
-    name: '1-1-vertical-shark',
+    name: '1-2-patrol-keeperWall',
+    obstacles: [
+      {
+        blueprintId: 'keeperWall',
+        transform: { position: { z: -5.4 } },
+        behavior: { 
+          type: 'patrol',
+          axis: 'x',
+          range: [-1.2, 1.2],
+          speed: 2.5,
+          waveform: 'sine'
+        }
+      }
+    ]
+  },
+  {
+    threshold: 15,
+    name: '1-2-patrol-drum',
+    obstacles: [
+      {
+        blueprintId: 'drum',
+        transform: { position: { y: 0.5, z: -5.0} },
+        behavior: { 
+          type: 'patrol',
+          axis: 'x',
+          range: [-1.1, 1.1],
+          speed: 2.5,
+          waveform: 'sine'
+        }
+      }
+    ]
+  },
+  {
+    threshold: 15,
+    name: '1-2-patrol-whiteDrone',
+    obstacles: [
+      {
+        blueprintId: 'whiteDrone',
+        transform: { position: { z: -5.0 }, positionRange: { y: [0.5, 2.5] },},
+        behavior: {
+          type: 'patrol',
+          axis: 'x',
+          range: [-1.0, 1.0],
+          speed: 2.5,
+          waveform: 'sine'
+        }
+      },
+    ]
+  },
+  {
+    threshold: 15,
+    name: '1-2-patrol-van',
+    obstacles: [
+      {
+        blueprintId: 'van',
+        transform: { position: {y: 1, z: -5.0 }, rotation: {y: - Math.PI /2} },
+        behavior: {
+          type: 'patrol',
+          axis: 'x',
+          range: [-2.5, 2.5],
+          speed: 2.0,
+          waveform: 'sine'
+        }
+      },
+    ]
+  },
+  {
+    threshold: 15,
+    name: '1-2-horizontal-shark',
+    obstacles: [
+      {
+        blueprintId: 'shark',
+        transform: { 
+          position: { z: -5.0 }, 
+          positionRange: { y: [0.3, 1.6] },
+        },
+        behavior: {
+          type: 'patrol',
+          axis: 'x',
+          range: [-2.0, 2.0],
+          speed: 2.5,
+          waveform: 'sine'
+        },
+      },
+    ]
+  },
+  {
+    threshold: 15,
+    name: '1-2-vertical-shark',
     obstacles: [
       {
         blueprintId: 'shark',
@@ -292,12 +383,133 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           type: 'patrol',
           axis: 'y',
           range: [0, 1.8],
-          speed: 1.5,
+          speed: 2.5,
           waveform: 'sine'
         },
       },
     ]
   },
+  /* Level 1-3 orbit spining */
+  {
+    threshold: 20,
+    name: '1-3-spin-keeperWall',
+    obstacles: [
+      {
+        blueprintId: 'keeperWall',
+        transform: { position: { z: -5.4 } },
+        behavior: { 
+          type: 'spin',
+          axis: 'z',
+          speed: 2.0,
+          orbit: {
+            axis: 'x',
+            range: [-1.5, 1.5],
+            speed: 2.0,
+            startPhase: 0
+          },
+          radius: 0,
+          startAngle: 0,
+        }
+      }
+    ]
+  },
+  {
+    threshold: 20,
+    name: '1-3-spin-drum',
+    obstacles: [
+      {
+        blueprintId: 'drum',
+        transform: { position: {z: -5.0}, positionRange: { y: [0.5, 1.5] } },
+        behavior: { 
+          type: 'spin',
+          axis: 'z',
+          speed: 2.0,
+          orbit: {
+            axis: 'x',
+            range: [-1.5, 1.5],
+            speed: 2.0,
+            startPhase: 0
+          },
+          radius: 0,
+          startAngle: 0,
+        }
+      }
+    ]
+  },
+  {
+    threshold: 20,
+    name: '1-3-spin-whiteDrone',
+    obstacles: [
+      {
+        blueprintId: 'whiteDrone',
+        transform: { position: { z: -5.0 }, positionRange: { y: [0.5, 1.5] },},
+        behavior: { 
+          type: 'spin',
+          axis: 'z',
+          speed: 2.0,
+          orbit: {
+            axis: 'x',
+            range: [-1.5, 1.5],
+            speed: 2.0,
+            startPhase: 0
+          },
+          radius: 0,
+          startAngle: 0,
+        }
+      },
+    ]
+  },
+  {
+    threshold: 20,
+    name: '1-3-spin-van',
+    obstacles: [
+      {
+        blueprintId: 'van',
+        transform: { position: {y: 1, z: -5.0 }, rotation: {y: - Math.PI /2} },
+        behavior: { 
+          type: 'spin',
+          axis: 'y',
+          speed: 2.0,
+          orbit: {
+            axis: 'x',
+            range: [-1.5, 1.5],
+            speed: 2.0,
+            startPhase: 0
+          },
+          radius: 0,
+          startAngle: 0,
+        }
+      },
+    ]
+  },
+  {
+    threshold: 20,
+    name: '1-3-spin-shark',
+    obstacles: [
+      {
+        blueprintId: 'shark',
+        transform: { 
+          position: { z: -5.0 }, 
+          positionRange: { y: [0.3, 1.6] },
+        },
+        behavior: { 
+          type: 'spin',
+          axis: 'x',
+          speed: 2.0,
+          orbit: {
+            axis: 'x',
+            range: [-1.5, 1.5],
+            speed: 2.0,
+            startPhase: 0
+          },
+          radius: 0,
+          startAngle: 0,
+        }
+      },
+    ]
+  },
+
+
 ];
 
 /**
