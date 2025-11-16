@@ -240,20 +240,23 @@ export class LoadingScreen {
   /**
    * 로딩 화면 전체에서 첫 터치 감지하여 AudioContext unlock
    * (로딩 중간에도 터치하면 즉시 unlock)
+   *
+   * iOS 9+: touchstart가 아닌 touchend에서만 AudioContext unlock 작동
+   * 스와이프: pointerup/touchend에서만 "valid user gesture"로 인식
    */
   private setupEarlyAudioUnlock(): void {
     const unlockAudio = () => {
       if (!this.audioUnlocked && this.audio) {
         console.log('🎵 첫 터치 감지 - AudioContext unlock 시도');
-        void this.audio.unlockAudioContext();
+        this.audio.unlockAudioContext();
         this.audioUnlocked = true;
       }
     };
 
-    // 로딩 화면 컨테이너 전체에 리스너 추가
+    // iOS: touchend/pointerup 사용 (touchstart/pointerdown은 스워이프에서 실패)
     // capture: true로 SwipeTracker의 preventDefault() 전에 실행
-    this.container.addEventListener('pointerdown', unlockAudio, { once: true, capture: true });
-    this.container.addEventListener('touchstart', unlockAudio, { once: true, passive: true, capture: true });
+    this.container.addEventListener('pointerup', unlockAudio, { once: true, capture: true });
+    this.container.addEventListener('touchend', unlockAudio, { once: true, passive: true, capture: true });
   }
 
   private setupSwipeListener(): void {
@@ -264,16 +267,18 @@ export class LoadingScreen {
 
       // swipeCanvas에서도 AudioContext unlock 시도
       // (로딩 중 터치하지 않고 축구공 스와이프로 시작하는 경우 대비)
+      // iOS: pointerup/touchend에서만 스와이프 중 unlock 작동
       // capture: true로 SwipeTracker의 preventDefault() 전에 실행
       const unlockAudioOnSwipe = () => {
         if (!this.audioUnlocked && this.audio) {
           console.log('🎵 스와이프 캔버스 터치 - AudioContext unlock 시도');
-          void this.audio.unlockAudioContext();
+          this.audio.unlockAudioContext();
           this.audioUnlocked = true;
         }
       };
 
-      this.swipeCanvas.addEventListener('pointerdown', unlockAudioOnSwipe, { once: true, capture: true });
+      this.swipeCanvas.addEventListener('pointerup', unlockAudioOnSwipe, { once: true, capture: true });
+      this.swipeCanvas.addEventListener('touchend', unlockAudioOnSwipe, { once: true, passive: true, capture: true });
 
       // 스와이프 이벤트 감지
       this.swipeCanvas.addEventListener('pointerup', () => {

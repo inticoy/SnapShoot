@@ -88,13 +88,22 @@ export class AudioManager {
   /**
    * 사용자 제스처 내에서 호출하여 AudioContext를 활성화
    * Safari/iOS에서 autoplay policy를 우회하기 위해 필요
+   *
+   * 중요: iOS는 AudioContext.resume()이 동기적 call-stack 내에서만 작동
+   * async/await를 사용하면 call-stack이 끊어져 모바일에서 실패함
    */
-  async unlockAudioContext(): Promise<void> {
+  unlockAudioContext(): void {
     const context = this.getContext();
     if (context.state === 'suspended') {
       console.log('🔓 AudioContext unlocking...');
-      await context.resume();
-      console.log('✅ AudioContext unlocked, state:', context.state);
+      // iOS: resume()을 await 없이 동기적으로 호출 (call-stack 유지)
+      context.resume()
+        .then(() => {
+          console.log('✅ AudioContext unlocked, state:', context.state);
+        })
+        .catch((error) => {
+          console.warn('❌ AudioContext unlock failed:', error);
+        });
     } else {
       console.log('ℹ️ AudioContext already running, state:', context.state);
     }

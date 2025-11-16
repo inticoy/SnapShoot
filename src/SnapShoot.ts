@@ -286,10 +286,14 @@ export class SnapShoot {
     // InputController가 입력 이벤트를 관리
 
     // 인게임 첫 터치에서 AudioContext unlock (Safari autoplay policy 우회)
+    // iOS 9+: pointerup/touchend에서만 스와이프 중 AudioContext unlock 작동
     // capture: true로 SwipeTracker의 preventDefault() 전에 실행
-    this.renderer.domElement.addEventListener('pointerdown', () => {
-      void this.audio.unlockAudioContext();
-    }, { once: true, capture: true });
+    const unlockAudio = () => {
+      this.audio.unlockAudioContext();
+    };
+
+    this.renderer.domElement.addEventListener('pointerup', unlockAudio, { once: true, capture: true });
+    this.renderer.domElement.addEventListener('touchend', unlockAudio, { once: true, passive: true, capture: true });
   }
 
   private handleResize() {
