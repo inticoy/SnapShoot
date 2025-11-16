@@ -435,19 +435,36 @@ export function loadGame(params?: { score?: number }) {
 
   // Page Visibility API: 백그라운드 전환 시 사운드 자동 제어
   // 앱인토스 가이드라인: "백그라운드로 전환 시 사운드가 계속 재생이 되지 않는지 확인"
+  let needsAudioResume = false;
+
   const handleVisibilityChange = () => {
     if (document.hidden) {
-      // 백그라운드로 전환 시 (랭킹보기, 고객센터 등) -> 사운드 일시정지
+      // 백그라운드로 전환 시 (랭킹보기, 고객센터 등) -> 즉시 사운드 일시정지
       console.log('🔇 백그라운드 전환: 사운드 일시정지');
       game.pauseAudio();
+      needsAudioResume = false; // 명시적으로 일시정지한 경우 재개 플래그 해제
     } else {
-      // 포그라운드로 복귀 시 -> 사운드 재개
-      console.log('🔊 포그라운드 복귀: 사운드 재개');
+      // 포그라운드 복귀 시 -> 재개 플래그만 설정 (모바일 Autoplay Policy 우회)
+      console.log('👆 포그라운드 복귀: 다음 터치 시 사운드 재개 예정');
+      needsAudioResume = true;
+    }
+  };
+
+  // 사용자 제스처 시 오디오 재개 (모바일 브라우저 Autoplay Policy 준수)
+  const handleUserGesture = () => {
+    if (needsAudioResume) {
+      console.log('🔊 사용자 제스처 감지: 사운드 재개');
       game.resumeAudio();
+      needsAudioResume = false;
     }
   };
 
   document.addEventListener('visibilitychange', handleVisibilityChange);
+
+  // 다양한 사용자 제스처 감지 (모바일 + 데스크톱 대응)
+  document.addEventListener('touchstart', handleUserGesture, { passive: true });
+  document.addEventListener('pointerdown', handleUserGesture);
+  document.addEventListener('click', handleUserGesture);
 
   // 임시 테스트: 키보드 'C' 키로 Continue Modal 열기
   window.addEventListener('keydown', (e) => {
