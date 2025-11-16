@@ -65,14 +65,13 @@ export class ContinueModal extends BaseModal {
     contentWrapper.className = `
       flex-1 w-full max-w-lg
       flex flex-col items-center justify-between
-      pt-[2vh] pb-[8vh] gap-4
+      pt-4 pb-[8vh]
     `.trim().replace(/\s+/g, ' ');
 
-    // 상단 콘텐츠 컨테이너
-    const topContent = document.createElement('div');
-    topContent.className = 'flex flex-col items-center w-full gap-4';
+    // 타이틀 (상단)
+    const titleWrapper = document.createElement('div');
+    titleWrapper.className = 'w-full flex items-center justify-center pointer-events-none py-4 pb-8';
 
-    // 타이틀
     const title = document.createElement('div');
     title.className = `
       font-russo text-white tracking-tight font-black text-center
@@ -81,20 +80,24 @@ export class ContinueModal extends BaseModal {
     title.style.fontSize = 'clamp(24px, 5vw, 32px)';
     title.textContent = '게임을 계속하시겠습니까?';
 
-    // 원형 버튼 + 진행바
+    titleWrapper.appendChild(title);
+
+    // 원형 버튼 + 진행바 (중앙)
+    const adButtonWrapper = document.createElement('div');
+    adButtonWrapper.className = 'flex items-center justify-center w-full';
+
     const continueButtonWrapper = this.createContinueButton();
+    adButtonWrapper.appendChild(continueButtonWrapper);
 
-    topContent.appendChild(title);
-    topContent.appendChild(continueButtonWrapper);
-
-    // 하단 버튼 (포기하기)
+    // 포기하기 버튼 (하단)
     const bottomButtonsWrapper = document.createElement('div');
     bottomButtonsWrapper.className = 'flex items-center justify-center w-full';
 
     this.giveUpButton = this.createGiveUpButton();
     bottomButtonsWrapper.appendChild(this.giveUpButton);
 
-    contentWrapper.appendChild(topContent);
+    contentWrapper.appendChild(titleWrapper);
+    contentWrapper.appendChild(adButtonWrapper);
     contentWrapper.appendChild(bottomButtonsWrapper);
 
     this.content.appendChild(contentWrapper);
