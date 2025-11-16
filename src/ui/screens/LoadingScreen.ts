@@ -123,6 +123,9 @@ export class LoadingScreen {
 
       // 스와이프 이벤트 리스너 설정
       this.setupSwipeListener();
+
+      // 로딩 화면 전체에서 첫 터치 감지 (Safari autoplay policy 우회)
+      this.setupEarlyAudioUnlock();
   }
 
   private createTitleSection(): HTMLDivElement {
@@ -234,23 +237,30 @@ export class LoadingScreen {
       return swipeCanvas;
   }
 
+  /**
+   * 로딩 화면 전체에서 첫 터치 감지하여 AudioContext unlock
+   * (로딩 중간에도 터치하면 즉시 unlock)
+   */
+  private setupEarlyAudioUnlock(): void {
+    const unlockAudio = () => {
+      if (!this.audioUnlocked && this.audio) {
+        console.log('🎵 첫 터치 감지 - AudioContext unlock 시도');
+        void this.audio.unlockAudioContext();
+        this.audioUnlocked = true;
+      }
+    };
+
+    // 로딩 화면 컨테이너 전체에 리스너 추가
+    // (로딩 바, 타이틀 등 어디를 터치해도 unlock)
+    this.container.addEventListener('pointerdown', unlockAudio, { once: true });
+    this.container.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
+  }
+
   private setupSwipeListener(): void {
       if (!this.swipeCanvas) return;
 
       // SwipeTracker 초기화
       this.swipeTracker = new SwipeTracker(this.swipeCanvas, 10);
-
-      // 첫 터치에서 AudioContext unlock (Safari autoplay policy 우회)
-      const unlockAudio = () => {
-        if (!this.audioUnlocked && this.audio) {
-          console.log('🎵 첫 터치 감지 - AudioContext unlock 시도');
-          void this.audio.unlockAudioContext();
-          this.audioUnlocked = true;
-        }
-      };
-
-      // pointerdown에서 AudioContext unlock (가장 빠른 시점)
-      this.swipeCanvas.addEventListener('pointerdown', unlockAudio, { once: false });
 
       // 스와이프 이벤트 감지
       this.swipeCanvas.addEventListener('pointerup', () => {
