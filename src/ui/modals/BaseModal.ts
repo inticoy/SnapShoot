@@ -383,9 +383,9 @@ export abstract class BaseModal {
    * 설정 버튼 스타일 (파란색)
    */
   private applySettingsStyle(button: HTMLButtonElement, highlight: HTMLDivElement): void {
-    button.style.background = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 50%, #00bcd4 100%)';
-    button.style.border = '2px solid rgba(79, 172, 254, 0.8)';
-    button.style.boxShadow = '0 6px 20px rgba(79, 172, 254, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 -2px 6px rgba(0, 0, 0, 0.2)';
+    button.style.background = 'linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%)';
+    button.style.border = '2px solid rgba(59, 130, 246, 0.8)';
+    button.style.boxShadow = '0 6px 20px rgba(37, 99, 235, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 -2px 6px rgba(0, 0, 0, 0.2)';
 
     highlight.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 60%)';
 
@@ -401,11 +401,11 @@ export abstract class BaseModal {
     // 클릭 효과
     button.addEventListener('pointerdown', () => {
       button.style.transform = 'scale(0.92)';
-      button.style.boxShadow = '0 2px 6px rgba(79, 172, 254, 0.3), inset 0 3px 10px rgba(0, 0, 0, 0.35)';
+      button.style.boxShadow = '0 2px 6px rgba(37, 99, 235, 0.3), inset 0 3px 10px rgba(0, 0, 0, 0.35)';
     });
     button.addEventListener('pointerup', () => {
       button.style.transform = '';
-      button.style.boxShadow = '0 6px 20px rgba(79, 172, 254, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 -2px 6px rgba(0, 0, 0, 0.2)';
+      button.style.boxShadow = '0 6px 20px rgba(37, 99, 235, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 -2px 6px rgba(0, 0, 0, 0.2)';
     });
   }
 
