@@ -27,10 +27,12 @@ export class LoadingScreen {
   // 축구공 슛 메커니즘
   private soccerBall: HTMLImageElement | null = null;
   private soccerBallContainer: HTMLDivElement | null = null;
+  private tapToStartContainer: HTMLDivElement | null = null;
   private swipeCanvas: HTMLCanvasElement | null = null;
   private swipeTracker: SwipeTracker | null = null;
   private isReadyToEnter = false; // 슛을 쏘았는지
   private isLoadingComplete = false; // 로딩이 완료되었는지
+  private hasUnlockedAudio = false; // AudioContext unlock 여부
 
   // 콜백
   private onSwipe?: () => void;
@@ -38,7 +40,6 @@ export class LoadingScreen {
 
   // 오디오 매니저 (Safari autoplay policy 우회용)
   private audio?: AudioManager;
-  private audioUnlocked = false;
 
   // 축구 테마 로딩 메시지
   private readonly footballMessages: string[] = [
@@ -72,6 +73,8 @@ export class LoadingScreen {
 
     tip: 'loading-screen__tip absolute left-1/2 bottom-[20px] max-w-[600px] -translate-x-1/2 px-[20px] text-center text-[14px] text-[rgba(255,255,255,0.7)] animate-fade-in-delayed lg:bottom-[30px] lg:text-[16px]',
     tipStrong: 'text-[#7dd3a0] font-bold',
+    tapToStartContainer: 'loading-screen__tap-to-start fixed inset-0 flex flex-col items-center justify-end pb-[10vh] opacity-0 transition-opacity duration-500 z-[37] cursor-pointer',
+    tapToStartText: 'text-[20px] font-bold text-white [text-shadow:0_1px_4px_rgba(0,0,0,0.2)] animate-pulse',
     soccerBallContainer: 'loading-screen__soccer-ball-container absolute left-1/2 bottom-[10vh] -translate-x-1/2 flex w-[min(90vw,360px)] flex-col items-center gap-8 px-4 opacity-0 transition-opacity duration-1000 z-[35]',
     soccerBall: 'loading-screen__soccer-ball w-[72px] h-[72px] cursor-pointer animate-bounce drop-shadow-[0_8px_16px_rgba(0,0,0,0.3)]',
     swipeCanvas: 'loading-screen__swipe-canvas fixed inset-0 z-[36] touch-none pointer-events-auto',
@@ -101,6 +104,9 @@ export class LoadingScreen {
       // Stage 1 (프로그레스 바) 생성
       this.stage1Container = this.createStage1Container();
 
+      // 탭해서 시작 UI 생성
+      this.tapToStartContainer = this.createTapToStartUI();
+
       // 축구공 UI 생성
       this.soccerBallContainer = this.createSoccerBallUI();
 
@@ -116,6 +122,7 @@ export class LoadingScreen {
       // DOM 조립
       this.container.appendChild(this.titleSection);
       this.container.appendChild(this.stage1Container);
+      this.container.appendChild(this.tapToStartContainer);
       this.container.appendChild(this.soccerBallContainer);
       this.container.appendChild(this.swipeCanvas);
       this.container.appendChild(goalpost);
@@ -124,8 +131,8 @@ export class LoadingScreen {
       // 스와이프 이벤트 리스너 설정
       this.setupSwipeListener();
 
-      // 로딩 화면 전체에서 첫 터치 감지 (Safari autoplay policy 우회)
-      this.setupEarlyAudioUnlock();
+      // 탭해서 시작 이벤트 리스너 설정
+      this.setupTapToStart();
   }
 
   private createTitleSection(): HTMLDivElement {
@@ -199,6 +206,22 @@ export class LoadingScreen {
       return stage1Container;
   }
 
+  private createTapToStartUI(): HTMLDivElement {
+      // 탭해서 시작 컨테이너 생성
+      const tapContainer = document.createElement('div');
+      tapContainer.className = LoadingScreen.CLASS_NAMES.tapToStartContainer;
+
+      // 텍스트
+      const text = document.createElement('div');
+      text.className = LoadingScreen.CLASS_NAMES.tapToStartText;
+      text.textContent = '아무 곳이나 터치하세요';
+      text.style.fontFamily = "'Chiron GoRound TC', sans-serif";
+
+      tapContainer.appendChild(text);
+
+      return tapContainer;
+  }
+
   private createSoccerBallUI(): HTMLDivElement {
       // 축구공 컨테이너 생성
       const soccerBallContainer = document.createElement('div');
@@ -237,27 +260,7 @@ export class LoadingScreen {
       return swipeCanvas;
   }
 
-  /**
-   * 로딩 화면 전체에서 첫 터치 감지하여 AudioContext unlock
-   * (로딩 중간에도 터치하면 즉시 unlock)
-   *
-   * iOS 9+: touchstart가 아닌 touchend에서만 AudioContext unlock 작동
-   * 스와이프: pointerup/touchend에서만 "valid user gesture"로 인식
-   */
-  private setupEarlyAudioUnlock(): void {
-    const unlockAudio = () => {
-      if (!this.audioUnlocked && this.audio) {
-        console.log('🎵 첫 터치 감지 - AudioContext unlock 시도');
-        this.audio.unlockAudioContext();
-        this.audioUnlocked = true;
-      }
-    };
-
-    // iOS: touchend/pointerup 사용 (touchstart/pointerdown은 스워이프에서 실패)
-    // capture: true로 SwipeTracker의 preventDefault() 전에 실행
-    this.container.addEventListener('pointerup', unlockAudio, { once: true, capture: true });
-    this.container.addEventListener('touchend', unlockAudio, { once: true, passive: true, capture: true });
-  }
+  // setupEarlyAudioUnlock() 제거 - SwipeTracker 내부에서 처리
 
   private setupSwipeListener(): void {
       if (!this.swipeCanvas) return;
@@ -265,25 +268,96 @@ export class LoadingScreen {
       // SwipeTracker 초기화
       this.swipeTracker = new SwipeTracker(this.swipeCanvas, 10);
 
-      // swipeCanvas에서도 AudioContext unlock 시도
-      // (로딩 중 터치하지 않고 축구공 스와이프로 시작하는 경우 대비)
-      // iOS: pointerup/touchend에서만 스와이프 중 unlock 작동
-      // capture: true로 SwipeTracker의 preventDefault() 전에 실행
-      const unlockAudioOnSwipe = () => {
-        if (!this.audioUnlocked && this.audio) {
-          console.log('🎵 스와이프 캔버스 터치 - AudioContext unlock 시도');
-          this.audio.unlockAudioContext();
-          this.audioUnlocked = true;
-        }
-      };
-
-      this.swipeCanvas.addEventListener('pointerup', unlockAudioOnSwipe, { once: true, capture: true });
-      this.swipeCanvas.addEventListener('touchend', unlockAudioOnSwipe, { once: true, passive: true, capture: true });
-
       // 스와이프 이벤트 감지
       this.swipeCanvas.addEventListener('pointerup', () => {
           this.handleSwipe();
       });
+  }
+
+  private setupTapToStart(): void {
+      if (!this.tapToStartContainer) return;
+
+      let hasMoved = false;
+      let startX = 0;
+      let startY = 0;
+
+      const handleStart = (e: TouchEvent | PointerEvent) => {
+          hasMoved = false;
+          if (e instanceof TouchEvent) {
+              startX = e.touches[0].clientX;
+              startY = e.touches[0].clientY;
+          } else {
+              startX = e.clientX;
+              startY = e.clientY;
+          }
+      };
+
+      const handleMove = (e: TouchEvent | PointerEvent) => {
+          let currentX = 0;
+          let currentY = 0;
+
+          if (e instanceof TouchEvent) {
+              currentX = e.touches[0].clientX;
+              currentY = e.touches[0].clientY;
+          } else {
+              currentX = e.clientX;
+              currentY = e.clientY;
+          }
+
+          // 5px 이상 움직이면 스와이프로 간주
+          const dx = Math.abs(currentX - startX);
+          const dy = Math.abs(currentY - startY);
+          if (dx > 5 || dy > 5) {
+              hasMoved = true;
+          }
+      };
+
+      const handleEnd = (e: Event) => {
+          if (this.hasUnlockedAudio) return;
+
+          // 스와이프면 무시 (탭만 허용)
+          if (hasMoved) {
+              console.log('⚠️ 스와이프 감지 - 무시 (탭만 허용)');
+              return;
+          }
+
+          console.log('🎵 탭으로 AudioContext unlock 시도', e.type);
+
+          // AudioContext unlock
+          if (this.audio) {
+              this.audio.unlockAudioContext();
+          }
+
+          this.hasUnlockedAudio = true;
+
+          // 탭해서 시작 UI 완전히 제거
+          if (this.tapToStartContainer) {
+              this.tapToStartContainer.style.opacity = '0';
+
+              // 페이드아웃 후 DOM에서 제거 (z-index 문제 해결)
+              setTimeout(() => {
+                  if (this.tapToStartContainer && this.tapToStartContainer.parentNode) {
+                      this.tapToStartContainer.parentNode.removeChild(this.tapToStartContainer);
+                      this.tapToStartContainer = null;
+                  }
+              }, 500);
+          }
+
+          // 0.5초 후 축구공 페이드인
+          setTimeout(() => {
+              this.showSoccerBall();
+          }, 500);
+      };
+
+      // 터치 이벤트
+      this.tapToStartContainer.addEventListener('touchstart', handleStart as EventListener);
+      this.tapToStartContainer.addEventListener('touchmove', handleMove as EventListener);
+      this.tapToStartContainer.addEventListener('touchend', handleEnd);
+
+      // 마우스 이벤트 (PC 테스트용)
+      this.tapToStartContainer.addEventListener('pointerdown', handleStart as EventListener);
+      this.tapToStartContainer.addEventListener('pointermove', handleMove as EventListener);
+      this.tapToStartContainer.addEventListener('pointerup', handleEnd);
   }
 
   /**
@@ -439,7 +513,7 @@ export class LoadingScreen {
   }
 
   /**
-   * 1단계 → 2단계 전환 (프로그레스 바 숨기고 축구공 표시)
+   * 1단계 → 2단계 전환 (프로그레스 바 숨기고 탭해서 시작 표시)
    */
   private transitionToStage2() {
     // 스테이지 1 컨테이너를 페이드아웃
@@ -447,23 +521,32 @@ export class LoadingScreen {
         this.stage1Container.style.opacity = '0';
     }
 
-    // 0.2초 후 축구공을 페이드인하고 BG 음악 시작
+    // 0.2초 후 "탭해서 시작" 페이드인
     setTimeout(() => {
-      if (this.soccerBallContainer) {
-        this.soccerBallContainer.style.opacity = '1';
+      if (this.tapToStartContainer) {
+        this.tapToStartContainer.style.opacity = '1';
       }
-
-      // 축구공 페이드인 완료 후 스와이프 허용
-      if (this.swipeCanvas) {
-        this.swipeCanvas.style.pointerEvents = 'auto';
-      }
-
-      // BG 음악 시작 (swipeCanvas 활성화 후에 호출하여 pointerdown 리스너가 준비된 상태에서 실행)
-      this.onLoadingComplete?.();
-
-      // 게임 진입 체크
-      this.checkAndEnterGame();
     }, 200);
+  }
+
+  /**
+   * 축구공 페이드인 및 스와이프 활성화
+   */
+  private showSoccerBall() {
+    if (this.soccerBallContainer) {
+      this.soccerBallContainer.style.opacity = '1';
+    }
+
+    // 축구공 페이드인 완료 후 스와이프 허용
+    if (this.swipeCanvas) {
+      this.swipeCanvas.style.pointerEvents = 'auto';
+    }
+
+    // BG 음악 시작
+    this.onLoadingComplete?.();
+
+    // 게임 진입 체크
+    this.checkAndEnterGame();
   }
 
   /**
