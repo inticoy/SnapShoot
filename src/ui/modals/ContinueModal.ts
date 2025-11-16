@@ -74,7 +74,7 @@ export class ContinueModal extends BaseModal {
 
     // Main View
     const mainView = document.createElement('div');
-    mainView.className = 'flex-1 flex flex-col items-center justify-between w-full max-w-lg pt-[2vh] pb-[8vh]';
+    mainView.className = 'flex-1 flex flex-col items-center justify-between w-full max-w-lg pt-2 pb-[8vh]';
 
     // 원형 버튼 + 진행바 (중앙)
     const adButtonWrapper = document.createElement('div');

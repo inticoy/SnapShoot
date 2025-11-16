@@ -231,7 +231,7 @@ export class PauseModal extends BaseModal {
    */
   private createPauseView(): HTMLDivElement {
     const view = document.createElement('div');
-    view.className = 'flex-1 flex flex-col items-center justify-between w-full max-w-lg pt-[2vh] pb-[8vh] gap-4';
+    view.className = 'flex-1 flex flex-col items-center justify-between w-full max-w-lg pt-2 pb-[8vh] gap-4';
 
     // 상단 콘텐츠 컨테이너
     const topContent = document.createElement('div');
@@ -239,8 +239,8 @@ export class PauseModal extends BaseModal {
 
     // 점수 영역 spacer (GameOverModal과 높이 맞추기 위해)
     const scoreSpacer = document.createElement('div');
-    scoreSpacer.className = 'flex flex-col items-center gap-2 py-4';
-    scoreSpacer.style.minHeight = 'clamp(80px, 15vw, 120px)'; // 점수 영역과 동일한 높이
+    scoreSpacer.className = 'flex flex-col items-center gap-2 py-2';
+    scoreSpacer.style.minHeight = 'clamp(40px, 8vw, 80px)'; // 점수 영역과 동일한 높이 (축소)
 
     // 정사각형 3개 버튼
     const topButtonsWrapper = document.createElement('div');
