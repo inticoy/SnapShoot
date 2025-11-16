@@ -262,6 +262,18 @@ export class LoadingScreen {
       // SwipeTracker 초기화
       this.swipeTracker = new SwipeTracker(this.swipeCanvas, 10);
 
+      // swipeCanvas에서도 AudioContext unlock 시도
+      // (로딩 중 터치하지 않고 축구공 스와이프로 시작하는 경우 대비)
+      const unlockAudioOnSwipe = () => {
+        if (!this.audioUnlocked && this.audio) {
+          console.log('🎵 스와이프 캔버스 터치 - AudioContext unlock 시도');
+          void this.audio.unlockAudioContext();
+          this.audioUnlocked = true;
+        }
+      };
+
+      this.swipeCanvas.addEventListener('pointerdown', unlockAudioOnSwipe, { once: true });
+
       // 스와이프 이벤트 감지
       this.swipeCanvas.addEventListener('pointerup', () => {
           this.handleSwipe();
