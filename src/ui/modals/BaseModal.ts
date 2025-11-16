@@ -272,7 +272,7 @@ export abstract class BaseModal {
         this.applyShareStyle(button, highlight);
         break;
       default:
-        this.applyDefaultStyle(button, highlight);
+        this.applyDefaultStyle(button);
         break;
     }
 
@@ -442,7 +442,7 @@ export abstract class BaseModal {
   /**
    * 기본 버튼 스타일
    */
-  private applyDefaultStyle(button: HTMLButtonElement, highlight: HTMLDivElement): void {
+  private applyDefaultStyle(button: HTMLButtonElement): void {
     button.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.08) 100%)';
     button.style.border = '1px solid rgba(255, 255, 255, 0.15)';
     button.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.2)';
