@@ -238,12 +238,14 @@ export class PauseModal extends BaseModal {
     const rankingButton = this.createSquareIconButton(
       'pause-ranking-btn',
       `<i class="ph-fill ph-ranking text-4xl text-white"></i>`,
-      '랭킹보기'
+      '랭킹보기',
+      'linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF8C00 100%)'
     );
     const customizeButton = this.createSquareIconButton(
       'pause-customize-btn',
       `<i class="ph-fill ph-palette text-4xl text-white"></i>`,
-      '테마 변경'
+      '테마 변경',
+      'linear-gradient(135deg, #FF6B6B 0%, #F06595 14%, #CC5DE8 28%, #845EF7 42%, #5C7CFA 56%, #339AF0 70%, #22B8CF 84%, #51CF66 100%)'
     );
     const settingsButton = this.createSquareIconButton(
       'pause-settings-btn',

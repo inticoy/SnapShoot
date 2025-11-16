@@ -186,21 +186,45 @@ export abstract class BaseModal {
   /**
    * 정사각형 아이콘 버튼 생성 헬퍼
    */
-  protected createSquareIconButton(id: string, iconSvg: string, label: string): HTMLButtonElement {
+  protected createSquareIconButton(id: string, iconSvg: string, label: string, gradient?: string): HTMLButtonElement {
     const button = document.createElement('button');
     button.id = id;
     button.type = 'button';
-    button.className = `
+
+    const baseClass = `
       flex-1 aspect-[0.85]
       flex flex-col items-center justify-center gap-3
       rounded-2xl
-      bg-white/12 border border-white/15
       shadow-[0_8px_20px_rgba(0,0,0,0.2)]
       transition-all duration-150
-      hover:bg-white/16 hover:border-white/25 hover:shadow-[0_10px_24px_rgba(0,0,0,0.24)]
-      active:bg-white/10 active:shadow-[0_2px_8px_rgba(0,0,0,0.15)]
       max-w-[120px] max-h-[140px]
     `.trim().replace(/\s+/g, ' ');
+
+    if (gradient) {
+      button.className = `${baseClass} border border-white/25`;
+      button.style.background = gradient;
+      button.style.setProperty('--hover-brightness', '1.1');
+      button.style.setProperty('--active-brightness', '0.9');
+      button.addEventListener('mouseenter', () => {
+        button.style.filter = 'brightness(1.1)';
+      });
+      button.addEventListener('mouseleave', () => {
+        button.style.filter = '';
+      });
+      button.addEventListener('pointerdown', () => {
+        button.style.filter = 'brightness(0.9)';
+      });
+      button.addEventListener('pointerup', () => {
+        button.style.filter = '';
+      });
+    } else {
+      button.className = `
+        ${baseClass}
+        bg-white/12 border border-white/15
+        hover:bg-white/16 hover:border-white/25 hover:shadow-[0_10px_24px_rgba(0,0,0,0.24)]
+        active:bg-white/10 active:shadow-[0_2px_8px_rgba(0,0,0,0.15)]
+      `.trim().replace(/\s+/g, ' ');
+    }
 
     button.innerHTML = `
       ${iconSvg}
