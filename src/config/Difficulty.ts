@@ -210,15 +210,15 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
       {
         blueprintId: 'keeperWall',
         transform: {
-          position: { z: -5.4 },
-          positionRange: { x: [-1.2, 1.2] }
+          position: { z: -5.4 }
         },
         behavior: {
           type: 'patrol',
           axis: 'x',
           range: [-1.2, 1.2],
           speed: 1.0,
-          waveform: 'sine'
+          waveform: 'sine',
+          startPhase: Math.random() * Math.PI * 2
         }
       }
     ]
@@ -230,15 +230,15 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
       {
         blueprintId: 'drum',
         transform: {
-          position: { y: 0.5, z: -5.0 },
-          positionRange: { x: [-1.1, 1.1] }
+          position: { y: 0.5, z: -5.0 }
         },
         behavior: {
           type: 'patrol',
           axis: 'x',
           range: [-1.1, 1.1],
           speed: 1.0,
-          waveform: 'sine'
+          waveform: 'sine',
+          startPhase: Math.random() * Math.PI * 2
         }
       }
     ]
@@ -251,14 +251,15 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
         blueprintId: 'whiteDrone',
         transform: {
           position: { z: -5.0 },
-          positionRange: { x: [-1.0, 1.0], y: [0.5, 1.5] }
+          positionRange: { y: [0.5, 1.5] }
         },
         behavior: {
           type: 'patrol',
           axis: 'x',
           range: [-1.0, 1.0],
           speed: 1.0,
-          waveform: 'sine'
+          waveform: 'sine',
+          startPhase: Math.random() * Math.PI * 2
         }
       },
     ]
@@ -271,7 +272,6 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
         blueprintId: 'van',
         transform: {
           position: { y: 1, z: -5.0 },
-          positionRange: { x: [-2.5, 2.5] },
           rotation: { y: -Math.PI / 2 }
         },
         behavior: {
@@ -279,7 +279,8 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           axis: 'x',
           range: [-2.5, 2.5],
           speed: 0.5,
-          waveform: 'sine'
+          waveform: 'sine',
+          startPhase: Math.random() * Math.PI * 2
         }
       },
     ]
@@ -292,14 +293,15 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
         blueprintId: 'shark',
         transform: {
           position: { z: -5.0 },
-          positionRange: { x: [-2.0, 2.0], y: [0.3, 1.6] }
+          positionRange: { y: [0.3, 1.6] }
         },
         behavior: {
           type: 'patrol',
           axis: 'x',
           range: [-2.0, 2.0],
           speed: 1.0,
-          waveform: 'sine'
+          waveform: 'sine',
+          startPhase: Math.random() * Math.PI * 2
         },
       },
     ]
@@ -312,15 +314,15 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
       {
         blueprintId: 'keeperWall',
         transform: {
-          position: { z: -5.4 },
-          positionRange: { x: [-1.2, 1.2] }
+          position: { z: -5.4 }
         },
         behavior: {
           type: 'patrol',
           axis: 'x',
           range: [-1.2, 1.2],
           speed: 2.0,
-          waveform: 'sine'
+          waveform: 'sine',
+          startPhase: Math.random() * Math.PI * 2
         }
       }
     ]
@@ -332,15 +334,15 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
       {
         blueprintId: 'drum',
         transform: {
-          position: { y: 0.5, z: -5.0 },
-          positionRange: { x: [-1.1, 1.1] }
+          position: { y: 0.5, z: -5.0 }
         },
         behavior: {
           type: 'patrol',
           axis: 'x',
           range: [-1.1, 1.1],
           speed: 2.0,
-          waveform: 'sine'
+          waveform: 'sine',
+          startPhase: Math.random() * Math.PI * 2
         }
       }
     ]
@@ -353,14 +355,15 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
         blueprintId: 'whiteDrone',
         transform: {
           position: { z: -5.0 },
-          positionRange: { x: [-1.0, 1.0], y: [0.5, 2.5] }
+          positionRange: { y: [0.5, 2.5] }
         },
         behavior: {
           type: 'patrol',
           axis: 'x',
           range: [-1.0, 1.0],
           speed: 2.0,
-          waveform: 'sine'
+          waveform: 'sine',
+          startPhase: Math.random() * Math.PI * 2
         }
       },
     ]
@@ -373,7 +376,6 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
         blueprintId: 'van',
         transform: {
           position: { y: 1, z: -5.0 },
-          positionRange: { x: [-2.5, 2.5] },
           rotation: { y: -Math.PI / 2 }
         },
         behavior: {
@@ -381,7 +383,8 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
           axis: 'x',
           range: [-2.5, 2.5],
           speed: 1.0,
-          waveform: 'sine'
+          waveform: 'sine',
+          startPhase: Math.random() * Math.PI * 2
         }
       },
     ]
@@ -394,14 +397,15 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
         blueprintId: 'shark',
         transform: {
           position: { z: -5.0 },
-          positionRange: { x: [-2.0, 2.0], y: [0.3, 1.6] }
+          positionRange: { y: [0.3, 1.6] }
         },
         behavior: {
           type: 'patrol',
           axis: 'x',
           range: [-2.0, 2.0],
           speed: 2.0,
-          waveform: 'sine'
+          waveform: 'sine',
+          startPhase: Math.random() * Math.PI * 2
         },
       },
     ]
@@ -413,15 +417,15 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
       {
         blueprintId: 'shark',
         transform: {
-          position: { z: -5.0 },
-          positionRange: { y: [0, 2.0] }
+          position: { z: -5.0 }
         },
         behavior: {
           type: 'patrol',
           axis: 'y',
           range: [0, 2.0],
           speed: 2.0,
-          waveform: 'sine'
+          waveform: 'sine',
+          startPhase: Math.random() * Math.PI * 2
         },
       },
     ]
@@ -434,8 +438,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
       {
         blueprintId: 'keeperWall',
         transform: {
-          position: { z: -5.4 },
-          positionRange: { x: [-1.5, 1.5] }
+          position: { z: -5.4 }
         },
         behavior: {
           type: 'spin',
@@ -445,7 +448,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
             axis: 'x',
             range: [-1.5, 1.5],
             speed: 2.0,
-            startPhase: 0
+            startPhase: Math.random() * Math.PI * 2
           },
           radius: 0,
           startAngle: 0,
@@ -461,7 +464,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
         blueprintId: 'drum',
         transform: {
           position: { z: -5.0 },
-          positionRange: { x: [-1.5, 1.5], y: [0.5, 1.5] }
+          positionRange: { y: [0.5, 1.5] }
         },
         behavior: {
           type: 'spin',
@@ -471,7 +474,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
             axis: 'x',
             range: [-1.5, 1.5],
             speed: 2.0,
-            startPhase: 0
+            startPhase: Math.random() * Math.PI * 2
           },
           radius: 0,
           startAngle: 0,
@@ -487,7 +490,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
         blueprintId: 'whiteDrone',
         transform: {
           position: { z: -5.0 },
-          positionRange: { x: [-1.5, 1.5], y: [0.5, 1.5] }
+          positionRange: { y: [0.5, 1.5] }
         },
         behavior: {
           type: 'spin',
@@ -497,7 +500,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
             axis: 'x',
             range: [-1.5, 1.5],
             speed: 2.0,
-            startPhase: 0
+            startPhase: Math.random() * Math.PI * 2
           },
           radius: 0,
           startAngle: 0,
@@ -513,7 +516,6 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
         blueprintId: 'van',
         transform: {
           position: { y: 1, z: -5.0 },
-          positionRange: { x: [-2.5, 2.5] },
           rotation: { y: -Math.PI / 2 }
         },
         behavior: {
@@ -524,7 +526,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
             axis: 'x',
             range: [-2.5, 2.5],
             speed: 1.0,
-            startPhase: 0
+            startPhase: Math.random() * Math.PI * 2
           },
           radius: 0,
           startAngle: 0,
@@ -540,7 +542,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
         blueprintId: 'shark',
         transform: {
           position: { z: -5.0 },
-          positionRange: { x: [-2.0, 2.0], y: [0.3, 1.6] }
+          positionRange: { y: [0.3, 1.6] }
         },
         behavior: {
           type: 'spin',
@@ -550,7 +552,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
             axis: 'x',
             range: [-2.0, 2.0],
             speed: 2.0,
-            startPhase: 0
+            startPhase: Math.random() * Math.PI * 2
           },
           radius: 0,
           startAngle: 0,
@@ -565,8 +567,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
       {
         blueprintId: 'shark',
         transform: {
-          position: { z: -5.0 },
-          positionRange: { y: [0, 2.0] }
+          position: { z: -5.0 }
         },
         behavior: {
           type: 'spin',
@@ -576,7 +577,7 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
             axis: 'y',
             range: [0, 2.0],
             speed: 2.0,
-            startPhase: 0
+            startPhase: Math.random() * Math.PI * 2
           },
           radius: 0,
           startAngle: 0,
