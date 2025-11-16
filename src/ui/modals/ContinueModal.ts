@@ -54,23 +54,9 @@ export class ContinueModal extends BaseModal {
    * 모달 컨텐츠 생성
    */
   private createModalContent(): void {
-    // BaseModal의 content를 완전히 새로 구성
-    this.content.className = `
-      absolute inset-0
-      flex items-center justify-center
-      px-6
-    `.trim().replace(/\s+/g, ' ');
-
-    const contentWrapper = document.createElement('div');
-    contentWrapper.className = `
-      flex-1 w-full max-w-lg
-      flex flex-col items-center justify-between
-      pt-4 pb-[8vh]
-    `.trim().replace(/\s+/g, ' ');
-
-    // 타이틀 (상단)
-    const titleWrapper = document.createElement('div');
-    titleWrapper.className = 'w-full flex items-center justify-center pointer-events-none py-4 pb-8';
+    // Title Container (GameOverModal과 동일한 구조)
+    const titleContainer = document.createElement('div');
+    titleContainer.className = 'w-full flex items-center justify-center pointer-events-none py-4 pb-8';
 
     const title = document.createElement('div');
     title.className = `
@@ -80,7 +66,15 @@ export class ContinueModal extends BaseModal {
     title.style.fontSize = 'clamp(24px, 5vw, 32px)';
     title.textContent = '게임을 계속하시겠습니까?';
 
-    titleWrapper.appendChild(title);
+    titleContainer.appendChild(title);
+
+    // Content Area (GameOverModal과 동일: flex-auto로 남은 공간 모두 차지)
+    const contentArea = document.createElement('div');
+    contentArea.className = 'flex-auto flex flex-col items-center w-full px-6';
+
+    // Main View
+    const mainView = document.createElement('div');
+    mainView.className = 'flex-1 flex flex-col items-center justify-between w-full max-w-lg pt-[2vh] pb-[8vh]';
 
     // 원형 버튼 + 진행바 (중앙)
     const adButtonWrapper = document.createElement('div');
@@ -96,11 +90,13 @@ export class ContinueModal extends BaseModal {
     this.giveUpButton = this.createGiveUpButton();
     bottomButtonsWrapper.appendChild(this.giveUpButton);
 
-    contentWrapper.appendChild(titleWrapper);
-    contentWrapper.appendChild(adButtonWrapper);
-    contentWrapper.appendChild(bottomButtonsWrapper);
+    mainView.appendChild(adButtonWrapper);
+    mainView.appendChild(bottomButtonsWrapper);
 
-    this.content.appendChild(contentWrapper);
+    contentArea.appendChild(mainView);
+
+    this.content.appendChild(titleContainer);
+    this.content.appendChild(contentArea);
   }
 
   /**
