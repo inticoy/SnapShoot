@@ -802,6 +802,16 @@ export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
     }
   },
 
+  /* 150: 10개 composition - 최고 난이도 */
+  {
+    threshold: 150,
+    name: '10-3-composition',
+    composition: {
+      count: 10,
+      from: ['1-3'],
+      unique: true
+    }
+  },
 
 ];
 
