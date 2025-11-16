@@ -14,103 +14,287 @@ export interface DifficultyLevelConfig {
 export const DIFFICULTY_LEVELS: DifficultyLevelConfig[] = [
   {
     threshold: 0,
-    name: 'Level 1',
+    name: '0-0-no-obstacles',
     obstacles: []
   },
   {
     threshold: 1,
-    name: 'Level 2',
+    name: '1-0-left-woodVertical',
     obstacles: [
       {
         blueprintId: 'woodVertical',
-        transform: { position: { x: 1.1, z: -5.4 } },
+        transform: { 
+          position: { x: -1.1, z: -5.4 }, 
+        },
         behavior: { type: 'static' }
       }
     ]
   },
   {
     threshold: 1,
-    name: 'Level 3',
+    name: '1-0-right-woodVertical',
+    obstacles: [
+      {
+        blueprintId: 'woodVertical',
+        transform: { 
+          position: { x: 1.1, z: -5.4 }, 
+        },
+        behavior: { type: 'static' }
+      }
+    ]
+  },
+  {
+    threshold: 1,
+    name: '1-0-top-woodHorizontal',
     obstacles: [
       {
         blueprintId: 'woodHorizontal',
-        transform: { position: { x: 0.0, y: 1.6, z: -5.35 } },
+        transform: { position: { y: 1.7, z: -5.4 } },
         behavior: { type: 'static' }
       }
     ]
   },
   {
     threshold: 1,
-    name: 'Level 4',
+    name: '1-0-top-woodHorizontal',
+    obstacles: [
+      {
+        blueprintId: 'woodHorizontal',
+        transform: { position: { y: 0.2, z: -5.4 } },
+        behavior: { type: 'static' }
+      }
+    ]
+  },
+  {
+    threshold: 1,
+    name: '1-0-left-drum',
+    obstacles: [
+      {
+        blueprintId: 'drum',
+        transform: { position: {x: -0.8, y: 0.5, z: -5.0 }},
+        behavior: {
+		  type: 'static',
+		}
+      },
+    ]
+  },
+  {
+    threshold: 1,
+    name: '1-0-right-drum',
+    obstacles: [
+      {
+        blueprintId: 'drum',
+        transform: { position: {x: 0.8, y: 0.5, z: -5.0 }},
+        behavior: {
+		  type: 'static',
+		}
+      },
+    ]
+  },
+  {
+    threshold: 1,
+    name: '1-0-left-keeperWall',
+    obstacles: [
+      {
+        blueprintId: 'keeperWall',
+        transform: { position: { x: -0.8, z: -5.2 } },
+        behavior: { type: 'static' }
+      }
+    ]
+  },
+  {
+    threshold: 1,
+    name: '1-0-right-keeperWall',
+    obstacles: [
+      {
+        blueprintId: 'keeperWall',
+        transform: { position: { x: 0.8, z: -5.2 } },
+        behavior: { type: 'static' }
+      }
+    ]
+  },
+  {
+    threshold: 5,
+    name: '1-0-middle-woodVertical',
+    obstacles: [
+      {
+        blueprintId: 'woodVertical',
+        transform: { position: { z: -5.4 } },
+        behavior: { type: 'static' }
+      }
+    ]
+  },
+  {
+    threshold: 5,
+    name: '1-0-middle-keeperWall',
     obstacles: [
       {
         blueprintId: 'keeperWall',
         transform: { position: { z: -5.2 } },
         behavior: { type: 'static' }
-      },
+      }
     ]
   },
   {
-    threshold: 1,
-    name: 'Level 5',
+    threshold: 5,
+    name: '1-0-middle-drum',
     obstacles: [
       {
-        blueprintId: 'shark',
-        transform: { position: {x: -0.5, y: 0.5, z: -5.0 }},
-        behavior: {
-		  type: 'patrol',
-		  axis: 'x',
-		  range: [-2.0, 2.0],
-		  speed: 1.0,
-		  waveform: 'pingpong'
-		}
-      },
+        blueprintId: 'drum',
+        transform: { position: { y: 0.5, z: -5.0 } },
+        behavior: { type: 'static' }
+      }
     ]
   },
   {
-    threshold: 1,
-    name: 'Level 6',
+    threshold: 6,
+    name: '1-0-diganonal-woodVertical',
+    obstacles: [
+      {
+        blueprintId: 'woodVertical',
+        transform: { 
+          position: { z: -5.4 },
+          positionRange : { x: [-1.5, 1.5] },
+          rotationRange : { z: [0, Math.PI] }
+          },
+        behavior: { type: 'static' }
+      }
+    ]
+  },
+  {
+    threshold: 6,
+    name: '1-0-diganonal-keeperWall',
+    obstacles: [
+      {
+        blueprintId: 'keeperWall',
+        transform: { 
+          position: { z: -5.4 },
+          positionRange : { x: [-1.5, 1.5] },
+          rotationRange : { z: [0, Math.PI] }
+          },
+        behavior: { type: 'static' }
+      }
+    ]
+  },
+  {
+    threshold: 6,
+    name: '1-0-diganonal-drum',
+    obstacles: [
+      {
+        blueprintId: 'drum',
+        transform: { 
+          position: { z: -5.0 },
+          positionRange : { x: [-1.5, 1.5], y: [0.5, 1.5] },
+          rotationRange : { z: [0, Math.PI] }
+          },
+        behavior: { type: 'static' }
+      }
+    ]
+  },
+  {
+    threshold: 10,
+    name: '1-1-patrol-keeperWall',
+    obstacles: [
+      {
+        blueprintId: 'keeperWall',
+        transform: { position: { z: -5.4 } },
+        behavior: { 
+          type: 'patrol',
+          axis: 'x',
+          range: [-1.2, 1.2],
+          speed: 1.5,
+          waveform: 'sine'
+        }
+      }
+    ]
+  },
+  {
+    threshold: 10,
+    name: '1-1-patrol-drum',
+    obstacles: [
+      {
+        blueprintId: 'drum',
+        transform: { position: { y: 0.5, z: -5.0} },
+        behavior: { 
+          type: 'patrol',
+          axis: 'x',
+          range: [-1.1, 1.1],
+          speed: 1.5,
+          waveform: 'sine'
+        }
+      }
+    ]
+  },
+  {
+    threshold: 10,
+    name: '1-1-patrol-whiteDrone',
     obstacles: [
       {
         blueprintId: 'whiteDrone',
-        transform: { position: {y: 1.5, z: -5.0 } },
+        transform: { position: { z: -5.0 }, positionRange: { y: [0.5, 1.5] },},
         behavior: {
-		  type: 'patrol',
-		  axis: 'x',
-		  range: [-1.0, 1.0],
-		  speed: 2.0,
-		  waveform: 'sine'
-		}
+          type: 'patrol',
+          axis: 'x',
+          range: [-1.0, 1.0],
+          speed: 1.5,
+          waveform: 'sine'
+        }
       },
     ]
   },
   {
-    threshold: 1,
-    name: 'Level 7',
+    threshold: 15,
+    name: '1-1-patrol-van',
     obstacles: [
       {
         blueprintId: 'van',
         transform: { position: {y: 1, z: -5.0 }, rotation: {y: - Math.PI /2} },
         behavior: {
-		  type: 'patrol',
-		  axis: 'x',
-		  range: [-2.0, 2.0],
-		  speed: 1.0,
-		  waveform: 'sine'
-		}
+          type: 'patrol',
+          axis: 'x',
+          range: [-2.5, 2.5],
+          speed: 1.5,
+          waveform: 'sine'
+        }
       },
     ]
   },
   {
-    threshold: 1,
-    name: 'Level 8',
+    threshold: 15,
+    name: '1-1-horizontal-shark',
     obstacles: [
       {
-        blueprintId: 'drum',
-        transform: { position: {x: -0.5, y: 0.5, z: -5.0 }},
+        blueprintId: 'shark',
+        transform: { 
+          position: { z: -5.0 }, 
+          positionRange: { y: [0.3, 1.6] },
+        },
         behavior: {
-		  type: 'static',
-		}
+          type: 'patrol',
+          axis: 'x',
+          range: [-2.0, 2.0],
+          speed: 1.5,
+          waveform: 'sine'
+        },
+      },
+    ]
+  },
+  {
+    threshold: 15,
+    name: '1-1-vertical-shark',
+    obstacles: [
+      {
+        blueprintId: 'shark',
+        transform: { 
+          position: { z: -5.0 }, 
+        },
+        behavior: {
+          type: 'patrol',
+          axis: 'y',
+          range: [0, 1.8],
+          speed: 1.5,
+          waveform: 'sine'
+        },
       },
     ]
   },
