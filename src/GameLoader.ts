@@ -162,8 +162,8 @@ export function loadGame(params?: { score?: number }) {
   game.setSfxEnabled(audioSettings.sfxEnabled);
   game.setMasterVolume(audioSettings.masterVolume);
 
-  // Pause Modal 생성
-  new PauseModal(uiContainer, {
+  // Pause Modal 생성 (백그라운드 복귀 시 사용하기 위해 변수로 저장)
+  const pauseModal = new PauseModal(uiContainer, {
     onToggleDebug: () => game.toggleDebugMode(),
     onSetMusicEnabled: (enabled: boolean) => game.setMusicEnabled(enabled),
     onSetSfxEnabled: (enabled: boolean) => game.setSfxEnabled(enabled),
@@ -171,6 +171,8 @@ export function loadGame(params?: { score?: number }) {
     onNextTheme: () => void game.switchToNextTheme(),
     onSelectTheme: (themeName: string) => void game.switchToTheme(themeName),
     onRestart: () => game.restartGame(),
+    onUnlockAudio: () => game.audio.unlockAudioContext(),
+    onResumeAudio: () => game.resumeAudio(),
     onRanking: async () => {
       // 게임센터가 비활성화되어 있으면 안내 메시지 표시
       if (!TOSS_CONFIG.GAME_CENTER_ENABLED) {
@@ -432,6 +434,23 @@ export function loadGame(params?: { score?: number }) {
   // 게임오버 시 Continue Modal 열기
   // TODO: game.ts에서 게임오버 이벤트 발생 시 continueModal.open() 호출
   // 예시: game.onGameOver(() => continueModal.open());
+
+  // Page Visibility API: 백그라운드 전환 시 사운드 자동 제어
+  // 앱인토스 가이드라인: "백그라운드로 전환 시 사운드가 계속 재생이 되지 않는지 확인"
+  const handleVisibilityChange = () => {
+    if (document.hidden) {
+      // 백그라운드로 전환 시 (랭킹보기, 고객센터, 다른 앱으로 이동 등)
+      console.log('🔇 백그라운드 전환: 사운드 일시정지');
+      game.pauseAudio();
+    } else {
+      // 포그라운드 복귀 시 -> PauseModal 자동 오픈
+      // (사용자가 "이어하기" 버튼을 터치하면 AudioContext unlock + 오디오 재개)
+      console.log('📱 포그라운드 복귀: PauseModal 자동 오픈');
+      pauseModal.openFromBackground();
+    }
+  };
+
+  document.addEventListener('visibilitychange', handleVisibilityChange);
 
   // 임시 테스트: 키보드 'C' 키로 Continue Modal 열기
   window.addEventListener('keydown', (e) => {

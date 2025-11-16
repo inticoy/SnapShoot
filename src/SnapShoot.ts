@@ -47,7 +47,7 @@ export class SnapShoot {
   private readonly ballController: BallController;
   private readonly goal: Goal;
   private readonly field: Field;
-  private readonly audio = new AudioManager();
+  public readonly audio = new AudioManager(); // public: unlockAudioContext() 접근 위해
 
   // Loggers
   private readonly gameLog = new CategoryLogger('Game');

@@ -21,6 +21,8 @@ export interface PauseModalCallbacks {
   onSelectTheme?: (themeName: string) => void;
   onRestart?: () => void;
   onRanking?: () => void;
+  onResumeAudio?: () => void; // 백그라운드 복귀 시 오디오 재개
+  onUnlockAudio?: () => void; // AudioContext unlock
 }
 
 type AudioSettingsState = {
@@ -48,6 +50,7 @@ export class PauseModal extends BaseModal {
   private backButton!: HTMLButtonElement;
   private callbacks: PauseModalCallbacks;
   private audioState: AudioSettingsState;
+  private fromBackground: boolean = false; // 백그라운드 복귀로 열렸는지 여부
 
   // UI 요소들
   private pauseView!: HTMLDivElement;
@@ -229,11 +232,20 @@ export class PauseModal extends BaseModal {
    */
   private createPauseView(): HTMLDivElement {
     const view = document.createElement('div');
-    view.className = 'flex-1 flex flex-col items-center justify-between w-full max-w-lg pt-[5vh] pb-[12vh]';
+    view.className = 'flex-1 flex flex-col items-center justify-between w-full max-w-lg pt-[2vh] pb-[8vh] gap-4';
 
-    // 상단 3개 버튼
+    // 상단 콘텐츠 컨테이너
+    const topContent = document.createElement('div');
+    topContent.className = 'flex flex-col items-center w-full gap-4';
+
+    // 점수 영역 spacer (GameOverModal과 높이 맞추기 위해)
+    const scoreSpacer = document.createElement('div');
+    scoreSpacer.className = 'flex flex-col items-center gap-2 py-4';
+    scoreSpacer.style.minHeight = 'clamp(80px, 15vw, 120px)'; // 점수 영역과 동일한 높이
+
+    // 정사각형 3개 버튼
     const topButtonsWrapper = document.createElement('div');
-    topButtonsWrapper.className = 'flex gap-4 w-full justify-center';
+    topButtonsWrapper.className = 'flex gap-4 w-full justify-center mb-8';
 
     const rankingButton = this.createSquareIconButton(
       'pause-ranking-btn',
@@ -302,14 +314,26 @@ export class PauseModal extends BaseModal {
     });
     continueButton.addEventListener('click', (e) => {
       e.stopPropagation();
-      console.log('이어하기 버튼 클릭');
+      console.log('이어하기 버튼 클릭, fromBackground:', this.fromBackground);
+
+      if (this.fromBackground) {
+        // 백그라운드에서 복귀한 경우: AudioContext unlock + 오디오 재개
+        console.log('🔓 백그라운드 복귀 모드: AudioContext unlock + 사운드 재개');
+        this.callbacks.onUnlockAudio?.();
+        this.callbacks.onResumeAudio?.();
+      }
+      // 일반 pause는 사운드가 계속 재생 중이므로 그냥 닫기만 하면 됨
+
       this.close();
     });
 
     bottomButtonsWrapper.appendChild(restartButton);
     bottomButtonsWrapper.appendChild(continueButton);
 
-    view.appendChild(topButtonsWrapper);
+    // 레이아웃 구성 (GameOverModal과 동일한 구조)
+    topContent.appendChild(scoreSpacer);
+    topContent.appendChild(topButtonsWrapper);
+    view.appendChild(topContent);
     view.appendChild(bottomButtonsWrapper);
 
     // 빈 공간 클릭 시 닫기
@@ -655,6 +679,16 @@ export class PauseModal extends BaseModal {
   }
 
   /**
+   * 백그라운드 복귀 시 모달 열기
+   * (사용자가 다른 앱에서 돌아왔을 때)
+   */
+  openFromBackground(): void {
+    console.log('📱 백그라운드에서 복귀: PauseModal 자동 오픈');
+    this.fromBackground = true;
+    this.open();
+  }
+
+  /**
    * 모달 열린 후 처리
    */
   protected onAfterOpen(): void {
@@ -668,6 +702,8 @@ export class PauseModal extends BaseModal {
   protected onAfterClose(): void {
     // Pause 뷰로 리셋
     this.viewManager.switchTo('pause');
+    // 백그라운드 플래그 리셋
+    this.fromBackground = false;
   }
 
   /**
