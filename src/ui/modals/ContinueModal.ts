@@ -209,44 +209,63 @@ export class ContinueModal extends BaseModal {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = `
-      px-12 py-3 rounded-full
+      px-16 py-4 rounded-full
       backdrop-blur-sm
-      text-white/80 font-semibold text-sm
+      text-white font-bold text-lg
       transition-all duration-150
       relative overflow-hidden
     `.trim().replace(/\s+/g, ' ');
 
-    // 스타일 적용
-    button.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%)';
-    button.style.border = '1px solid rgba(255, 255, 255, 0.25)';
-    button.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -2px 6px rgba(0, 0, 0, 0.15)';
+    // 스타일 적용 (GameOverModal의 다시하기 버튼과 동일)
+    button.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.15) 100%)';
+    button.style.border = '2px solid rgba(255, 255, 255, 0.4)';
+    button.style.boxShadow = '0 12px 32px rgba(0, 0, 0, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.5), inset 0 -3px 8px rgba(0, 0, 0, 0.2)';
 
     // 하이라이트 레이어
     const highlight = document.createElement('div');
     highlight.className = 'absolute inset-0 rounded-full pointer-events-none';
-    highlight.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 60%)';
+    highlight.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 60%)';
     highlight.style.zIndex = '1';
 
-    // 텍스트 컨테이너
-    const content = document.createElement('span');
-    content.className = 'relative z-[2]';
-    content.textContent = '포기하기';
+    // 아이콘과 텍스트 컨테이너 (GameOverModal 스타일)
+    const content = document.createElement('div');
+    content.className = 'relative z-[2] flex items-center gap-2';
+    content.innerHTML = `
+      <i class="ph-fill ph-x-circle text-2xl"></i>
+      <span>포기하기</span>
+    `;
 
     button.appendChild(highlight);
     button.appendChild(content);
 
-    // 클릭 효과
+    // 아이콘에 필터 적용
+    const icon = content.querySelector('i');
+    if (icon) {
+      (icon as HTMLElement).style.filter = 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3))';
+      (icon as HTMLElement).style.transition = 'transform 0.15s ease';
+    }
+
+    // 클릭 효과 (GameOverModal과 동일)
     button.addEventListener('pointerdown', () => {
       button.style.transform = 'scale(0.95)';
-      button.style.boxShadow = '0 2px 6px rgba(0, 0, 0, 0.2), inset 0 3px 10px rgba(0, 0, 0, 0.3)';
+      button.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.3), inset 0 4px 12px rgba(0, 0, 0, 0.4)';
+      if (icon) {
+        (icon as HTMLElement).style.transform = 'scale(0.85)';
+      }
     });
     button.addEventListener('pointerup', () => {
       button.style.transform = '';
-      button.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -2px 6px rgba(0, 0, 0, 0.15)';
+      button.style.boxShadow = '0 12px 32px rgba(0, 0, 0, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.5), inset 0 -3px 8px rgba(0, 0, 0, 0.2)';
+      if (icon) {
+        (icon as HTMLElement).style.transform = '';
+      }
     });
     button.addEventListener('pointercancel', () => {
       button.style.transform = '';
-      button.style.boxShadow = '0 6px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -2px 6px rgba(0, 0, 0, 0.15)';
+      button.style.boxShadow = '0 12px 32px rgba(0, 0, 0, 0.4), inset 0 2px 0 rgba(255, 255, 255, 0.5), inset 0 -3px 8px rgba(0, 0, 0, 0.2)';
+      if (icon) {
+        (icon as HTMLElement).style.transform = '';
+      }
     });
 
     this.addPressEffect(button);

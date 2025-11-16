@@ -236,7 +236,7 @@ export class PauseModal extends BaseModal {
 
     // 상단 3개 버튼
     const topButtonsWrapper = document.createElement('div');
-    topButtonsWrapper.className = 'flex gap-4 w-full justify-center';
+    topButtonsWrapper.className = 'flex gap-4 w-full justify-center mb-8';
 
     const rankingButton = this.createSquareIconButton(
       'pause-ranking-btn',
