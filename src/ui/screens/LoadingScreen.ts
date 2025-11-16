@@ -251,9 +251,9 @@ export class LoadingScreen {
     };
 
     // 로딩 화면 컨테이너 전체에 리스너 추가
-    // (로딩 바, 타이틀 등 어디를 터치해도 unlock)
-    this.container.addEventListener('pointerdown', unlockAudio, { once: true });
-    this.container.addEventListener('touchstart', unlockAudio, { once: true, passive: true });
+    // capture: true로 SwipeTracker의 preventDefault() 전에 실행
+    this.container.addEventListener('pointerdown', unlockAudio, { once: true, capture: true });
+    this.container.addEventListener('touchstart', unlockAudio, { once: true, passive: true, capture: true });
   }
 
   private setupSwipeListener(): void {
@@ -264,6 +264,7 @@ export class LoadingScreen {
 
       // swipeCanvas에서도 AudioContext unlock 시도
       // (로딩 중 터치하지 않고 축구공 스와이프로 시작하는 경우 대비)
+      // capture: true로 SwipeTracker의 preventDefault() 전에 실행
       const unlockAudioOnSwipe = () => {
         if (!this.audioUnlocked && this.audio) {
           console.log('🎵 스와이프 캔버스 터치 - AudioContext unlock 시도');
@@ -272,7 +273,7 @@ export class LoadingScreen {
         }
       };
 
-      this.swipeCanvas.addEventListener('pointerdown', unlockAudioOnSwipe, { once: true });
+      this.swipeCanvas.addEventListener('pointerdown', unlockAudioOnSwipe, { once: true, capture: true });
 
       // 스와이프 이벤트 감지
       this.swipeCanvas.addEventListener('pointerup', () => {
