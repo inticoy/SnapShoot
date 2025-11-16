@@ -445,15 +445,16 @@ export function loadGame(params?: { score?: number }) {
       needsAudioResume = false; // 명시적으로 일시정지한 경우 재개 플래그 해제
     } else {
       // 포그라운드 복귀 시 -> 재개 플래그만 설정 (모바일 Autoplay Policy 우회)
-      console.log('👆 포그라운드 복귀: 다음 터치 시 사운드 재개 예정');
+      console.log('👆 포그라운드 복귀: 다음 터치 시 사운드 재개 예정 (needsAudioResume=true)');
       needsAudioResume = true;
     }
   };
 
   // 사용자 제스처 시 오디오 재개 (모바일 브라우저 Autoplay Policy 준수)
-  const handleUserGesture = () => {
+  const handleUserGesture = (e: Event) => {
+    console.log(`👆 사용자 제스처 감지: ${e.type}, needsAudioResume=${needsAudioResume}`);
     if (needsAudioResume) {
-      console.log('🔊 사용자 제스처 감지: 사운드 재개');
+      console.log('🔊 사운드 재개 시도...');
       game.resumeAudio();
       needsAudioResume = false;
     }
@@ -461,7 +462,13 @@ export function loadGame(params?: { score?: number }) {
 
   document.addEventListener('visibilitychange', handleVisibilityChange);
 
-  // 다양한 사용자 제스처 감지 (모바일 + 데스크톱 대응)
+  // 사용자 제스처 감지: 게임 캔버스에 직접 등록 (이벤트 전파 문제 회피)
+  // 게임 플레이는 항상 캔버스를 터치하므로 이 방법이 가장 확실함
+  canvas.addEventListener('touchstart', handleUserGesture, { passive: true });
+  canvas.addEventListener('pointerdown', handleUserGesture);
+  canvas.addEventListener('click', handleUserGesture);
+
+  // document 레벨에도 등록 (UI 버튼 클릭 시에도 작동하도록)
   document.addEventListener('touchstart', handleUserGesture, { passive: true });
   document.addEventListener('pointerdown', handleUserGesture);
   document.addEventListener('click', handleUserGesture);
