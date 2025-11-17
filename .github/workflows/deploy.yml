@@ -34,6 +34,9 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build
+        env:
+          VITE_INTERSTITIAL_AD_ID: ${{ secrets.VITE_INTERSTITIAL_AD_ID || 'ait.live.c3342a482ba9472e' }}
+          VITE_ENVIRONMENT: production
         run: pnpm build
 
       - name: Upload artifact
