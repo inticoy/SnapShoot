@@ -80,6 +80,46 @@ export function loadGame(params?: { score?: number }) {
     return adId;
   }
 
+  /**
+   * 광고 사전 로드 (중복 호출 방지)
+   */
+  function preloadAd(): void {
+    // 이미 로드 중이거나 로드 완료된 경우 스킵
+    if (adLoadState === 'loading' || adLoadState === 'loaded') {
+      console.log('ℹ️ 광고 이미 로드됨, 스킵');
+      return;
+    }
+
+    if (!TOSS_CONFIG.ADS_ENABLED || !isTossAdAvailable()) {
+      adLoadState = 'idle';
+      return;
+    }
+
+    if (!GoogleAdMob.loadAppsInTossAdMob?.isSupported?.()) {
+      adLoadState = 'failed';
+      return;
+    }
+
+    adLoadState = 'loading';
+    console.log('📥 광고 사전 로드 시작...');
+
+    GoogleAdMob.loadAppsInTossAdMob({
+      options: {
+        adGroupId: getAdGroupId()
+      },
+      onEvent: (event) => {
+        if (event.type === 'loaded') {
+          console.log('✅ 광고 로드 완료');
+          adLoadState = 'loaded';
+        }
+      },
+      onError: (error) => {
+        console.error('❌ 광고 로드 실패:', error);
+        adLoadState = 'failed';
+      }
+    });
+  }
+
   // 환경 정보 로깅
   logEnvironmentInfo();
 
@@ -161,6 +201,9 @@ export function loadGame(params?: { score?: number }) {
       // 게임 시작 콜백 (로딩 화면 스와이프 후)
       isGameReady = true;
       console.log('✅ 게임 준비 완료 (로딩 화면 스와이프됨)');
+
+      // 🎯 첫 게임오버를 대비해 광고 미리 로드
+      preloadAd();
     }
   );
 
@@ -217,35 +260,8 @@ export function loadGame(params?: { score?: number }) {
     uiContainer,
     {
       onBeforeOpen: () => {
-        // 광고 사전 로드 시작
-        if (!TOSS_CONFIG.ADS_ENABLED || !isTossAdAvailable()) {
-          adLoadState = 'idle';
-          return;
-        }
-
-        if (!GoogleAdMob.loadAppsInTossAdMob?.isSupported?.()) {
-          adLoadState = 'failed';
-          return;
-        }
-
-        adLoadState = 'loading';
-        console.log('📥 광고 로드 시작...');
-
-        GoogleAdMob.loadAppsInTossAdMob({
-          options: {
-            adGroupId: getAdGroupId()
-          },
-          onEvent: (event) => {
-            if (event.type === 'loaded') {
-              console.log('✅ 광고 로드 완료');
-              adLoadState = 'loaded';
-            }
-          },
-          onError: (error) => {
-            console.error('❌ 광고 로드 실패:', error);
-            adLoadState = 'failed';
-          }
-        });
+        // 광고 사전 로드 (이미 로드됐으면 스킵)
+        preloadAd();
       },
       onContinue: async () => {
         // 1. 광고 기능 비활성화 체크
@@ -302,6 +318,9 @@ export function loadGame(params?: { score?: number }) {
                   }
 
                   adLoadState = 'idle'; // 상태 초기화
+
+                  // 🎯 다음 광고 미리 로드
+                  setTimeout(() => preloadAd(), 1000); // 1초 후 다음 광고 로드
                   break;
               }
             },
@@ -310,6 +329,9 @@ export function loadGame(params?: { score?: number }) {
               game.resumeAudio();
               game.continueGame();
               adLoadState = 'idle';
+
+              // 🎯 실패 후에도 다음 광고 미리 로드 시도
+              setTimeout(() => preloadAd(), 2000);
             }
           });
         } catch (error) {
@@ -317,6 +339,9 @@ export function loadGame(params?: { score?: number }) {
           game.resumeAudio();
           game.continueGame();
           adLoadState = 'idle';
+
+          // 🎯 오류 후에도 다음 광고 미리 로드 시도
+          setTimeout(() => preloadAd(), 2000);
         }
       },
       onGiveUp: () => {
