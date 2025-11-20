@@ -6,6 +6,7 @@ import { PauseModal } from './ui/modals/PauseModal';
 import { ContinueModal } from './ui/modals/ContinueModal';
 import { GameOverModal, getRandomShareMessage } from './ui/modals/GameOverModal';
 import { gameStateService } from './core/GameStateService';
+import { debugSettings } from './core/DebugSettings';
 import {
   openGameCenterLeaderboard,
   submitGameCenterLeaderBoardScore,
@@ -213,9 +214,11 @@ export function loadGame(params?: { score?: number }) {
   game.setSfxEnabled(audioSettings.sfxEnabled);
   game.setMasterVolume(audioSettings.masterVolume);
 
+  // 디버그 토글 함수를 전역에 등록 (콘솔에서 window.toggleDebug() 사용 가능)
+  debugSettings.registerDebugToggler((enabled) => game.toggleDebugMode(enabled));
+
   // Pause Modal 생성 (백그라운드 복귀 시 사용하기 위해 변수로 저장)
   const pauseModal = new PauseModal(uiContainer, {
-    onToggleDebug: () => game.toggleDebugMode(),
     onSetMusicEnabled: (enabled: boolean) => game.setMusicEnabled(enabled),
     onSetSfxEnabled: (enabled: boolean) => game.setSfxEnabled(enabled),
     onSetMasterVolume: (volume: number) => game.setMasterVolume(volume),

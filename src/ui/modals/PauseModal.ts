@@ -3,7 +3,7 @@
  *
  * 기능:
  * - 일시정지 화면 (이어하기, 재시작, 커스터마이즈, 랭킹, 설정 버튼)
- * - 설정 화면 (배경음악, 효과음, 마스터 볼륨, 디버그)
+ * - 설정 화면 (배경음악, 효과음, 마스터 볼륨)
  * - 테마 변경 화면 (볼 테마 선택)
  */
 
@@ -13,7 +13,6 @@ import { createCustomizeView } from '../views/CustomizeView';
 import { gameStateService } from '../../core/GameStateService';
 
 export interface PauseModalCallbacks {
-  onToggleDebug?: () => void;
   onSetMusicEnabled?: (enabled: boolean) => void;
   onSetSfxEnabled?: (enabled: boolean) => void;
   onSetMasterVolume?: (volume: number) => void;
@@ -356,34 +355,9 @@ export class PauseModal extends BaseModal {
     this.masterVolumeRange = masterSection.range;
     this.masterVolumeLabel = masterSection.label;
 
-    // 디버그 버튼
-    const debugSection = document.createElement('div');
-    debugSection.className = 'w-full py-3';
-
-    const debugToggleBtn = document.createElement('button');
-    debugToggleBtn.type = 'button';
-    debugToggleBtn.className = `
-      w-full px-4 py-3 rounded-xl
-      bg-white/12 border border-white/15
-      shadow-[0_4px_12px_rgba(0,0,0,0.2)]
-      text-white/90 font-medium text-left
-      transition-all duration-150
-      hover:bg-white/16 hover:border-white/25 hover:shadow-[0_6px_16px_rgba(0,0,0,0.24)]
-      active:bg-white/10 active:shadow-[0_1px_4px_rgba(0,0,0,0.15)]
-    `.trim().replace(/\s+/g, ' ');
-    debugToggleBtn.textContent = '디버그 모드 전환';
-
-    this.addPressEffect(debugToggleBtn);
-    debugToggleBtn.addEventListener('click', () => {
-      this.callbacks.onToggleDebug?.();
-    });
-
-    debugSection.appendChild(debugToggleBtn);
-
     view.appendChild(musicSection.element);
     view.appendChild(sfxSection.element);
     view.appendChild(masterSection.element);
-    view.appendChild(debugSection);
 
     // 오디오 설정 이벤트 리스너
     this.musicToggle.addEventListener('change', () => {
