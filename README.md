@@ -13,9 +13,9 @@
 
 ## Tech Stack
 
-- **Frontend Framework**: Vite + React
+- **Frontend Framework**: Next.js
 - **Language**: TypeScript
-- **Styling**: CSS
+- **Styling**: CSS + Tailwind CSS
 - **Integration**: Toss Game Center SDK, Toss AdMob
 - **Deployment**: GitHub Pages
 
@@ -42,7 +42,8 @@ cp .env.example .env
 
 Then configure the following variables:
 
-- `VITE_TOSS_AD_GROUP_ID`: Your Toss Ad Group ID from [Toss Apps Console](https://developers-apps-in-toss.toss.im/)
+- `NEXT_PUBLIC_INTERSTITIAL_AD_ID`: Your Toss Interstitial Ad Group ID from [Toss Apps Console](https://developers-apps-in-toss.toss.im/)
+- `NEXT_PUBLIC_ENVIRONMENT`: Environment setting (`development` or `production`)
 
 ## Development
 
