@@ -3,7 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   transpilePackages: [],
   output: 'export',
-  basePath: '/snapshoot',
+  basePath: process.env.NODE_ENV === 'production' ? '/snapshoot' : '',
   images: {
     unoptimized: true,
   },
