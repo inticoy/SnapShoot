@@ -68,7 +68,7 @@ export function loadGame(params?: { score?: number }) {
     const adId = typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_INTERSTITIAL_AD_ID : undefined;
 
     if (!adId) {
-      console.warn('⚠️ VITE_INTERSTITIAL_AD_ID 미설정, 테스트 ID 사용');
+      console.warn('⚠️ NEXT_PUBLIC_INTERSTITIAL_AD_ID 미설정, 테스트 ID 사용');
       return 'ait-ad-test-interstitial-id';
     }
 
