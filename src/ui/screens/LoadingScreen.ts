@@ -1,7 +1,7 @@
-import soccerBallUrl from '../../assets/soccer_ball.png?url';
-import logoUrl from '../../assets/Snapshoot!.png?url';
-import postUrl from '../../assets/post.svg?url';
-import gracAllUrl from '../../assets/GRAC_ALL.png?url';
+const soccerBallUrl = new URL('../../assets/soccer_ball.png', import.meta.url).toString();
+const logoUrl = new URL('../../assets/Snapshoot.png', import.meta.url).toString();
+const postUrl = new URL('../../assets/post.svg', import.meta.url).toString();
+const gracAllUrl = new URL('../../assets/GRAC_ALL.png', import.meta.url).toString();
 import { SwipeTracker } from '../../input/SwipeTracker';
 import type { AudioManager } from '../../infra/Audio';
 

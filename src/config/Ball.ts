@@ -1,25 +1,25 @@
 import { PHYSICS_LINEAR_DAMPING } from '../physics/Constants';
 import type { SoundKey } from './Audio';
-import basicBallModel from '../assets/ball/basic.glb?url';
-import moonBallModel from '../assets/ball/moon.glb?url';
-import basketBallModel from '../assets/ball/basketball.glb?url';
-import volleyBallModel from '../assets/ball/volleyball.glb?url';
-import earthBallModel from '../assets/ball/earth.glb?url';
-import worldCup2010BallModel from '../assets/ball/worldcup2010.glb?url';
-import beachBallModel from '../assets/ball/beachball.glb?url';
-import monsterBallModel from '../assets/ball/monsterball.glb?url';
-import sunBallModel from '../assets/ball/sun.glb?url';
 
-// PNG 이미지 import
-import basicBallImage from '../assets/ball/basic.png';
-import moonBallImage from '../assets/ball/moon.png';
-import basketballBallImage from '../assets/ball/basketball.png';
-import volleyballBallImage from '../assets/ball/volleyball.png';
-import earthBallImage from '../assets/ball/earth.png';
-import worldcup2010BallImage from '../assets/ball/worldcup2010.png';
-import beachballImage from '../assets/ball/beachball.png';
-import monsterballImage from '../assets/ball/monsterball.png';
-import sunBallImage from '../assets/ball/sun.png';
+const basicBallModel = new URL('../assets/ball/basic.glb', import.meta.url).toString();
+const moonBallModel = new URL('../assets/ball/moon.glb', import.meta.url).toString();
+const basketBallModel = new URL('../assets/ball/basketball.glb', import.meta.url).toString();
+const volleyBallModel = new URL('../assets/ball/volleyball.glb', import.meta.url).toString();
+const earthBallModel = new URL('../assets/ball/earth.glb', import.meta.url).toString();
+const worldCup2010BallModel = new URL('../assets/ball/worldcup2010.glb', import.meta.url).toString();
+const beachBallModel = new URL('../assets/ball/beachball.glb', import.meta.url).toString();
+const monsterBallModel = new URL('../assets/ball/monsterball.glb', import.meta.url).toString();
+const sunBallModel = new URL('../assets/ball/sun.glb', import.meta.url).toString();
+
+const basicBallImage = new URL('../assets/ball/basic.png', import.meta.url).toString();
+const moonBallImage = new URL('../assets/ball/moon.png', import.meta.url).toString();
+const basketballBallImage = new URL('../assets/ball/basketball.png', import.meta.url).toString();
+const volleyballBallImage = new URL('../assets/ball/volleyball.png', import.meta.url).toString();
+const earthBallImage = new URL('../assets/ball/earth.png', import.meta.url).toString();
+const worldcup2010BallImage = new URL('../assets/ball/worldcup2010.png', import.meta.url).toString();
+const beachballImage = new URL('../assets/ball/beachball.png', import.meta.url).toString();
+const monsterballImage = new URL('../assets/ball/monsterball.png', import.meta.url).toString();
+const sunBallImage = new URL('../assets/ball/sun.png', import.meta.url).toString();
 
 // 공통 물리 속성 (모든 테마에서 공유)
 export interface BallPhysicsConfig {

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { STANDS_CONFIG } from '../config/Stands';
-import crowdTextureUrl from '../assets/crowd/crowd.webp?url';
+
+const crowdTextureUrl = new URL('../assets/crowd/crowd.webp', import.meta.url).toString();
 
 export class Stands {
   private readonly mesh: THREE.Mesh;

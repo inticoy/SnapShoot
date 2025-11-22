@@ -1,11 +1,12 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
-import grassColorUrl from '../assets/grass/Grass005_1K-JPG_Color.jpeg?url';
 import { GOAL_DEPTH, GOAL_WIDTH } from '../config/Goal';
 import { FIELD_DIMENSIONS, FIELD_OFFSETS, FIELD_STRIPES, FIELD_TEXTURE_REPEAT } from '../config/Field';
 import { AD_BOARD_CONFIG } from '../config/AdBoard';
 import { AdBoard } from '../entities/AdBoard';
 import { Stands } from './Stands';
+
+const grassColorUrl = new URL('../assets/grass/Grass005_1K-JPG_Color.jpeg', import.meta.url).toString();
 
 export interface FieldOptions {
   goalDepth?: number;

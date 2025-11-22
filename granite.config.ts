@@ -13,12 +13,12 @@ export default defineConfig({
     host: 'localhost',
     port: 5173,
     commands: {
-      dev: 'vite',
-      build: 'tsc && vite build',
+      dev: 'next dev',
+      build: 'next build',
     },
   },
   permissions: [],
-  outdir: 'dist',
+  outdir: 'out',
   // 게임센터 설정 (토스 콘솔에서 먼저 게임센터를 활성화해야 함)
   gameCenter: {
     enabled: true // 토스 콘솔에서 게임센터 설정 후 true로 변경

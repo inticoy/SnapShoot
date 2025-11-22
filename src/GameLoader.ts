@@ -65,7 +65,7 @@ export function loadGame(params?: { score?: number }) {
    * 환경변수에서 광고 ID 가져오기
    */
   function getAdGroupId(): string {
-    const adId = import.meta.env.VITE_INTERSTITIAL_AD_ID;
+    const adId = typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_INTERSTITIAL_AD_ID : undefined;
 
     if (!adId) {
       console.warn('⚠️ VITE_INTERSTITIAL_AD_ID 미설정, 테스트 ID 사용');
@@ -384,7 +384,9 @@ export function loadGame(params?: { score?: number }) {
           // 3. 토스 앱 여부에 따라 다른 공유 링크 사용
           if (isTossApp()) {
             // 토스 앱: 딥링크 + 토스 공유 링크 사용
-            const environment = import.meta.env.VITE_ENVIRONMENT || 'development';
+      const environment = typeof process !== 'undefined'
+        ? process.env.NEXT_PUBLIC_ENVIRONMENT ?? 'development'
+        : 'development';
             const scheme = environment === 'production' ? 'intoss' : 'intoss-private';
             const deepLink = `${scheme}://snapshoot?score=${score}`;
 

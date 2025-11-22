@@ -1,10 +1,10 @@
-import keeperTextureUrl from '../assets/keeper/wall.png?url';
-import woodTextureUrl from '../assets/models/obstacle/wood.jpg?url';
-import whiteDroneTextureUrl from '../assets/models/obstacle/whiteDrone.png?url';
-import cokeModelUrl from '../assets/models/bottle/coke.glb?url';
-import drumModelUrl from '../assets/models/drum.glb?url';
-import vanModelUrl from '../assets/models/van.glb?url';
-import sharkModelUrl from '../assets/models/shark.glb?url';
+const keeperTextureUrl = new URL('../assets/keeper/wall.png', import.meta.url).toString();
+const woodTextureUrl = new URL('../assets/models/obstacle/wood.jpg', import.meta.url).toString();
+const whiteDroneTextureUrl = new URL('../assets/models/obstacle/whiteDrone.png', import.meta.url).toString();
+const cokeModelUrl = new URL('../assets/models/bottle/coke.glb', import.meta.url).toString();
+const drumModelUrl = new URL('../assets/models/drum.glb', import.meta.url).toString();
+const vanModelUrl = new URL('../assets/models/van.glb', import.meta.url).toString();
+const sharkModelUrl = new URL('../assets/models/shark.glb', import.meta.url).toString();
 
 
 export type Axis = 'x' | 'y' | 'z';

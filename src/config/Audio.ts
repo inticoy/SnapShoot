@@ -1,14 +1,14 @@
-import kickUrl from '../assets/audio/kick.mp3?url';
-import bounceUrl from '../assets/audio/bounce.mp3?url';
-import goalUrl from '../assets/audio/goal.mp3?url';
-import saveUrl from '../assets/audio/save.mp3?url';
-import postUrl from '../assets/audio/post.mp3?url';
-import resetUrl from '../assets/audio/reset.mp3?url';
-import netUrl from '../assets/audio/net.mp3?url';
-import cheerUrl from '../assets/audio/cheer.mp3?url';
-import recordUrl from '../assets/audio/record.mp3?url';
-import chantUrl from '../assets/audio/chant.mp3?url';
-import bg1Url from '../assets/audio/bg1.mp3?url';
+const kickUrl = new URL('../assets/audio/kick.mp3', import.meta.url).toString();
+const bounceUrl = new URL('../assets/audio/bounce.mp3', import.meta.url).toString();
+const goalUrl = new URL('../assets/audio/goal.mp3', import.meta.url).toString();
+const saveUrl = new URL('../assets/audio/save.mp3', import.meta.url).toString();
+const postUrl = new URL('../assets/audio/post.mp3', import.meta.url).toString();
+const resetUrl = new URL('../assets/audio/reset.mp3', import.meta.url).toString();
+const netUrl = new URL('../assets/audio/net.mp3', import.meta.url).toString();
+const cheerUrl = new URL('../assets/audio/cheer.mp3', import.meta.url).toString();
+const recordUrl = new URL('../assets/audio/record.mp3', import.meta.url).toString();
+const chantUrl = new URL('../assets/audio/chant.mp3', import.meta.url).toString();
+const bg1Url = new URL('../assets/audio/bg1.mp3', import.meta.url).toString();
 
 /**
  * 효과음 키 타입

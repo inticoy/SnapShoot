@@ -14,8 +14,9 @@ import type { LoadingScreen } from '../ui/screens/LoadingScreen';
 import { CategoryLogger } from '../utils/Logger';
 import { BALL_THEMES } from '../config/Ball';
 import { OBSTACLE_BLUEPRINTS } from '../config/Obstacles';
-import grassColorUrl from '../assets/grass/Grass005_1K-JPG_Color.jpeg?url';
-import crowdTextureUrl from '../assets/crowd/crowd.webp?url';
+
+const grassColorUrl = new URL('../assets/grass/Grass005_1K-JPG_Color.jpeg', import.meta.url).toString();
+const crowdTextureUrl = new URL('../assets/crowd/crowd.webp', import.meta.url).toString();
 
 /**
  * AssetLoader 생성자 매개변수

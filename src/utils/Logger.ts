@@ -16,7 +16,7 @@ export type LogLevel = typeof LogLevel[keyof typeof LogLevel];
  */
 class Logger {
   private static level: LogLevel = LogLevel.DEBUG;
-  private static enabled = import.meta.env.DEV; // 개발 모드에서만 기본 활성화
+  private static enabled = typeof process !== 'undefined' ? process.env.NODE_ENV !== 'production' : false;
 
   /**
    * 로그 레벨 설정
@@ -39,7 +39,7 @@ class Logger {
     return {
       level: this.level,
       enabled: this.enabled,
-      isDev: import.meta.env.DEV
+      isDev: typeof process !== 'undefined' ? process.env.NODE_ENV !== 'production' : false
     };
   }
 
