@@ -2,6 +2,9 @@
 
 import { useEffect, useMemo, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { TouchGuide } from '@/components/hud/TouchGuide';
+import { ShotInfoHud } from '@/components/hud/ShotInfoHud';
+import { ScoreDisplay } from '@/components/hud/ScoreDisplay';
 import { EventTest } from '@/components/test/EventTest';
 import { ModalTest } from '@/components/test/ModalTest';
 
@@ -36,7 +39,11 @@ export default function HomePage() {
     <div id="game-container">
       <div id="loading-screen" />
       <canvas id="game-canvas" />
-      <div id="ui" />
+      <div id="ui">
+        <TouchGuide />
+        <ShotInfoHud />
+        <ScoreDisplay />
+      </div>
       <EventTest />
       <ModalTest />
       <Suspense fallback={null}>

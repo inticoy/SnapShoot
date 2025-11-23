@@ -1,7 +1,6 @@
 import './style.css';
 import { SnapShoot } from './SnapShoot';
 import { ScoreDisplay } from './ui/hud/ScoreDisplay';
-import { TouchGuide } from './ui/hud/TouchGuide';
 import { PauseModal } from './ui/modals/PauseModal';
 import { ContinueModal } from './ui/modals/ContinueModal';
 import { GameOverModal, getRandomShareMessage } from './ui/modals/GameOverModal';
@@ -157,9 +156,7 @@ export function loadGame(params?: { score?: number }) {
       });
   }
 
-  // ScoreDisplay 생성 - BestScore 갱신 시 토스 랭킹에 제출
   const scoreDisplay = new ScoreDisplay(uiContainer, async (bestScore) => {
-    // 토스 앱 환경이고 게임센터가 활성화된 경우에만 랭킹에 제출
     if (TOSS_CONFIG.GAME_CENTER_ENABLED && isTossGameCenterAvailable()) {
       try {
         const result = await submitGameCenterLeaderBoardScore({ score: bestScore.toString() });
@@ -173,19 +170,15 @@ export function loadGame(params?: { score?: number }) {
       }
     }
   });
-  const touchGuide = new TouchGuide(uiContainer);
 
-  // Continue Modal과 GameOver Modal은 미리 선언 (상호 참조를 위해)
   let continueModal: ContinueModal;
   let gameOverModal: GameOverModal;
 
   const game = new SnapShoot(
     canvas,
     (score) => {
-      // 점수 업데이트 (BestScore 갱신 시 자동으로 토스 랭킹에 제출됨)
       scoreDisplay.update(score);
     },
-    (show) => touchGuide.show(show),
     scoreDisplay,
     (failCount: number) => {
       // 실패 시 콜백

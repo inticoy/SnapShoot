@@ -12,7 +12,6 @@ import { Goal } from './entities/goal/Goal';
 import { BALL_THEMES } from './config/Ball';
 import { GOAL_DEPTH } from './config/Goal';
 import type { DifficultyLevelConfig } from './config/Difficulty';
-// Debug button removed - now integrated into Settings modal
 import { ShotInfoHud } from './ui/hud/ShotInfoHud';
 import { AudioManager } from './infra/Audio';
 import { LoadingScreen } from './ui/screens/LoadingScreen';
@@ -32,10 +31,11 @@ import { CategoryLogger } from './utils/Logger';
 import { DebugVisualizer } from './debug/DebugVisualizer';
 import { DifficultyManager } from './core/DifficultyManager';
 import { AssetLoader } from './core/AssetLoader';
+import { gameEventBus } from '../app/lib/gameEventBus';
+import { gameStateService } from './core/GameStateService';
 
 export class SnapShoot {
   private readonly onScoreChange: (score: number) => void;
-  private readonly onShowTouchGuide: (show: boolean) => void;
   private readonly scoreDisplay: ScoreDisplay;
 
   private readonly renderer: THREE.WebGLRenderer;
@@ -108,13 +108,11 @@ export class SnapShoot {
   constructor(
     canvas: HTMLCanvasElement,
     onScoreChange: (score: number) => void,
-    onShowTouchGuide: (show: boolean) => void,
     scoreDisplay: ScoreDisplay,
     onGameFailed?: (failCount: number) => void,
     onGameStart?: () => void
   ) {
     this.onScoreChange = onScoreChange;
-    this.onShowTouchGuide = onShowTouchGuide;
     this.scoreDisplay = scoreDisplay;
     this.onGameFailed = onGameFailed;
 
@@ -224,14 +222,13 @@ export class SnapShoot {
     this.gameLog.info(`⚽ GOAL! Score: ${this.score + 1}`);
 
     this.score += 1;
-    this.onScoreChange(this.score);
+    this.updateScore(this.score);
 
-    // 점수가 올라갔으므로 터치 가이드 숨김
     if (this.touchGuideTimer !== null) {
       clearTimeout(this.touchGuideTimer);
       this.touchGuideTimer = null;
     }
-    this.onShowTouchGuide(false);
+    gameEventBus.emit({ type: 'SHOW_TOUCH_GUIDE', show: false });
     this.hasScored = true;
     this.difficultyManager.stopAllTracking();
     const tempBallPosition = this.ballController.copyPositionToTemp();
@@ -368,13 +365,26 @@ export class SnapShoot {
     this.audio.setMasterVolume(volume);
   }
 
+  private updateScore(newScore: number): void {
+    this.onScoreChange(newScore);
+    gameEventBus.emit({ type: 'SCORE_CHANGED', score: newScore });
+
+    const bestScore = gameStateService.getBestScore();
+    if (newScore > bestScore) {
+      gameStateService.setBestScore(newScore);
+      gameEventBus.emit({ type: 'BEST_SCORE_UPDATED', bestScore: newScore });
+    }
+  }
+
   public toggleDebugMode(enabled?: boolean): boolean {
     this.debugVisualizer.toggleDebugMode(enabled);
     this.debugVisualizer.applyDebugVisibility(this.difficultyManager.getObstacles());
     if (this.debugVisualizer.isDebugMode()) {
       this.debugVisualizer.updateColliderVisuals();
     }
-    return this.debugVisualizer.isDebugMode();
+    const isEnabled = this.debugVisualizer.isDebugMode();
+    gameEventBus.emit({ type: 'DEBUG_MODE_CHANGED', enabled: isEnabled });
+    return isEnabled;
   }
 
   /**
@@ -393,12 +403,9 @@ export class SnapShoot {
     this.shootingLog.debug(debugVelocity(shot.velocity));
     this.shootingLog.debug(debugAngularVelocity(shot.angularVelocity));
 
-    // INVALID가 아니면 실제 슈팅 실행
     if (shot.shotType !== ShotType.INVALID) {
-      // 타겟 마커 위치 업데이트
       this.debugVisualizer.setTargetMarkerPosition(shot.targetPosition);
 
-      // Shot Info HUD 업데이트 (디버그 모드일 때만 보임)
       this.shotInfoHud.update(
         shot.debugInfo.analysis,
         shot.debugInfo.shotParams,
@@ -406,7 +413,28 @@ export class SnapShoot {
         shot.angularVelocity
       );
 
-      // 🔍 궤적 추적 시작
+      const speed = Math.sqrt(
+        shot.velocity.x ** 2 +
+        shot.velocity.y ** 2 +
+        shot.velocity.z ** 2
+      );
+
+      gameEventBus.emit({
+        type: 'SHOT_INFO_UPDATED',
+        data: {
+          type: shot.debugInfo.analysis.type,
+          power: shot.debugInfo.analysis.power,
+          curveAmount: shot.debugInfo.analysis.curveAmount,
+          curveDirection: shot.debugInfo.analysis.curveDirection,
+          heightFactor: shot.debugInfo.analysis.heightFactor,
+          speed,
+          targetPosition: {
+            x: shot.debugInfo.shotParams.targetPosition.x,
+            y: shot.debugInfo.shotParams.targetPosition.y
+          }
+        }
+      });
+
       this.isTrackingBall = true;
       this.trackingStartTime = performance.now();
 
@@ -436,15 +464,13 @@ export class SnapShoot {
     // 커브 힘 시스템 시작
     this.curveForceSystem.startCurveShot(analysis);
 
-    // 골키퍼 추적 시작
     this.difficultyManager.getObstacles().forEach((obstacle) => obstacle.startTracking());
 
-    // 터치 가이드 타이머 취소 및 숨김
     if (this.touchGuideTimer !== null) {
       clearTimeout(this.touchGuideTimer);
       this.touchGuideTimer = null;
     }
-    this.onShowTouchGuide(false);
+    gameEventBus.emit({ type: 'SHOW_TOUCH_GUIDE', show: false });
 
     // 2.5초 후 리셋 타이머 설정
     this.shotResetTimer = window.setTimeout(() => {
@@ -478,10 +504,9 @@ export class SnapShoot {
         this.onGameFailed(this.failCount);
       }
 
-      // 실패 콜백이 없거나 2번째 실패면 점수 초기화
       if (!this.onGameFailed || this.failCount >= GAME_CONFIG.gameOver.maxFailsAllowed) {
         this.score = 0;
-        this.onScoreChange(this.score);
+        this.updateScore(this.score);
         this.scoreDisplay.resetNewRecordFlag();
       }
 
@@ -523,14 +548,12 @@ export class SnapShoot {
     this.difficultyManager.updateDifficulty(this.score, true);
     this.difficultyManager.setColliderDebugVisible(this.debugVisualizer.isDebugMode());
 
-    // 광고판 효과: 깜빡임 중지 + 기본 광고로 복원
     this.field.adBoard.stopBlinking();
     this.field.adBoard.switchAdSet('default');
 
-    // 터치 가이드 타이머 시작 (점수가 0일 때만, 1초 후 표시)
     if (this.score === 0) {
       this.touchGuideTimer = window.setTimeout(() => {
-        this.onShowTouchGuide(true);
+        gameEventBus.emit({ type: 'SHOW_TOUCH_GUIDE', show: true });
       }, GAME_CONFIG.timing.touchGuideDelayMs);
     }
   }
@@ -576,20 +599,15 @@ export class SnapShoot {
   public restartGame(): void {
     console.log('🔄 게임 재시작');
 
-    // 진행 중인 샷 타이머 정리
     if (this.shotResetTimer !== null) {
       clearTimeout(this.shotResetTimer);
       this.shotResetTimer = null;
     }
 
-    // 점수 초기화
     this.score = 0;
-    this.onScoreChange(this.score);
-
-    // 최고 기록 플래그 리셋
+    this.updateScore(this.score);
     this.scoreDisplay.resetNewRecordFlag();
 
-    // 실패 카운트 리셋
     this.failCount = 0;
     this.savedGameState = undefined;
 
@@ -615,14 +633,10 @@ export class SnapShoot {
   public gameOver(): void {
     console.log('💀 게임오버');
 
-    // 점수 초기화
     this.score = 0;
-    this.onScoreChange(this.score);
-
-    // 최고 기록 플래그 리셋
+    this.updateScore(this.score);
     this.scoreDisplay.resetNewRecordFlag();
 
-    // 실패 카운트 리셋
     this.failCount = 0;
     this.savedGameState = undefined;
 
