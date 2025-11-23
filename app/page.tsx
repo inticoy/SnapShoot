@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { EventTest } from '@/components/test/EventTest';
+import { ModalTest } from '@/components/test/ModalTest';
 
 function GameContent() {
   const searchParams = useSearchParams();
@@ -35,6 +37,8 @@ export default function HomePage() {
       <div id="loading-screen" />
       <canvas id="game-canvas" />
       <div id="ui" />
+      <EventTest />
+      <ModalTest />
       <Suspense fallback={null}>
         <GameContent />
       </Suspense>
