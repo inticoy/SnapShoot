@@ -7,14 +7,7 @@ import { ContinueModal } from './ui/modals/ContinueModal';
 import { GameOverModal, getRandomShareMessage } from './ui/modals/GameOverModal';
 import { gameStateService } from './core/GameStateService';
 import { debugSettings } from './core/DebugSettings';
-import {
-  openGameCenterLeaderboard,
-  submitGameCenterLeaderBoardScore,
-  getUserKeyForGame,
-  GoogleAdMob,
-  getTossShareLink,
-  share
-} from '@apps-in-toss/web-framework';
+import { loadTossIntegration } from './utils/TossIntegration';
 import { isTossApp, isTossGameCenterAvailable, isTossAdAvailable, logEnvironmentInfo } from './utils/TossEnvironment';
 import { TOSS_CONFIG } from './config/TossConfig';
 import { showToast } from './ui/utils/Toast';
@@ -41,7 +34,18 @@ function showFriendScoreNotification(friendScore: number): void {
   }, 3000);
 }
 
-export function loadGame(params?: { score?: number }) {
+export async function loadGame(params?: { score?: number }) {
+  // Toss 통합 로드
+  const toss = await loadTossIntegration();
+  const {
+    openGameCenterLeaderboard,
+    submitGameCenterLeaderBoardScore,
+    getUserKeyForGame,
+    GoogleAdMob,
+    getTossShareLink,
+    share
+  } = toss;
+
   const canvas = document.getElementById('game-canvas') as HTMLCanvasElement | null;
   const uiContainer = document.getElementById('ui') as HTMLDivElement | null;
 
@@ -108,13 +112,13 @@ export function loadGame(params?: { score?: number }) {
       options: {
         adGroupId: getAdGroupId()
       },
-      onEvent: (event) => {
+      onEvent: (event: any) => {
         if (event.type === 'loaded') {
           console.log('✅ 광고 로드 완료');
           adLoadState = 'loaded';
         }
       },
-      onError: (error) => {
+      onError: (error: any) => {
         console.error('❌ 광고 로드 실패:', error);
         adLoadState = 'failed';
       }
@@ -296,7 +300,7 @@ export function loadGame(params?: { score?: number }) {
             options: {
               adGroupId: getAdGroupId()
             },
-            onEvent: (event) => {
+            onEvent: (event: any) => {
               switch (event.type) {
                 case 'show':
                   console.log('🎬 광고 재생 시작');
@@ -327,7 +331,7 @@ export function loadGame(params?: { score?: number }) {
                   break;
               }
             },
-            onError: (error) => {
+            onError: (error: any) => {
               console.error('❌ 광고 표시 실패:', error);
               game.resumeAudio();
               game.continueGame();

@@ -7,6 +7,15 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  webpack: (config, { isServer }) => {
+    // @apps-in-toss/web-framework를 선택적 의존성으로 처리
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      '@apps-in-toss/web-framework': false,
+    };
+
+    return config;
+  },
 };
 
 export default nextConfig;

@@ -4,12 +4,10 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "granite dev",
-    "build": "granite build",
-    "deploy": "ait deploy",
-    "next:dev": "next dev",
-    "next:build": "next build",
-    "next:start": "next start"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "devDependencies": {
     "@types/matter-js": "^0.19.6",
@@ -23,11 +21,9 @@
     "typescript": "~5.9.3"
   },
   "dependencies": {
-    "@apps-in-toss/web-framework": "^1.4.3",
     "cannon-es": "^0.20.0",
     "matter-js": "^0.20.0",
     "next": "^15.1.6",
-    "pnpm": "^10.18.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "three": "^0.180.0"
