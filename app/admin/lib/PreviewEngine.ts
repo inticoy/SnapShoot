@@ -1,9 +1,5 @@
-import './style.css';
-
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-
-import { DIFFICULTY_LEVELS, composeObstacles, type DifficultyLevelConfig } from '../config/Difficulty';
 import {
   OBSTACLE_BLUEPRINTS,
   type ObstacleBlueprint,
@@ -19,13 +15,13 @@ import {
   type Vector3Range,
   type Axis,
   type ObstacleMaterialConfig
-} from '../config/Obstacles';
-import { GOAL_DEPTH, GOAL_HEIGHT, GOAL_WIDTH, POST_RADIUS } from '../config/Goal';
-import { GOAL_NET_CONFIG } from '../config/Net';
+} from '../../../src/config/Obstacles';
+import { GOAL_DEPTH, GOAL_HEIGHT, GOAL_WIDTH, POST_RADIUS } from '../../../src/config/Goal';
+import { GOAL_NET_CONFIG } from '../../../src/config/Net';
+import type { DifficultyLevelConfig } from '../../../src/config/Difficulty';
 
 const GOAL_Z = GOAL_DEPTH;
 const GOAL_REAR_Z = GOAL_DEPTH - GOAL_NET_CONFIG.layout.depthBottom;
-const CARD_ASPECT = 16 / 10;
 
 function randomInRange(range?: RangeValue): number {
   if (!range) return 0;
@@ -379,7 +375,7 @@ class PreviewObstacle {
   }
 }
 
-class LevelPreview {
+export class LevelPreviewEngine {
   private readonly container: HTMLElement;
   private readonly obstacleConfigs: ObstacleInstanceConfig[];
   private readonly renderer: THREE.WebGLRenderer;
@@ -400,7 +396,7 @@ class LevelPreview {
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.renderer.setPixelRatio(window.devicePixelRatio);
-    this.renderer.domElement.classList.add('preview-canvas');
+    this.renderer.domElement.classList.add('w-full', 'aspect-video', 'rounded-xl');
     this.container.appendChild(this.renderer.domElement);
 
     this.camera = new THREE.PerspectiveCamera(55, 1, 0.1, 50);
@@ -551,7 +547,7 @@ class LevelPreview {
 
   resize() {
     const width = this.container.clientWidth;
-    const height = width / CARD_ASPECT;
+    const height = width / (16 / 10);
     this.renderer.setSize(width, height, false);
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
@@ -569,423 +565,3 @@ class LevelPreview {
     this.renderer.render(this.scene, this.camera);
   }
 }
-
-function createObstacleSummary(instance: ObstacleInstanceConfig): string {
-  const parts = [instance.blueprintId];
-  if (instance.behavior) {
-    parts.push(`• ${instance.behavior.type}`);
-  } else {
-    parts.push('• static');
-  }
-  return parts.join(' ');
-}
-
-function ensureRoot(): HTMLElement {
-  let root = document.getElementById('admin-app');
-  if (!root) {
-    root = document.createElement('div');
-    root.id = 'admin-app';
-    document.body.appendChild(root);
-  }
-  return root;
-}
-
-/**
- * Extract level prefix from name (e.g., "1-0-left-woodVertical" → "1-0")
- */
-function getLevelPrefix(name: string): string {
-  // Match "0" or patterns like "1-0", "1-1", "1-2", etc.
-  const match = name.match(/^(\d+(?:-\d+)?)/);
-  return match ? match[1] : '0';
-}
-
-/**
- * Group levels by their prefix
- */
-function groupLevelsByPrefix(levels: DifficultyLevelConfig[]): Map<string, DifficultyLevelConfig[]> {
-  const groups = new Map<string, DifficultyLevelConfig[]>();
-
-  levels.forEach(level => {
-    const prefix = getLevelPrefix(level.name);
-    if (!groups.has(prefix)) {
-      groups.set(prefix, []);
-    }
-    groups.get(prefix)!.push(level);
-  });
-
-  return groups;
-}
-
-/**
- * Render index page with group buttons
- */
-function renderIndexPage(groups: Map<string, DifficultyLevelConfig[]>) {
-  const root = ensureRoot();
-  root.innerHTML = '';
-
-  const header = document.createElement('div');
-  header.className = 'page-header';
-  header.innerHTML = `
-    <h1>Difficulty Preview Admin</h1>
-    <p>난이도 그룹별로 장애물 배치를 확인하세요.</p>
-  `;
-  root.appendChild(header);
-
-  const groupList = document.createElement('div');
-  groupList.className = 'group-list';
-  groupList.style.cssText = `
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1rem;
-    padding: 2rem;
-  `;
-
-  // Sort groups by prefix
-  const sortedGroups = Array.from(groups.entries()).sort((a, b) => {
-    const parsePrefix = (p: string) => {
-      const parts = p.split('-').map(n => parseInt(n, 10));
-      return parts;
-    };
-    const aNum = parsePrefix(a[0]);
-    const bNum = parsePrefix(b[0]);
-
-    for (let i = 0; i < Math.max(aNum.length, bNum.length); i++) {
-      const aPart = aNum[i] || 0;
-      const bPart = bNum[i] || 0;
-      if (aPart !== bPart) return aPart - bPart;
-    }
-    return 0;
-  });
-
-  sortedGroups.forEach(([prefix, levels]) => {
-    const card = document.createElement('div');
-    card.className = 'group-card';
-    card.style.cssText = `
-      background: #0a1929;
-      border: 1px solid #1e3a5f;
-      border-radius: 8px;
-      padding: 1.5rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    `;
-    card.onmouseenter = () => {
-      card.style.borderColor = '#3b82f6';
-      card.style.transform = 'translateY(-2px)';
-    };
-    card.onmouseleave = () => {
-      card.style.borderColor = '#1e3a5f';
-      card.style.transform = 'translateY(0)';
-    };
-    card.onclick = () => {
-      window.location.hash = `/${prefix}`;
-    };
-
-    const title = document.createElement('h2');
-    title.textContent = `Level ${prefix}`;
-    title.style.cssText = `
-      margin: 0 0 0.5rem 0;
-      color: #e8f0ff;
-      font-size: 1.5rem;
-    `;
-
-    const count = document.createElement('p');
-    count.textContent = `${levels.length} variant${levels.length > 1 ? 's' : ''}`;
-    count.style.cssText = `
-      margin: 0;
-      color: #64b5f6;
-      font-size: 0.875rem;
-    `;
-
-    const threshold = document.createElement('p');
-    threshold.textContent = `Threshold: ${levels[0].threshold}`;
-    threshold.style.cssText = `
-      margin: 0.5rem 0 0 0;
-      color: #90caf9;
-      font-size: 0.75rem;
-    `;
-
-    card.appendChild(title);
-    card.appendChild(count);
-    card.appendChild(threshold);
-    groupList.appendChild(card);
-  });
-
-  root.appendChild(groupList);
-}
-
-/**
- * Render composition level with 3 samples and refresh button
- */
-function renderCompositionLevel(
-  level: DifficultyLevelConfig,
-  grid: HTMLElement,
-  previews: LevelPreview[]
-) {
-  const card = document.createElement('section');
-  card.className = 'level-card composition-card';
-  card.style.cssText = `
-    grid-column: 1 / -1;
-    background: linear-gradient(135deg, #0a1929 0%, #1a2332 100%);
-    border: 2px solid #2196f3;
-  `;
-
-  const header = document.createElement('div');
-  header.style.cssText = `
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-  `;
-
-  const titleSection = document.createElement('div');
-  const title = document.createElement('h2');
-  title.textContent = level.name;
-  title.style.color = '#64b5f6';
-  titleSection.appendChild(title);
-
-  const meta = document.createElement('div');
-  meta.className = 'level-meta';
-  meta.innerHTML = `
-    <span>Threshold · ${level.threshold}</span>
-    <span>Composition · ${level.composition!.count} from [${level.composition!.from.join(', ')}]</span>
-    <span>Unique · ${level.composition!.unique ?? true}</span>
-  `;
-  titleSection.appendChild(meta);
-  header.appendChild(titleSection);
-
-  const refreshButton = document.createElement('button');
-  refreshButton.textContent = '🔄 Refresh Samples';
-  refreshButton.style.cssText = `
-    padding: 0.75rem 1.5rem;
-    background: #2196f3;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    font-weight: 500;
-    transition: background 0.2s;
-  `;
-  refreshButton.onmouseenter = () => {
-    refreshButton.style.background = '#1976d2';
-  };
-  refreshButton.onmouseleave = () => {
-    refreshButton.style.background = '#2196f3';
-  };
-  header.appendChild(refreshButton);
-
-  card.appendChild(header);
-
-  const samplesContainer = document.createElement('div');
-  samplesContainer.style.cssText = `
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-  `;
-  card.appendChild(samplesContainer);
-
-  grid.appendChild(card);
-
-  let currentSamplePreviews: LevelPreview[] = [];
-
-  function renderSamples() {
-    // Dispose old previews
-    currentSamplePreviews.forEach(preview => {
-      const index = previews.indexOf(preview);
-      if (index !== -1) {
-        previews.splice(index, 1);
-      }
-      preview.dispose();
-    });
-    currentSamplePreviews = [];
-    samplesContainer.innerHTML = '';
-
-    // Generate 3 new samples
-    for (let i = 0; i < 3; i++) {
-      const sampleObstacles = composeObstacles(level.composition!);
-
-      const sampleCard = document.createElement('div');
-      sampleCard.style.cssText = `
-        background: #0a1929;
-        border: 1px solid #1e3a5f;
-        border-radius: 8px;
-        padding: 1rem;
-      `;
-
-      const sampleTitle = document.createElement('h3');
-      sampleTitle.textContent = `Sample ${i + 1}`;
-      sampleTitle.style.cssText = `
-        margin: 0 0 0.5rem 0;
-        color: #e8f0ff;
-        font-size: 1rem;
-      `;
-      sampleCard.appendChild(sampleTitle);
-
-      const previewContainer = document.createElement('div');
-      previewContainer.style.width = '100%';
-      sampleCard.appendChild(previewContainer);
-
-      const obstacleList = document.createElement('div');
-      obstacleList.className = 'obstacle-list';
-      obstacleList.style.marginTop = '0.5rem';
-
-      if (sampleObstacles.length === 0) {
-        const empty = document.createElement('div');
-        empty.className = 'empty-message';
-        empty.textContent = '장애물 없음';
-        obstacleList.appendChild(empty);
-      } else {
-        sampleObstacles.forEach((instance) => {
-          const pill = document.createElement('div');
-          pill.className = 'obstacle-pill';
-          pill.textContent = createObstacleSummary(instance);
-          obstacleList.appendChild(pill);
-        });
-      }
-
-      sampleCard.appendChild(obstacleList);
-      samplesContainer.appendChild(sampleCard);
-
-      const preview = new LevelPreview(previewContainer, level, sampleObstacles);
-      previews.push(preview);
-      currentSamplePreviews.push(preview);
-    }
-  }
-
-  refreshButton.onclick = renderSamples;
-  renderSamples(); // Initial render
-}
-
-/**
- * Render specific level group page
- */
-function renderLevelGroupPage(groupId: string, levels: DifficultyLevelConfig[]) {
-  const root = ensureRoot();
-  root.innerHTML = '';
-
-  const header = document.createElement('div');
-  header.className = 'page-header';
-  header.innerHTML = `
-    <h1>Level ${groupId}</h1>
-    <p>${levels.length}개의 난이도 변형이 있습니다.</p>
-  `;
-  root.appendChild(header);
-
-  const backButton = document.createElement('button');
-  backButton.textContent = '← 목록으로';
-  backButton.style.cssText = `
-    margin: 0 2rem 1rem 2rem;
-    padding: 0.5rem 1rem;
-    background: #1e3a5f;
-    color: #e8f0ff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.875rem;
-  `;
-  backButton.onmouseenter = () => {
-    backButton.style.background = '#2c5282';
-  };
-  backButton.onmouseleave = () => {
-    backButton.style.background = '#1e3a5f';
-  };
-  backButton.onclick = () => {
-    window.location.hash = '/';
-  };
-  root.appendChild(backButton);
-
-  const grid = document.createElement('div');
-  grid.className = 'levels-grid';
-  root.appendChild(grid);
-
-  const previews: LevelPreview[] = [];
-
-  levels.forEach((level) => {
-    if (level.composition) {
-      // Composition level: render 3 samples with refresh button
-      renderCompositionLevel(level, grid, previews);
-    } else {
-      // Normal level: render single preview
-      const card = document.createElement('section');
-      card.className = 'level-card';
-
-      const title = document.createElement('h2');
-      title.textContent = level.name;
-      card.appendChild(title);
-
-      const meta = document.createElement('div');
-      meta.className = 'level-meta';
-      const obstacleCount = level.obstacles?.length ?? 0;
-      meta.innerHTML = `
-        <span>Threshold · ${level.threshold}</span>
-        <span>Obstacles · ${obstacleCount}</span>
-      `;
-      card.appendChild(meta);
-
-      const previewContainer = document.createElement('div');
-      previewContainer.style.width = '100%';
-      card.appendChild(previewContainer);
-
-      const obstacleList = document.createElement('div');
-      obstacleList.className = 'obstacle-list';
-
-      if (obstacleCount === 0) {
-        const empty = document.createElement('div');
-        empty.className = 'empty-message';
-        empty.textContent = '배치된 장애물이 없습니다.';
-        obstacleList.appendChild(empty);
-      } else {
-        level.obstacles!.forEach((instance) => {
-          const pill = document.createElement('div');
-          pill.className = 'obstacle-pill';
-          pill.textContent = createObstacleSummary(instance);
-          obstacleList.appendChild(pill);
-        });
-      }
-
-      card.appendChild(obstacleList);
-      grid.appendChild(card);
-
-      const preview = new LevelPreview(previewContainer, level);
-      previews.push(preview);
-    }
-  });
-
-  const clock = new THREE.Clock();
-  function tick() {
-    const delta = clock.getDelta();
-    previews.forEach((preview) => preview.update(delta));
-    requestAnimationFrame(tick);
-  }
-  tick();
-}
-
-// Hash-based routing logic
-function initRouter() {
-  const groups = groupLevelsByPrefix(DIFFICULTY_LEVELS);
-
-  function handleRoute() {
-    const hash = window.location.hash.slice(1); // Remove '#'
-
-    if (!hash || hash === '/' || hash === '') {
-      renderIndexPage(groups);
-    } else {
-      // Remove leading slash if present
-      const groupId = hash.startsWith('/') ? hash.slice(1) : hash;
-      const levels = groups.get(groupId);
-      if (levels) {
-        renderLevelGroupPage(groupId, levels);
-      } else {
-        renderIndexPage(groups);
-      }
-    }
-  }
-
-  // Handle hash changes
-  window.addEventListener('hashchange', handleRoute);
-
-  // Initial route
-  handleRoute();
-}
-
-initRouter();

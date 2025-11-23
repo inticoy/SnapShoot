@@ -1,5 +1,4 @@
 import type { ReactNode } from 'react';
-import '../../src/admin/style.css';
 
 export const metadata = {
   title: 'SnapShoot Admin',
