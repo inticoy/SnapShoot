@@ -417,6 +417,7 @@ export class LevelPreviewEngine {
 
   dispose() {
     this.resizeObserver.disconnect();
+    this.container.removeChild(this.renderer.domElement);
     this.renderer.dispose();
   }
 
