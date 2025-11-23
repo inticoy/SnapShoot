@@ -396,7 +396,7 @@ export class LevelPreviewEngine {
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.renderer.setPixelRatio(window.devicePixelRatio);
-    this.renderer.domElement.classList.add('w-full', 'aspect-video', 'rounded-xl');
+    this.renderer.domElement.classList.add('w-full', 'h-full', 'block', 'rounded-xl');
     this.container.appendChild(this.renderer.domElement);
 
     this.camera = new THREE.PerspectiveCamera(55, 1, 0.1, 50);
@@ -417,6 +417,7 @@ export class LevelPreviewEngine {
 
   dispose() {
     this.resizeObserver.disconnect();
+    this.container.removeChild(this.renderer.domElement);
     this.renderer.dispose();
   }
 
@@ -547,7 +548,7 @@ export class LevelPreviewEngine {
 
   resize() {
     const width = this.container.clientWidth;
-    const height = width / (16 / 10);
+    const height = this.container.clientHeight;
     this.renderer.setSize(width, height, false);
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();

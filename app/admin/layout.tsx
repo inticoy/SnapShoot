@@ -6,5 +6,9 @@ export const metadata = {
 };
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
-  return <>{children}</>;
+  return (
+    <div className="overflow-auto h-screen touch-auto select-auto">
+      {children}
+    </div>
+  );
 }
