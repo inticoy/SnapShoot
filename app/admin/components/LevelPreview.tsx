@@ -39,5 +39,5 @@ export function LevelPreview({ level, obstacleConfigs }: LevelPreviewProps) {
     };
   }, [level, obstacleConfigs]);
 
-  return <div ref={containerRef} className="w-full" />;
+  return <div ref={containerRef} className="w-full aspect-video" />;
 }
