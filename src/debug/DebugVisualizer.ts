@@ -18,7 +18,7 @@ import type { Ball } from '../entities/ball/Ball';
 import type { Goal } from '../entities/goal/Goal';
 import type { Obstacle } from '../entities/Obstacle';
 import type { InputController } from '../input/InputController';
-import type { ShotInfoHud } from '../ui/hud/ShotInfoHud';
+
 import { BALL_RADIUS } from '../config/Ball';
 import { GOAL_DEPTH, GOAL_HEIGHT, GOAL_WIDTH, POST_RADIUS } from '../config/Goal';
 import { GOAL_NET_CONFIG } from '../config/Net';
@@ -36,7 +36,6 @@ export interface DebugVisualizerConfig {
   ball: Ball;
   goal: Goal;
   inputController: InputController;
-  shotInfoHud: ShotInfoHud;
 }
 
 /**
@@ -49,7 +48,7 @@ export class DebugVisualizer {
   private readonly ball: Ball;
   private readonly goal: Goal;
   private readonly inputController: InputController;
-  private readonly shotInfoHud: ShotInfoHud;
+
 
   private debugMode = false;
 
@@ -88,7 +87,7 @@ export class DebugVisualizer {
     this.ball = config.ball;
     this.goal = config.goal;
     this.inputController = config.inputController;
-    this.shotInfoHud = config.shotInfoHud;
+    this.inputController = config.inputController;
 
     // 콜라이더 시각화 생성
     this.ballColliderMesh = this.createBallColliderMesh();
@@ -422,7 +421,7 @@ export class DebugVisualizer {
     this.goalColliderGroup.visible = visible;
     this.adBoardColliderGroup.visible = visible;
     this.trajectoryLine.visible = visible;
-    this.shotInfoHud.setVisible(visible);
+    this.trajectoryLine.visible = visible;
     this.targetMarker.visible = visible && this.targetMarker.visible; // visible 상태 유지하되 debugMode에 따라
     const hasSwipe = this.inputController.getLastSwipe() !== null;
     this.swipeDebugLine.visible = visible && hasSwipe;

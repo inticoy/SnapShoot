@@ -12,7 +12,7 @@ import { Goal } from './entities/goal/Goal';
 import { BALL_THEMES } from './config/Ball';
 import { GOAL_DEPTH } from './config/Goal';
 import type { DifficultyLevelConfig } from './config/Difficulty';
-import { ShotInfoHud } from './ui/hud/ShotInfoHud';
+
 import { AudioManager } from './infra/Audio';
 import { LoadingScreen } from './ui/screens/LoadingScreen';
 import { InputController } from './input/InputController';
@@ -55,7 +55,7 @@ export class SnapShoot {
 
   private readonly inputController: InputController;
   private readonly curveForceSystem = new CurveForceSystem();
-  private readonly shotInfoHud = new ShotInfoHud();
+
   private debugVisualizer!: DebugVisualizer; // 초기화는 생성자에서 (의존성 필요)
   private difficultyManager!: DifficultyManager; // 초기화는 생성자에서 (의존성 필요)
   private lastBounceSoundTime = 0;
@@ -188,7 +188,7 @@ export class SnapShoot {
       ball: this.ball,
       goal: this.goal,
       inputController: this.inputController,
-      shotInfoHud: this.shotInfoHud
+
     });
 
     // 난이도 관리자 초기화
@@ -334,7 +334,7 @@ export class SnapShoot {
     this.ball.body.removeEventListener('collide', this.handleBallCollideBound);
     this.debugVisualizer.dispose();
     this.difficultyManager.dispose();
-    this.shotInfoHud.destroy();
+    this.difficultyManager.dispose();
 
     // 배경음악 중지
     this.audio.stopMusic();
@@ -411,12 +411,7 @@ export class SnapShoot {
     if (shot.shotType !== ShotType.INVALID) {
       this.debugVisualizer.setTargetMarkerPosition(shot.targetPosition);
 
-      this.shotInfoHud.update(
-        shot.debugInfo.analysis,
-        shot.debugInfo.shotParams,
-        shot.velocity,
-        shot.angularVelocity
-      );
+
 
       const speed = Math.sqrt(
         shot.velocity.x ** 2 +
