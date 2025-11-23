@@ -16,7 +16,6 @@ import { ShotInfoHud } from './ui/hud/ShotInfoHud';
 import { AudioManager } from './infra/Audio';
 import { LoadingScreen } from './ui/screens/LoadingScreen';
 import { InputController } from './input/InputController';
-import type { ScoreDisplay } from './ui/hud/ScoreDisplay';
 import { executeShot } from './shooting/ExecuteShot';
 import { ShotType } from './shooting/ShotAnalyzer';
 import { CurveForceSystem } from './shooting/CurveForceSystem';
@@ -36,7 +35,7 @@ import { gameStateService } from './core/GameStateService';
 
 export class SnapShoot {
   private readonly onScoreChange: (score: number) => void;
-  private readonly scoreDisplay: ScoreDisplay;
+  private isNewRecord = false;
 
   private readonly renderer: THREE.WebGLRenderer;
   private readonly scene: THREE.Scene;
@@ -108,12 +107,10 @@ export class SnapShoot {
   constructor(
     canvas: HTMLCanvasElement,
     onScoreChange: (score: number) => void,
-    scoreDisplay: ScoreDisplay,
     onGameFailed?: (failCount: number) => void,
     onGameStart?: () => void
   ) {
     this.onScoreChange = onScoreChange;
-    this.scoreDisplay = scoreDisplay;
     this.onGameFailed = onGameFailed;
 
     // 로딩 화면 생성 및 표시
@@ -371,9 +368,18 @@ export class SnapShoot {
 
     const bestScore = gameStateService.getBestScore();
     if (newScore > bestScore) {
+      this.isNewRecord = true;
       gameStateService.setBestScore(newScore);
       gameEventBus.emit({ type: 'BEST_SCORE_UPDATED', bestScore: newScore });
     }
+  }
+
+  public getScore(): number {
+    return this.score;
+  }
+
+  public resetNewRecordFlag(): void {
+    this.isNewRecord = false;
   }
 
   public toggleDebugMode(enabled?: boolean): boolean {
@@ -507,7 +513,7 @@ export class SnapShoot {
       if (!this.onGameFailed || this.failCount >= GAME_CONFIG.gameOver.maxFailsAllowed) {
         this.score = 0;
         this.updateScore(this.score);
-        this.scoreDisplay.resetNewRecordFlag();
+        this.resetNewRecordFlag();
       }
 
       // 2번째 실패가 아니면 여기서 리턴 (모달에서 처리)

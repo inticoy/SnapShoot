@@ -1,6 +1,5 @@
 import './style.css';
 import { SnapShoot } from './SnapShoot';
-import { ScoreDisplay } from './ui/hud/ScoreDisplay';
 import { PauseModal } from './ui/modals/PauseModal';
 import { ContinueModal } from './ui/modals/ContinueModal';
 import { GameOverModal, getRandomShareMessage } from './ui/modals/GameOverModal';
@@ -156,38 +155,17 @@ export function loadGame(params?: { score?: number }) {
       });
   }
 
-  const scoreDisplay = new ScoreDisplay(uiContainer, async (bestScore) => {
-    if (TOSS_CONFIG.GAME_CENTER_ENABLED && isTossGameCenterAvailable()) {
-      try {
-        const result = await submitGameCenterLeaderBoardScore({ score: bestScore.toString() });
-        if (result && result.statusCode === 'SUCCESS') {
-          console.log('✅ 토스 랭킹에 BestScore 제출 성공:', bestScore);
-        } else if (result) {
-          console.warn('⚠️ 토스 랭킹 BestScore 제출 실패:', result.statusCode);
-        }
-      } catch (error) {
-        console.error('❌ 토스 랭킹 BestScore 제출 오류:', error);
-      }
-    }
-  });
-
   let continueModal: ContinueModal;
   let gameOverModal: GameOverModal;
 
   const game = new SnapShoot(
     canvas,
-    (score) => {
-      scoreDisplay.update(score);
-    },
-    scoreDisplay,
+    () => {},
     (failCount: number) => {
-      // 실패 시 콜백
       if (failCount >= 2) {
-        // 2번째 실패 -> 바로 GameOver
-        gameOverModal.updateScore(scoreDisplay.getScore());
+        gameOverModal.updateScore(game.getScore());
         gameOverModal.open();
       } else {
-        // 1번째 실패 -> Continue Modal
         continueModal.open();
       }
     },
@@ -341,14 +319,14 @@ export function loadGame(params?: { score?: number }) {
         }
       },
       onGiveUp: () => {
-        const finalScore = scoreDisplay.getScore();
-        game.gameOver(); // 게임오버 처리 (점수 초기화)
+        const finalScore = game.getScore();
+        game.gameOver();
         gameOverModal.updateScore(finalScore);
         gameOverModal.open();
       },
       onTimeout: () => {
-        const finalScore = scoreDisplay.getScore();
-        game.gameOver(); // 게임오버 처리 (점수 초기화)
+        const finalScore = game.getScore();
+        game.gameOver();
         gameOverModal.updateScore(finalScore);
         gameOverModal.open();
       }
@@ -494,7 +472,7 @@ export function loadGame(params?: { score?: number }) {
       continueModal.open();
     }
     if (e.key === 'g' || e.key === 'G') {
-      gameOverModal.updateScore(scoreDisplay.getScore());
+      gameOverModal.updateScore(game.getScore());
       gameOverModal.open();
     }
   });
