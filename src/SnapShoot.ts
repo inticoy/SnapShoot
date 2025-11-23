@@ -231,8 +231,7 @@ export class SnapShoot {
     const tempBallPosition = this.ballController.copyPositionToTemp();
     this.goal.triggerNetPulse(tempBallPosition, 1);
 
-    // 골 사운드: 최고 기록 경신 중이면 record, 아니면 goal
-    const isNewRecord = this.scoreDisplay.isNewRecordAchieved();
+    const isNewRecord = this.isNewRecord;
     if (isNewRecord) {
       this.audio.playSound('record');
     } else {
@@ -612,7 +611,7 @@ export class SnapShoot {
 
     this.score = 0;
     this.updateScore(this.score);
-    this.scoreDisplay.resetNewRecordFlag();
+    this.resetNewRecordFlag();
 
     this.failCount = 0;
     this.savedGameState = undefined;
@@ -641,7 +640,7 @@ export class SnapShoot {
 
     this.score = 0;
     this.updateScore(this.score);
-    this.scoreDisplay.resetNewRecordFlag();
+    this.resetNewRecordFlag();
 
     this.failCount = 0;
     this.savedGameState = undefined;
