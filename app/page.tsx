@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { TouchGuide } from '@/components/hud/TouchGuide';
 import { ShotInfoHud } from '@/components/hud/ShotInfoHud';
 import { ScoreDisplay } from '@/components/hud/ScoreDisplay';
+import { LoadingScreen } from '@/components/screens/LoadingScreen';
 import { ModalTest } from '@/components/test/ModalTest';
 
 function GameContent() {
@@ -36,7 +37,7 @@ function GameContent() {
 export default function HomePage() {
   return (
     <div id="game-container">
-      <div id="loading-screen" />
+      <LoadingScreen />
       <canvas id="game-canvas" />
       <div id="ui" className="pointer-events-none">
         <TouchGuide />

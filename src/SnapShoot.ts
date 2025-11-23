@@ -14,7 +14,7 @@ import { GOAL_DEPTH } from './config/Goal';
 import type { DifficultyLevelConfig } from './config/Difficulty';
 
 import { AudioManager } from './infra/Audio';
-import { LoadingScreen } from './ui/screens/LoadingScreen';
+
 import { InputController } from './input/InputController';
 import { executeShot } from './shooting/ExecuteShot';
 import { ShotType } from './shooting/ShotAnalyzer';
@@ -101,7 +101,6 @@ export class SnapShoot {
   private readonly handleBallCollideBound = (event: { body: CANNON.Body }) => this.handleBallCollide(event);
   private readonly handleGoalCollisionBound = (event: { body: CANNON.Body }) => this.handleGoalCollision(event);
   private touchGuideTimer: number | null = null;
-  private loadingScreen: LoadingScreen | null = null;
   private assetLoader!: AssetLoader; // 초기화는 생성자에서 (의존성 필요)
 
   constructor(
@@ -114,27 +113,28 @@ export class SnapShoot {
     this.onGameFailed = onGameFailed;
 
     // 로딩 화면 생성 및 표시
-    this.loadingScreen = new LoadingScreen(
-      () => {
-        // 로딩 화면 스와이프 시 관중 함성 시작 (페이드인)
-        void this.audio.playMusic('chant', { fadeIn: true });
-        // 게임 시작 콜백 호출
-        if (onGameStart) {
-          onGameStart();
-        }
-      },
-      () => {
-        // 로딩 완료 시 게임플레이 음악 시작
-        void this.audio.playMusic('gameplay');
-      },
-      this.audio // Safari autoplay policy 우회를 위해 audio 인스턴스 전달
-    );
-    this.loadingScreen.show();
-    this.loadingScreen.setProgress(0);
+    // EventBus Listeners for Game Start
+    gameEventBus.on('GAME_STARTED', () => {
+      // 로딩 화면 스와이프 시 관중 함성 시작 (페이드인)
+      void this.audio.playMusic('chant', { fadeIn: true });
+      // 게임 시작 콜백 호출
+      if (onGameStart) {
+        onGameStart();
+      }
+    });
+
+    gameEventBus.on('UNLOCK_AUDIO', () => {
+      this.audio.unlockAudioContext();
+    });
+
+    // 로딩 완료 시 게임플레이 음악 시작 (AssetLoader가 LOADING_COMPLETE emit)
+    gameEventBus.on('LOADING_COMPLETE', () => {
+      void this.audio.playMusic('gameplay');
+    });
 
     // 에셋 로더 초기화
     this.assetLoader = new AssetLoader({
-      loadingScreen: this.loadingScreen,
+
       gameLog: this.gameLog,
       onAllAssetsLoaded: () => this.onAllAssetsLoaded()
     });

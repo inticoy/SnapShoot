@@ -31,6 +31,7 @@ export type GameEvent =
   | { type: 'MUSIC_ENABLED_CHANGED'; enabled: boolean }
   | { type: 'SFX_ENABLED_CHANGED'; enabled: boolean }
   | { type: 'MASTER_VOLUME_CHANGED'; volume: number }
+  | { type: 'UNLOCK_AUDIO' }
 
   // 디버그
   | { type: 'SHOT_INFO_UPDATED'; data: ShotInfo }
