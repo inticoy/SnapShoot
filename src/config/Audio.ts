@@ -1,14 +1,16 @@
-const kickUrl = '/assets/audio/kick.mp3';
-const bounceUrl = '/assets/audio/bounce.mp3';
-const goalUrl = '/assets/audio/goal.mp3';
-const saveUrl = '/assets/audio/save.mp3';
-const postUrl = '/assets/audio/post.mp3';
-const resetUrl = '/assets/audio/reset.mp3';
-const netUrl = '/assets/audio/net.mp3';
-const cheerUrl = '/assets/audio/cheer.mp3';
-const recordUrl = '/assets/audio/record.mp3';
-const chantUrl = '/assets/audio/chant.mp3';
-const bg1Url = '/assets/audio/bg1.mp3';
+import { getAssetPath } from '../utils/assetPath';
+
+const kickUrl = getAssetPath('/assets/audio/kick.mp3');
+const bounceUrl = getAssetPath('/assets/audio/bounce.mp3');
+const goalUrl = getAssetPath('/assets/audio/goal.mp3');
+const saveUrl = getAssetPath('/assets/audio/save.mp3');
+const postUrl = getAssetPath('/assets/audio/post.mp3');
+const resetUrl = getAssetPath('/assets/audio/reset.mp3');
+const netUrl = getAssetPath('/assets/audio/net.mp3');
+const cheerUrl = getAssetPath('/assets/audio/cheer.mp3');
+const recordUrl = getAssetPath('/assets/audio/record.mp3');
+const chantUrl = getAssetPath('/assets/audio/chant.mp3');
+const bg1Url = getAssetPath('/assets/audio/bg1.mp3');
 
 /**
  * 효과음 키 타입

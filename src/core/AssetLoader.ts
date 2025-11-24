@@ -14,9 +14,10 @@ import { gameEventBus } from '../../app/lib/gameEventBus';
 import { CategoryLogger } from '../utils/Logger';
 import { BALL_THEMES } from '../config/Ball';
 import { OBSTACLE_BLUEPRINTS } from '../config/Obstacles';
+import { getAssetPath } from '../utils/assetPath';
 
-const grassColorUrl = '/assets/grass/Grass005_1K-JPG_Color.jpeg';
-const crowdTextureUrl = '/assets/crowd/crowd.webp';
+const grassColorUrl = getAssetPath('/assets/grass/Grass005_1K-JPG_Color.jpeg');
+const crowdTextureUrl = getAssetPath('/assets/crowd/crowd.webp');
 
 /**
  * AssetLoader 생성자 매개변수

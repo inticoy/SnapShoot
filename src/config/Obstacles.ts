@@ -1,10 +1,12 @@
-const keeperTextureUrl = '/assets/keeper/wall.png';
-const woodTextureUrl = '/assets/models/obstacle/wood.jpg';
-const whiteDroneTextureUrl = '/assets/models/obstacle/whiteDrone.png';
-const cokeModelUrl = '/assets/models/bottle/coke.glb';
-const drumModelUrl = '/assets/models/drum.glb';
-const vanModelUrl = '/assets/models/van.glb';
-const sharkModelUrl = '/assets/models/shark.glb';
+import { getAssetPath } from '../utils/assetPath';
+
+const keeperTextureUrl = getAssetPath('/assets/keeper/wall.png');
+const woodTextureUrl = getAssetPath('/assets/models/obstacle/wood.jpg');
+const whiteDroneTextureUrl = getAssetPath('/assets/models/obstacle/whiteDrone.png');
+const cokeModelUrl = getAssetPath('/assets/models/bottle/coke.glb');
+const drumModelUrl = getAssetPath('/assets/models/drum.glb');
+const vanModelUrl = getAssetPath('/assets/models/van.glb');
+const sharkModelUrl = getAssetPath('/assets/models/shark.glb');
 
 
 export type Axis = 'x' | 'y' | 'z';

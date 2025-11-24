@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 import { STANDS_CONFIG } from '../config/Stands';
+import { getAssetPath } from '../utils/assetPath';
 
-const crowdTextureUrl = '/assets/crowd/crowd.webp';
+const crowdTextureUrl = getAssetPath('/assets/crowd/crowd.webp');
 
 export class Stands {
   private readonly mesh: THREE.Mesh;

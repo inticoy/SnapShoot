@@ -1,25 +1,26 @@
 import { PHYSICS_LINEAR_DAMPING } from '../physics/Constants';
 import type { SoundKey } from './Audio';
+import { getAssetPath } from '../utils/assetPath';
 
-const basicBallModel = '/assets/ball/basic.glb';
-const moonBallModel = '/assets/ball/moon.glb';
-const basketBallModel = '/assets/ball/basketball.glb';
-const volleyBallModel = '/assets/ball/volleyball.glb';
-const earthBallModel = '/assets/ball/earth.glb';
-const worldCup2010BallModel = '/assets/ball/worldcup2010.glb';
-const beachBallModel = '/assets/ball/beachball.glb';
-const monsterBallModel = '/assets/ball/monsterball.glb';
-const sunBallModel = '/assets/ball/sun.glb';
+const basicBallModel = getAssetPath('/assets/ball/basic.glb');
+const moonBallModel = getAssetPath('/assets/ball/moon.glb');
+const basketBallModel = getAssetPath('/assets/ball/basketball.glb');
+const volleyBallModel = getAssetPath('/assets/ball/volleyball.glb');
+const earthBallModel = getAssetPath('/assets/ball/earth.glb');
+const worldCup2010BallModel = getAssetPath('/assets/ball/worldcup2010.glb');
+const beachBallModel = getAssetPath('/assets/ball/beachball.glb');
+const monsterBallModel = getAssetPath('/assets/ball/monsterball.glb');
+const sunBallModel = getAssetPath('/assets/ball/sun.glb');
 
-const basicBallImage = '/assets/ball/basic.png';
-const moonBallImage = '/assets/ball/moon.png';
-const basketballBallImage = '/assets/ball/basketball.png';
-const volleyballBallImage = '/assets/ball/volleyball.png';
-const earthBallImage = '/assets/ball/earth.png';
-const worldcup2010BallImage = '/assets/ball/worldcup2010.png';
-const beachballImage = '/assets/ball/beachball.png';
-const monsterballImage = '/assets/ball/monsterball.png';
-const sunBallImage = '/assets/ball/sun.png';
+const basicBallImage = getAssetPath('/assets/ball/basic.png');
+const moonBallImage = getAssetPath('/assets/ball/moon.png');
+const basketballBallImage = getAssetPath('/assets/ball/basketball.png');
+const volleyballBallImage = getAssetPath('/assets/ball/volleyball.png');
+const earthBallImage = getAssetPath('/assets/ball/earth.png');
+const worldcup2010BallImage = getAssetPath('/assets/ball/worldcup2010.png');
+const beachballImage = getAssetPath('/assets/ball/beachball.png');
+const monsterballImage = getAssetPath('/assets/ball/monsterball.png');
+const sunBallImage = getAssetPath('/assets/ball/sun.png');
 
 // 공통 물리 속성 (모든 테마에서 공유)
 export interface BallPhysicsConfig {
