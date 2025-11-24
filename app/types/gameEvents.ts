@@ -9,6 +9,9 @@ export type GameEvent =
   | { type: 'GAME_PAUSED' }
   | { type: 'GAME_RESUMED' }
   | { type: 'GAME_OVER'; score: number; isNewRecord: boolean }
+  | { type: 'RESTART_GAME' }
+  | { type: 'CONTINUE_GIVE_UP' }
+  | { type: 'CONTINUE_GAME_SUCCESS' }
 
   // 골 관련
   | { type: 'GOAL_SCORED'; score: number }

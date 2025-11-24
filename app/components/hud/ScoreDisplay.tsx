@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useGameEvent } from '@/hooks/useGameEvent';
 
 export function ScoreDisplay() {
-  const [score, setScore] = useState(0);
+
   const [bestScore, setBestScore] = useState(0);
   const [displayScore, setDisplayScore] = useState(0);
   const animationFrameRef = useRef<number | null>(null);
@@ -20,7 +20,6 @@ export function ScoreDisplay() {
 
   useGameEvent('SCORE_CHANGED', (event) => {
     animateScore(displayScore, event.score);
-    setScore(event.score);
   });
 
   useGameEvent('BEST_SCORE_UPDATED', (event) => {

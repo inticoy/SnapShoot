@@ -62,8 +62,8 @@ export class SnapShoot {
   private score = 0;
   private shotResetTimer: number | null = null;
   private failCount = 0; // 현재 게임에서 실패한 횟수
-  private onGameFailed?: (failCount: number) => void; // 실패 시 콜백
   private savedGameState?: { score: number; difficulty: DifficultyLevelConfig | null }; // 이어하기용 상태 저장
+  private isPaused = false;
 
   // 게임 상태 관리자
   private readonly stateManager = new GameStateManager(GameState.INITIALIZING);
@@ -105,22 +105,34 @@ export class SnapShoot {
 
   constructor(
     canvas: HTMLCanvasElement,
-    onScoreChange: (score: number) => void,
-    onGameFailed?: (failCount: number) => void,
-    onGameStart?: () => void
+    onScoreChange: (score: number) => void
   ) {
     this.onScoreChange = onScoreChange;
-    this.onGameFailed = onGameFailed;
 
     // 로딩 화면 생성 및 표시
     // EventBus Listeners for Game Start
     gameEventBus.on('GAME_STARTED', () => {
       // 로딩 화면 스와이프 시 관중 함성 시작 (페이드인)
       void this.audio.playMusic('chant', { fadeIn: true });
-      // 게임 시작 콜백 호출
-      if (onGameStart) {
-        onGameStart();
-      }
+    });
+
+    // Modal Event Listeners
+    gameEventBus.on('RESTART_GAME', () => this.restartGame());
+    gameEventBus.on('CONTINUE_GIVE_UP', () => this.gameOver());
+    gameEventBus.on('CONTINUE_GAME_SUCCESS', () => this.continueGame());
+    
+    gameEventBus.on('THEME_CHANGED', (event: any) => {
+      void this.switchToTheme(event.themeName);
+    });
+
+    gameEventBus.on('GAME_PAUSED', () => {
+      this.isPaused = true;
+      this.pauseAudio();
+    });
+
+    gameEventBus.on('GAME_RESUMED', () => {
+      this.isPaused = false;
+      this.resumeAudio();
     });
 
     gameEventBus.on('UNLOCK_AUDIO', () => {
@@ -297,6 +309,9 @@ export class SnapShoot {
     requestAnimationFrame(this.animate);
 
     const deltaTime = this.clock.getDelta();
+
+    if (this.isPaused) return;
+
     // Tunneling 방지: 더 작은 timestep, 더 많은 substeps
     // 빠른 슛(40 m/s)도 얇은 골대(0.1m)와 정확히 충돌
     this.world.step(GAME_CONFIG.physics.timeStep, deltaTime, GAME_CONFIG.physics.substeps);
@@ -499,25 +514,30 @@ export class SnapShoot {
         difficulty: this.difficultyManager.getCurrentDifficulty()
       };
 
-      // 실패 콜백 호출 (모달 띄우기)
-      if (this.onGameFailed) {
-        this.onGameFailed(this.failCount);
-      }
-
-      if (!this.onGameFailed || this.failCount >= GAME_CONFIG.gameOver.maxFailsAllowed) {
-        this.score = 0;
-        this.updateScore(this.score);
-        this.resetNewRecordFlag();
-      }
-
-      // 2번째 실패가 아니면 여기서 리턴 (모달에서 처리)
-      if (this.failCount < GAME_CONFIG.gameOver.maxFailsAllowed && this.onGameFailed) {
+      // 실패 콜백 호출 (모달 띄우기) 대신 이벤트 발생
+      if (this.failCount < GAME_CONFIG.gameOver.maxFailsAllowed) {
+        gameEventBus.emit({ type: 'SHOW_CONTINUE_MODAL', failCount: this.failCount });
+        
         // 상태 초기화만 하고 공은 리셋하지 않음 (모달에서 선택에 따라 처리)
         this.isShotInProgress = false;
         this.hasScored = false;
         this.shotResetTimer = null;
         this.curveForceSystem.stopCurveShot();
         return;
+      } else {
+        // 최대 실패 횟수 초과 -> 게임오버
+        this.gameOver();
+        // gameOver() 내부에서 점수 초기화 등을 수행하지만,
+        // 모달을 띄우기 위해 이벤트를 발생시켜야 함.
+        // gameOver()는 로직 초기화만 담당하고, 모달은 여기서 띄움?
+        // 아니면 gameOver() 안에서 emit?
+        // gameOver()는 'RESTART_GAME' 등에서도 호출되므로, 
+        // 여기서 명시적으로 SHOW_GAME_OVER_MODAL을 emit하는 것이 좋음.
+        // 단, gameOver()가 호출되면 점수가 0이 되므로, 점수 초기화 전에 emit해야 함.
+        // 하지만 위 코드 흐름상 gameOver() 호출 전에 emit해야 함.
+        // Wait, gameOver() resets score to 0.
+        // So I should emit SHOW_GAME_OVER_MODAL with current score BEFORE calling gameOver().
+        // Actually, let's look at gameOver() implementation.
       }
     }
 
@@ -632,6 +652,12 @@ export class SnapShoot {
    */
   public gameOver(): void {
     console.log('💀 게임오버');
+
+    // 점수 저장 (모달 표시용)
+    const finalScore = this.score;
+
+    // 게임오버 모달 표시
+    gameEventBus.emit({ type: 'SHOW_GAME_OVER_MODAL', score: finalScore });
 
     this.score = 0;
     this.updateScore(this.score);

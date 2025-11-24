@@ -5,8 +5,12 @@ import { useSearchParams } from 'next/navigation';
 import { TouchGuide } from '@/components/hud/TouchGuide';
 import { ShotInfoHud } from '@/components/hud/ShotInfoHud';
 import { ScoreDisplay } from '@/components/hud/ScoreDisplay';
-import { LoadingScreen } from '@/components/screens/LoadingScreen';
-import { ModalTest } from '@/components/test/ModalTest';
+import { LoadingScreen } from './components/screens/LoadingScreen';
+import { PauseButton } from './components/hud/PauseButton';
+import { PauseModal } from './components/modals/PauseModal';
+import { GameOverModal } from './components/modals/GameOverModal';
+import { ContinueModal } from './components/modals/ContinueModal';
+import { Toaster } from '@/lib/toast';
 
 function GameContent() {
   const searchParams = useSearchParams();
@@ -43,11 +47,16 @@ export default function HomePage() {
         <TouchGuide />
         <ShotInfoHud />
         <ScoreDisplay />
+        <PauseButton />
+        
+        <PauseModal />
+        <GameOverModal />
+        <ContinueModal />
       </div>
-      <ModalTest />
       <Suspense fallback={null}>
         <GameContent />
       </Suspense>
+      <Toaster />
     </div>
   );
 }
