@@ -28,7 +28,7 @@ function GameContent() {
     initializationRef.current = true;
 
     const load = async () => {
-      const { loadGame } = await import('../src/GameLoader');
+      const { loadGame } = await import('../src/core/GameLoader');
       loadGame(friendScore ? { score: friendScore } : undefined);
     };
 
@@ -53,7 +53,7 @@ export default function HomePage() {
         <GameOverModal />
         <ContinueModal />
       </div>
-      <Suspense fallback={null}>
+      <Suspense>
         <GameContent />
       </Suspense>
       <Toaster />

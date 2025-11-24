@@ -6,7 +6,7 @@ import { AD_BOARD_CONFIG } from '../config/AdBoard';
 import { AdBoard } from '../entities/AdBoard';
 import { Stands } from './Stands';
 
-const grassColorUrl = new URL('../assets/grass/Grass005_1K-JPG_Color.jpeg', import.meta.url).toString();
+const grassColorUrl = '/assets/grass/Grass005_1K-JPG_Color.jpeg';
 
 export interface FieldOptions {
   goalDepth?: number;

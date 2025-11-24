@@ -1,14 +1,14 @@
-const kickUrl = new URL('../assets/audio/kick.mp3', import.meta.url).toString();
-const bounceUrl = new URL('../assets/audio/bounce.mp3', import.meta.url).toString();
-const goalUrl = new URL('../assets/audio/goal.mp3', import.meta.url).toString();
-const saveUrl = new URL('../assets/audio/save.mp3', import.meta.url).toString();
-const postUrl = new URL('../assets/audio/post.mp3', import.meta.url).toString();
-const resetUrl = new URL('../assets/audio/reset.mp3', import.meta.url).toString();
-const netUrl = new URL('../assets/audio/net.mp3', import.meta.url).toString();
-const cheerUrl = new URL('../assets/audio/cheer.mp3', import.meta.url).toString();
-const recordUrl = new URL('../assets/audio/record.mp3', import.meta.url).toString();
-const chantUrl = new URL('../assets/audio/chant.mp3', import.meta.url).toString();
-const bg1Url = new URL('../assets/audio/bg1.mp3', import.meta.url).toString();
+const kickUrl = '/assets/audio/kick.mp3';
+const bounceUrl = '/assets/audio/bounce.mp3';
+const goalUrl = '/assets/audio/goal.mp3';
+const saveUrl = '/assets/audio/save.mp3';
+const postUrl = '/assets/audio/post.mp3';
+const resetUrl = '/assets/audio/reset.mp3';
+const netUrl = '/assets/audio/net.mp3';
+const cheerUrl = '/assets/audio/cheer.mp3';
+const recordUrl = '/assets/audio/record.mp3';
+const chantUrl = '/assets/audio/chant.mp3';
+const bg1Url = '/assets/audio/bg1.mp3';
 
 /**
  * 효과음 키 타입

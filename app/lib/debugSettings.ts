@@ -41,8 +41,11 @@ declare global {
   }
 }
 
-window.toggleDebug = (enabled?: boolean) => {
-  const newState = debugSettings.toggleDebugMode(enabled);
-  console.log(`🐛 디버그 모드 ${newState ? 'ON' : 'OFF'}`);
-  return newState;
-};
+// SSR safety: only add to window in client environment
+if (typeof window !== 'undefined') {
+  window.toggleDebug = (enabled?: boolean) => {
+    const newState = debugSettings.toggleDebugMode(enabled);
+    console.log(`🐛 디버그 모드 ${newState ? 'ON' : 'OFF'}`);
+    return newState;
+  };
+}

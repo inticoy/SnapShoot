@@ -54,6 +54,7 @@ export function StyledIconButton({ icon, label, variant, onClick, className = ''
     <button
       onClick={onClick}
       className={`flex flex-col items-center gap-2 group ${className}`}
+      aria-label={label}
     >
       <div 
         className={`
@@ -76,7 +77,7 @@ export function StyledIconButton({ icon, label, variant, onClick, className = ''
         <div className={`absolute inset-0 rounded-2xl pointer-events-none z-[1] ${styles.highlight}`} />
 
         {/* Icon */}
-        <i className={`ph-fill ${icon} text-3xl text-white relative z-[2] ${styles.icon}`}></i>
+        <i className={`ph-fill ${icon} text-3xl text-white relative z-[2] ${styles.icon}`} aria-hidden="true"></i>
       </div>
       <span className="text-white/80 text-xs font-medium drop-shadow-md">{label}</span>
     </button>

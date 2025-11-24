@@ -5,12 +5,6 @@ import { useGameEvent } from '@/hooks/useGameEvent';
 import { gameEventBus } from '@/lib/gameEventBus';
 import Image from 'next/image';
 
-// Assets
-import soccerBallImg from '../../../src/assets/soccer_ball.png';
-import logoImg from '../../../src/assets/Snapshoot.png';
-import postImg from '../../../src/assets/post.svg';
-import gracAllImg from '../../../src/assets/GRAC_ALL.png';
-
 const FOOTBALL_MESSAGES = [
   '양말 신는 중...',
   '축구화 끈 묶는 중...',
@@ -152,7 +146,7 @@ export function LoadingScreen() {
         className="loading-screen__title mb-20 text-center animate-fade-in-down-large transition-all duration-800 ease-out"
         style={{ transform: titleTransform, opacity: titleTransform ? 0 : 1 }}
       >
-        <Image src={logoImg} alt="Snapshoot!" className="loading-screen__title-text mx-6 w-[80vw] max-w-[500px] h-auto" priority />
+        <Image src="/assets/Snapshoot.png" alt="Snapshoot!" width={500} height={200} className="loading-screen__title-text mx-6 w-[80vw] max-w-[500px] h-auto" priority />
       </div>
 
       {/* Stage 1: Progress */}
@@ -195,7 +189,9 @@ export function LoadingScreen() {
         style={{ opacity: ballOpacity, pointerEvents: 'none' }}
       >
         <Image 
-          src={soccerBallImg} 
+          src="/assets/soccer_ball.png"
+          width={72}
+          height={72} 
           alt="Soccer Ball" 
           className={`loading-screen__soccer-ball w-[72px] h-[72px] cursor-pointer drop-shadow-[0_8px_16px_rgba(0,0,0,0.3)] ${!isShooting ? 'animate-bounce' : ''}`}
           style={{ 
@@ -220,10 +216,10 @@ export function LoadingScreen() {
       )}
 
       {/* Goalpost */}
-      <Image src={postImg} alt="Goalpost" className="loading-goalpost" />
+      <Image src="/assets/post.svg" alt="Goalpost" width={120} height={180} className="loading-goalpost" />
 
       {/* Rating Badge */}
-      <Image src={gracAllImg} alt="Rating" className="loading-screen__rating-badge absolute right-[16px] bottom-[16px] w-[60px] h-[60px] opacity-90 animate-fade-in z-[25]" />
+      <Image src="/assets/GRAC_ALL.png" alt="Rating" width={60} height={60} className="loading-screen__rating-badge absolute right-[16px] bottom-[16px] w-[60px] h-[60px] opacity-90 animate-fade-in z-[25]" />
     </div>
   );
 }

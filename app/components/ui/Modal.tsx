@@ -51,19 +51,83 @@ export function Modal({
 
   return (
     <div
-      className="fixed inset-0 flex bg-black/40 backdrop-blur-[2px] z-[30] transition-opacity duration-300"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in-fast pointer-events-auto"
       onClick={closeOnBackdrop ? onClose : undefined}
     >
       <div
-        className="relative flex h-full w-full flex-col overflow-y-auto pt-[15vh] pb-[5vh] bg-black/30 backdrop-blur-sm text-white transition-all duration-300 ease-out"
-        style={{
-          paddingRight: 'calc(env(safe-area-inset-right, 0px) + 16px)',
-          paddingLeft: 'calc(env(safe-area-inset-left, 0px) + 16px)'
-        }}
+        className="relative w-full h-full flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {children}
       </div>
+    </div>
+  );
+}
+
+// Layout Helper Components
+
+export interface ModalHeaderProps {
+  title: string;
+  onBack?: () => void;
+  className?: string;
+}
+
+export function ModalHeader({ title, onBack, className = '' }: ModalHeaderProps) {
+  return (
+    <div 
+      className={`w-full flex items-center justify-center py-4 pb-8 ${className}`}
+      style={{
+        paddingTop: 'max(env(safe-area-inset-top, 0px), calc(25vh - 3rem))', // 상단 1/4 지점
+      }}
+    >
+      {/* Back Button */}
+      {onBack && (
+        <button
+          onClick={onBack}
+          className="absolute left-8 z-[40] w-10 h-10 flex items-center justify-center text-white/90 hover:text-white transition-colors"
+        >
+          <i className="ph ph-arrow-left text-3xl"></i>
+        </button>
+      )}
+      
+      {/* Title */}
+      <div className="font-russo text-white tracking-tight font-black text-[clamp(32px,6vw,48px)]">
+        {title}
+      </div>
+    </div>
+  );
+}
+
+export interface ModalContentProps {
+  children: ReactNode;
+  className?: string;
+  centered?: boolean;
+}
+
+export function ModalContent({ children, className = '', centered = true }: ModalContentProps) {
+  return (
+    <div 
+      className={`flex-auto flex flex-col w-full px-6 items-center ${centered ? 'justify-center' : ''} ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
+
+export interface ModalFooterProps {
+  children: ReactNode;
+  className?: string;
+}
+
+export function ModalFooter({ children, className = '' }: ModalFooterProps) {
+  return (
+    <div 
+      className={`w-full flex items-center justify-center ${className}`}
+      style={{
+        paddingBottom: 'max(env(safe-area-inset-bottom, 0px), calc(25vh - 4rem))', // 하단 1/4 지점
+      }}
+    >
+      {children}
     </div>
   );
 }

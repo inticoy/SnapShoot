@@ -8,17 +8,8 @@ import { gameStateService } from '@/../src/core/GameStateService';
 import { showToast } from '@/lib/toast';
 import { TOSS_CONFIG } from '@/../src/config/TossConfig';
 import { isTossGameCenterAvailable } from '@/../src/utils/TossEnvironment';
-
+import { Modal, ModalHeader, ModalContent, ModalFooter } from '@/components/ui/Modal';
 import { StyledIconButton } from '@/components/common/StyledIconButton';
-
-// Modal Wrapper Component (can be extracted later if needed)
-const ModalWrapper = ({ children, onClose: _onClose }: { children: React.ReactNode; onClose: () => void }) => (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in-fast pointer-events-auto">
-    <div className="relative w-full h-full flex flex-col items-center justify-center p-4">
-      {children}
-    </div>
-  </div>
-);
 
 export function PauseModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -53,17 +44,6 @@ export function PauseModal() {
 
   const handleRestart = () => {
     handleClose();
-    // We need a way to trigger restart. 
-    // Currently SnapShoot.ts doesn't listen for RESTART_GAME event.
-    // But we can add it or use a direct method if we had access, but we don't.
-    // Let's add RESTART_GAME event to gameEvents.ts later if needed, 
-    // OR we can just emit GAME_STARTED? No, that's for loading screen.
-    // Let's check if there is a restart mechanism.
-    // Legacy PauseModal called callbacks.onRestart().
-    // We should emit a new event 'RESTART_GAME'.
-    // For now, let's assume we'll add it.
-    // Wait, SnapShoot.ts needs to listen to it.
-    // I'll add 'RESTART_GAME' to gameEvents.ts in the next step.
     gameEventBus.emit({ type: 'RESTART_GAME' } as any); 
   };
 
@@ -96,14 +76,14 @@ export function PauseModal() {
     // 게임센터가 비활성화되어 있으면 안내 메시지 표시
     if (!TOSS_CONFIG.GAME_CENTER_ENABLED) {
       console.warn('ℹ️ 게임센터 기능이 아직 활성화되지 않았습니다.');
-      showToast.info('랭킹 기능은 준비 중입니다.\n조금만 기다려주세요!');
+      showToast.info('랭킹 기능은 준비 중입니다.\\n조금만 기다려주세요!');
       return;
     }
 
     // 토스 앱 환경이 아니면 경고 메시지 표시
     if (!isTossGameCenterAvailable()) {
       console.warn('ℹ️ 랭킹 기능은 토스 앱에서만 사용 가능합니다.');
-      showToast.info('랭킹 기능은 토스 앱에서만 사용 가능합니다.\n토스 앱에서 게임을 실행해주세요!');
+      showToast.info('랭킹 기능은 토스 앱에서만 사용 가능합니다.\\n토스 앱에서 게임을 실행해주세요!');
       return;
     }
 
@@ -116,70 +96,42 @@ export function PauseModal() {
     }
   };
 
-  if (!isOpen) return null;
+  const getTitle = () => {
+    switch (view) {
+      case 'pause': return '일시정지';
+      case 'settings': return '설정';
+      case 'customize': return '테마 변경';
+    }
+  };
 
   return (
-    <ModalWrapper onClose={handleClose}>
-      {/* Title */}
-      <div className="absolute top-8 w-full flex items-center justify-center pointer-events-none py-4 pb-8">
-        <div className="font-russo text-white tracking-tight font-black text-[clamp(32px,6vw,48px)]">
-          {view === 'pause' ? '일시정지' : view === 'settings' ? '설정' : '테마 변경'}
-        </div>
-      </div>
-
-      {/* Back Button */}
-      {view !== 'pause' && (
-        <button
-          onClick={() => setView('pause')}
-          className="absolute top-8 left-8 z-[40] w-10 h-10 flex items-center justify-center text-white/90 hover:text-white transition-colors"
-        >
-          <i className="ph ph-arrow-left text-3xl"></i>
-        </button>
-      )}
-
-      {/* Content */}
-      <div className="flex-auto flex flex-col items-center w-full px-6 justify-center">
-        
+    <Modal isOpen={isOpen} onClose={handleClose} closeOnEsc={true} closeOnBackdrop={false}>
+      <ModalHeader 
+        title={getTitle()}
+        onBack={view !== 'pause' ? () => setView('pause') : undefined}
+      />
+      
+      <ModalContent centered={view === 'pause'}>
         {view === 'pause' && (
-          <div className="flex flex-col items-center gap-8 w-full max-w-lg">
-            {/* Top Buttons */}
-            <div className="flex gap-6 w-full justify-center">
-              <StyledIconButton 
-                icon="ph-ranking" 
-                label="랭킹보기" 
-                variant="ranking"
-                onClick={handleRanking}
-              />
-              <StyledIconButton 
-                icon="ph-palette" 
-                label="테마 변경" 
-                variant="theme"
-                onClick={() => setView('customize')} 
-              />
-              <StyledIconButton 
-                icon="ph-gear" 
-                label="설정" 
-                variant="settings"
-                onClick={() => setView('settings')} 
-              />
-            </div>
-
-            {/* Bottom Buttons */}
-            <div className="flex items-center justify-center gap-6 w-full mt-8">
-              <CircleButton 
-                icon="ph-arrow-clockwise" 
-                size="w-16 h-16" 
-                iconSize="text-3xl"
-                onClick={handleRestart}
-              />
-              <CircleButton 
-                icon="ph-play" 
-                size="w-20 h-20" 
-                iconSize="text-4xl"
-                isLarge 
-                onClick={handleContinue}
-              />
-            </div>
+          <div className="flex gap-6 w-full max-w-lg justify-center">
+            <StyledIconButton 
+              icon="ph-ranking" 
+              label="랭킹보기" 
+              variant="ranking"
+              onClick={handleRanking}
+            />
+            <StyledIconButton 
+              icon="ph-palette" 
+              label="테마 변경" 
+              variant="theme"
+              onClick={() => setView('customize')} 
+            />
+            <StyledIconButton 
+              icon="ph-gear" 
+              label="설정" 
+              variant="settings"
+              onClick={() => setView('settings')} 
+            />
           </div>
         )}
 
@@ -205,14 +157,32 @@ export function PauseModal() {
         {view === 'customize' && (
           <CustomizeView />
         )}
+      </ModalContent>
 
-      </div>
-    </ModalWrapper>
+      {view === 'pause' && (
+        <ModalFooter>
+          <div className="flex items-center justify-center gap-6">
+            <CircleButton 
+              icon="ph-arrow-clockwise" 
+              size="w-16 h-16" 
+              iconSize="text-3xl"
+              onClick={handleRestart}
+            />
+            <CircleButton 
+              icon="ph-play" 
+              size="w-20 h-20" 
+              iconSize="text-4xl"
+              isLarge 
+              onClick={handleContinue}
+            />
+          </div>
+        </ModalFooter>
+      )}
+    </Modal>
   );
 }
 
 // Sub-components
-
 
 function CircleButton({ icon, size, iconSize, isLarge, onClick }: { icon: string; size: string; iconSize: string; isLarge?: boolean; onClick: () => void }) {
   return (

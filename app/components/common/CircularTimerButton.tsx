@@ -54,6 +54,7 @@ export function CircularTimerButton({ duration, onComplete, onClick, size = 120 
       onClick={onClick}
       className="relative rounded-full flex items-center justify-center group active:scale-95 transition-transform duration-150"
       style={{ width: size, height: size }}
+      aria-label="이어하기 버튼"
     >
       {/* Background Circle */}
       <svg 
@@ -88,7 +89,7 @@ export function CircularTimerButton({ duration, onComplete, onClick, size = 120 
         className="absolute inset-2 rounded-full bg-gradient-to-br from-[#4facfe] to-[#00f2fe] flex flex-col items-center justify-center shadow-[0_0_20px_rgba(79,172,254,0.4)] border-2 border-white/20"
         style={{ width: size - 16, height: size - 16 }}
       >
-        <i className="ph-fill ph-play text-4xl text-white drop-shadow-md ml-1"></i>
+        <i className="ph-fill ph-play text-4xl text-white drop-shadow-md ml-1" aria-hidden="true"></i>
         <span className="text-white font-bold text-sm mt-1">이어하기</span>
       </div>
       

@@ -1,10 +1,10 @@
-import './style.css';
+
 import { SnapShoot } from './SnapShoot';
-import { gameStateService } from './core/GameStateService';
-import { debugSettings } from './core/DebugSettings';
+import { gameStateService } from './GameStateService';
+import { debugSettings } from './DebugSettings';
 import { getUserKeyForGame } from '@apps-in-toss/web-framework';
-import { isTossGameCenterAvailable, logEnvironmentInfo } from './utils/TossEnvironment';
-import { TOSS_CONFIG } from './config/TossConfig';
+import { isTossGameCenterAvailable, logEnvironmentInfo } from '../utils/TossEnvironment';
+import { TOSS_CONFIG } from '../config/TossConfig';
 
 
 /**
@@ -114,7 +114,7 @@ export function loadGame(params?: { score?: number }) {
       // isGameReady 변수는 제거되었으므로, 게임 상태를 확인해야 함.
       // 하지만 여기서는 간단히 이벤트를 보냄.
       console.log('📱 포그라운드 복귀: PauseModal 자동 오픈');
-      import('../app/lib/gameEventBus').then(({ gameEventBus }) => {
+      import('../../app/lib/gameEventBus').then(({ gameEventBus }) => {
         gameEventBus.emit({ type: 'SHOW_PAUSE_MODAL', show: true });
       });
     }
@@ -122,17 +122,5 @@ export function loadGame(params?: { score?: number }) {
 
   document.addEventListener('visibilitychange', handleVisibilityChange);
 
-  // 임시 테스트: 키보드 'C' 키로 Continue Modal 열기
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'c' || e.key === 'C') {
-      import('../app/lib/gameEventBus').then(({ gameEventBus }) => {
-        gameEventBus.emit({ type: 'SHOW_CONTINUE_MODAL', failCount: 1 });
-      });
-    }
-    if (e.key === 'g' || e.key === 'G') {
-      import('../app/lib/gameEventBus').then(({ gameEventBus }) => {
-        gameEventBus.emit({ type: 'SHOW_GAME_OVER_MODAL', score: game.getScore() });
-      });
-    }
-  });
+
 }
