@@ -2,6 +2,15 @@
 
 import { useEffect, useMemo, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { TouchGuide } from '@/components/hud/TouchGuide';
+import { ShotInfoHud } from '@/components/hud/ShotInfoHud';
+import { ScoreDisplay } from '@/components/hud/ScoreDisplay';
+import { LoadingScreen } from './components/screens/LoadingScreen';
+import { PauseButton } from './components/hud/PauseButton';
+import { PauseModal } from './components/modals/PauseModal';
+import { GameOverModal } from './components/modals/GameOverModal';
+import { ContinueModal } from './components/modals/ContinueModal';
+import { Toaster } from '@/lib/toast';
 
 function GameContent() {
   const searchParams = useSearchParams();
@@ -19,7 +28,7 @@ function GameContent() {
     initializationRef.current = true;
 
     const load = async () => {
-      const { loadGame } = await import('../src/GameLoader');
+      const { loadGame } = await import('../src/core/GameLoader');
       loadGame(friendScore ? { score: friendScore } : undefined);
     };
 
@@ -32,12 +41,22 @@ function GameContent() {
 export default function HomePage() {
   return (
     <div id="game-container">
-      <div id="loading-screen" />
+      <LoadingScreen />
       <canvas id="game-canvas" />
-      <div id="ui" />
-      <Suspense fallback={null}>
+      <div id="ui" className="pointer-events-none">
+        <TouchGuide />
+        <ShotInfoHud />
+        <ScoreDisplay />
+        <PauseButton />
+        
+        <PauseModal />
+        <GameOverModal />
+        <ContinueModal />
+      </div>
+      <Suspense>
         <GameContent />
       </Suspense>
+      <Toaster />
     </div>
   );
 }

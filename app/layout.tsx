@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import '../src/style.css';
-import '../src/phosphor-icons.css';
+import './styles/phosphor-icons.css';
 
 export const metadata: Metadata = {
   title: 'SnapShoot',
-  description: 'Next.js migration workspace for the SnapShoot game',
+  description: 'Swipe up to SnapShoot!',
   icons: {
     icon: '/icon.svg',
     apple: '/icon.svg',

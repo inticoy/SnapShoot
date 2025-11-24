@@ -1,42 +1,41 @@
 import * as THREE from 'three';
 import * as CANNON from 'cannon-es';
-import { createRenderer } from './infra/Graphics';
-import { createPerspectiveCamera } from './infra/Camera';
-import { configureSceneLighting } from './infra/Lighting';
-import { createPhysicsWorld } from './physics/World';
-import { createField } from './environment/Field';
-import type { Field } from './environment/Field';
-import { Ball } from './entities/ball/Ball';
-import { BallController } from './entities/ball/BallController';
-import { Goal } from './entities/goal/Goal';
-import { BALL_THEMES } from './config/Ball';
-import { GOAL_DEPTH } from './config/Goal';
-import type { DifficultyLevelConfig } from './config/Difficulty';
-// Debug button removed - now integrated into Settings modal
-import { ShotInfoHud } from './ui/hud/ShotInfoHud';
-import { AudioManager } from './infra/Audio';
-import { LoadingScreen } from './ui/screens/LoadingScreen';
-import { InputController } from './input/InputController';
-import type { ScoreDisplay } from './ui/hud/ScoreDisplay';
-import { executeShot } from './shooting/ExecuteShot';
-import { ShotType } from './shooting/ShotAnalyzer';
-import { CurveForceSystem } from './shooting/CurveForceSystem';
-import { debugNormalizedSwipe } from './shooting/SwipeNormalizer';
-import { debugShotAnalysis } from './shooting/ShotAnalyzer';
-import { debugShotParameters } from './shooting/ShotParameters';
-import { debugVelocity } from './shooting/VelocityCalculator';
-import { debugAngularVelocity } from './shooting/SpinCalculator';
-import { GameStateManager, GameState } from './core/GameStateManager';
-import { GAME_CONFIG } from './config/Game';
-import { CategoryLogger } from './utils/Logger';
-import { DebugVisualizer } from './debug/DebugVisualizer';
-import { DifficultyManager } from './core/DifficultyManager';
-import { AssetLoader } from './core/AssetLoader';
+import { createRenderer } from '../infra/Graphics';
+import { createPerspectiveCamera } from '../infra/Camera';
+import { configureSceneLighting } from '../infra/Lighting';
+import { createPhysicsWorld } from '../physics/World';
+import { createField } from '../environment/Field';
+import type { Field } from '../environment/Field';
+import { Ball } from '../entities/ball/Ball';
+import { BallController } from '../entities/ball/BallController';
+import { Goal } from '../entities/goal/Goal';
+import { BALL_THEMES } from '../config/Ball';
+import { GOAL_DEPTH } from '../config/Goal';
+import type { DifficultyLevelConfig } from '../config/Difficulty';
+
+import { AudioManager } from '../infra/Audio';
+
+import { InputController } from '../input/InputController';
+import { executeShot } from '../shooting/ExecuteShot';
+import { ShotType } from '../shooting/ShotAnalyzer';
+import { CurveForceSystem } from '../shooting/CurveForceSystem';
+import { debugNormalizedSwipe } from '../shooting/SwipeNormalizer';
+import { debugShotAnalysis } from '../shooting/ShotAnalyzer';
+import { debugShotParameters } from '../shooting/ShotParameters';
+import { debugVelocity } from '../shooting/VelocityCalculator';
+import { debugAngularVelocity } from '../shooting/SpinCalculator';
+import { GameStateManager, GameState } from './GameStateManager';
+import { GAME_CONFIG } from '../config/Game';
+import { CategoryLogger } from '../utils/Logger';
+import { DebugVisualizer } from '../debug/DebugVisualizer';
+import { DifficultyManager } from './DifficultyManager';
+import { AssetLoader } from './AssetLoader';
+import { gameEventBus } from '../../app/lib/gameEventBus';
+import { gameStateService } from './GameStateService';
 
 export class SnapShoot {
   private readonly onScoreChange: (score: number) => void;
-  private readonly onShowTouchGuide: (show: boolean) => void;
-  private readonly scoreDisplay: ScoreDisplay;
+  private isNewRecord = false;
 
   private readonly renderer: THREE.WebGLRenderer;
   private readonly scene: THREE.Scene;
@@ -56,15 +55,15 @@ export class SnapShoot {
 
   private readonly inputController: InputController;
   private readonly curveForceSystem = new CurveForceSystem();
-  private readonly shotInfoHud = new ShotInfoHud();
+
   private debugVisualizer!: DebugVisualizer; // 초기화는 생성자에서 (의존성 필요)
   private difficultyManager!: DifficultyManager; // 초기화는 생성자에서 (의존성 필요)
   private lastBounceSoundTime = 0;
   private score = 0;
   private shotResetTimer: number | null = null;
   private failCount = 0; // 현재 게임에서 실패한 횟수
-  private onGameFailed?: (failCount: number) => void; // 실패 시 콜백
   private savedGameState?: { score: number; difficulty: DifficultyLevelConfig | null }; // 이어하기용 상태 저장
+  private isPaused = false;
 
   // 게임 상태 관리자
   private readonly stateManager = new GameStateManager(GameState.INITIALIZING);
@@ -102,44 +101,52 @@ export class SnapShoot {
   private readonly handleBallCollideBound = (event: { body: CANNON.Body }) => this.handleBallCollide(event);
   private readonly handleGoalCollisionBound = (event: { body: CANNON.Body }) => this.handleGoalCollision(event);
   private touchGuideTimer: number | null = null;
-  private loadingScreen: LoadingScreen | null = null;
   private assetLoader!: AssetLoader; // 초기화는 생성자에서 (의존성 필요)
 
   constructor(
     canvas: HTMLCanvasElement,
-    onScoreChange: (score: number) => void,
-    onShowTouchGuide: (show: boolean) => void,
-    scoreDisplay: ScoreDisplay,
-    onGameFailed?: (failCount: number) => void,
-    onGameStart?: () => void
+    onScoreChange: (score: number) => void
   ) {
     this.onScoreChange = onScoreChange;
-    this.onShowTouchGuide = onShowTouchGuide;
-    this.scoreDisplay = scoreDisplay;
-    this.onGameFailed = onGameFailed;
 
     // 로딩 화면 생성 및 표시
-    this.loadingScreen = new LoadingScreen(
-      () => {
-        // 로딩 화면 스와이프 시 관중 함성 시작 (페이드인)
-        void this.audio.playMusic('chant', { fadeIn: true });
-        // 게임 시작 콜백 호출
-        if (onGameStart) {
-          onGameStart();
-        }
-      },
-      () => {
-        // 로딩 완료 시 게임플레이 음악 시작
-        void this.audio.playMusic('gameplay');
-      },
-      this.audio // Safari autoplay policy 우회를 위해 audio 인스턴스 전달
-    );
-    this.loadingScreen.show();
-    this.loadingScreen.setProgress(0);
+    // EventBus Listeners for Game Start
+    gameEventBus.on('GAME_STARTED', () => {
+      // 로딩 화면 스와이프 시 관중 함성 시작 (페이드인)
+      void this.audio.playMusic('chant', { fadeIn: true });
+    });
+
+    // Modal Event Listeners
+    gameEventBus.on('RESTART_GAME', () => this.restartGame());
+    gameEventBus.on('CONTINUE_GIVE_UP', () => this.gameOver());
+    gameEventBus.on('CONTINUE_GAME_SUCCESS', () => this.continueGame());
+    
+    gameEventBus.on('THEME_CHANGED', (event: any) => {
+      void this.switchToTheme(event.themeName);
+    });
+
+    gameEventBus.on('GAME_PAUSED', () => {
+      this.isPaused = true;
+      this.pauseAudio();
+    });
+
+    gameEventBus.on('GAME_RESUMED', () => {
+      this.isPaused = false;
+      this.resumeAudio();
+    });
+
+    gameEventBus.on('UNLOCK_AUDIO', () => {
+      this.audio.unlockAudioContext();
+    });
+
+    // 로딩 완료 시 게임플레이 음악 시작 (AssetLoader가 LOADING_COMPLETE emit)
+    gameEventBus.on('LOADING_COMPLETE', () => {
+      void this.audio.playMusic('gameplay');
+    });
 
     // 에셋 로더 초기화
     this.assetLoader = new AssetLoader({
-      loadingScreen: this.loadingScreen,
+
       gameLog: this.gameLog,
       onAllAssetsLoaded: () => this.onAllAssetsLoaded()
     });
@@ -193,7 +200,7 @@ export class SnapShoot {
       ball: this.ball,
       goal: this.goal,
       inputController: this.inputController,
-      shotInfoHud: this.shotInfoHud
+
     });
 
     // 난이도 관리자 초기화
@@ -224,21 +231,19 @@ export class SnapShoot {
     this.gameLog.info(`⚽ GOAL! Score: ${this.score + 1}`);
 
     this.score += 1;
-    this.onScoreChange(this.score);
+    this.updateScore(this.score);
 
-    // 점수가 올라갔으므로 터치 가이드 숨김
     if (this.touchGuideTimer !== null) {
       clearTimeout(this.touchGuideTimer);
       this.touchGuideTimer = null;
     }
-    this.onShowTouchGuide(false);
+    gameEventBus.emit({ type: 'SHOW_TOUCH_GUIDE', show: false });
     this.hasScored = true;
     this.difficultyManager.stopAllTracking();
     const tempBallPosition = this.ballController.copyPositionToTemp();
     this.goal.triggerNetPulse(tempBallPosition, 1);
 
-    // 골 사운드: 최고 기록 경신 중이면 record, 아니면 goal
-    const isNewRecord = this.scoreDisplay.isNewRecordAchieved();
+    const isNewRecord = this.isNewRecord;
     if (isNewRecord) {
       this.audio.playSound('record');
     } else {
@@ -304,6 +309,9 @@ export class SnapShoot {
     requestAnimationFrame(this.animate);
 
     const deltaTime = this.clock.getDelta();
+
+    if (this.isPaused) return;
+
     // Tunneling 방지: 더 작은 timestep, 더 많은 substeps
     // 빠른 슛(40 m/s)도 얇은 골대(0.1m)와 정확히 충돌
     this.world.step(GAME_CONFIG.physics.timeStep, deltaTime, GAME_CONFIG.physics.substeps);
@@ -341,7 +349,7 @@ export class SnapShoot {
     this.ball.body.removeEventListener('collide', this.handleBallCollideBound);
     this.debugVisualizer.dispose();
     this.difficultyManager.dispose();
-    this.shotInfoHud.destroy();
+    this.difficultyManager.dispose();
 
     // 배경음악 중지
     this.audio.stopMusic();
@@ -368,13 +376,35 @@ export class SnapShoot {
     this.audio.setMasterVolume(volume);
   }
 
+  private updateScore(newScore: number): void {
+    this.onScoreChange(newScore);
+    gameEventBus.emit({ type: 'SCORE_CHANGED', score: newScore });
+
+    const bestScore = gameStateService.getBestScore();
+    if (newScore > bestScore) {
+      this.isNewRecord = true;
+      gameStateService.setBestScore(newScore);
+      gameEventBus.emit({ type: 'BEST_SCORE_UPDATED', bestScore: newScore });
+    }
+  }
+
+  public getScore(): number {
+    return this.score;
+  }
+
+  public resetNewRecordFlag(): void {
+    this.isNewRecord = false;
+  }
+
   public toggleDebugMode(enabled?: boolean): boolean {
     this.debugVisualizer.toggleDebugMode(enabled);
     this.debugVisualizer.applyDebugVisibility(this.difficultyManager.getObstacles());
     if (this.debugVisualizer.isDebugMode()) {
       this.debugVisualizer.updateColliderVisuals();
     }
-    return this.debugVisualizer.isDebugMode();
+    const isEnabled = this.debugVisualizer.isDebugMode();
+    gameEventBus.emit({ type: 'DEBUG_MODE_CHANGED', enabled: isEnabled });
+    return isEnabled;
   }
 
   /**
@@ -393,20 +423,33 @@ export class SnapShoot {
     this.shootingLog.debug(debugVelocity(shot.velocity));
     this.shootingLog.debug(debugAngularVelocity(shot.angularVelocity));
 
-    // INVALID가 아니면 실제 슈팅 실행
     if (shot.shotType !== ShotType.INVALID) {
-      // 타겟 마커 위치 업데이트
       this.debugVisualizer.setTargetMarkerPosition(shot.targetPosition);
 
-      // Shot Info HUD 업데이트 (디버그 모드일 때만 보임)
-      this.shotInfoHud.update(
-        shot.debugInfo.analysis,
-        shot.debugInfo.shotParams,
-        shot.velocity,
-        shot.angularVelocity
+
+
+      const speed = Math.sqrt(
+        shot.velocity.x ** 2 +
+        shot.velocity.y ** 2 +
+        shot.velocity.z ** 2
       );
 
-      // 🔍 궤적 추적 시작
+      gameEventBus.emit({
+        type: 'SHOT_INFO_UPDATED',
+        data: {
+          type: shot.debugInfo.analysis.type,
+          power: shot.debugInfo.analysis.power,
+          curveAmount: shot.debugInfo.analysis.curveAmount,
+          curveDirection: shot.debugInfo.analysis.curveDirection,
+          heightFactor: shot.debugInfo.analysis.heightFactor,
+          speed,
+          targetPosition: {
+            x: shot.debugInfo.shotParams.targetPosition.x,
+            y: shot.debugInfo.shotParams.targetPosition.y
+          }
+        }
+      });
+
       this.isTrackingBall = true;
       this.trackingStartTime = performance.now();
 
@@ -436,15 +479,13 @@ export class SnapShoot {
     // 커브 힘 시스템 시작
     this.curveForceSystem.startCurveShot(analysis);
 
-    // 골키퍼 추적 시작
     this.difficultyManager.getObstacles().forEach((obstacle) => obstacle.startTracking());
 
-    // 터치 가이드 타이머 취소 및 숨김
     if (this.touchGuideTimer !== null) {
       clearTimeout(this.touchGuideTimer);
       this.touchGuideTimer = null;
     }
-    this.onShowTouchGuide(false);
+    gameEventBus.emit({ type: 'SHOW_TOUCH_GUIDE', show: false });
 
     // 2.5초 후 리셋 타이머 설정
     this.shotResetTimer = window.setTimeout(() => {
@@ -473,26 +514,30 @@ export class SnapShoot {
         difficulty: this.difficultyManager.getCurrentDifficulty()
       };
 
-      // 실패 콜백 호출 (모달 띄우기)
-      if (this.onGameFailed) {
-        this.onGameFailed(this.failCount);
-      }
-
-      // 실패 콜백이 없거나 2번째 실패면 점수 초기화
-      if (!this.onGameFailed || this.failCount >= GAME_CONFIG.gameOver.maxFailsAllowed) {
-        this.score = 0;
-        this.onScoreChange(this.score);
-        this.scoreDisplay.resetNewRecordFlag();
-      }
-
-      // 2번째 실패가 아니면 여기서 리턴 (모달에서 처리)
-      if (this.failCount < GAME_CONFIG.gameOver.maxFailsAllowed && this.onGameFailed) {
+      // 실패 콜백 호출 (모달 띄우기) 대신 이벤트 발생
+      if (this.failCount < GAME_CONFIG.gameOver.maxFailsAllowed) {
+        gameEventBus.emit({ type: 'SHOW_CONTINUE_MODAL', failCount: this.failCount });
+        
         // 상태 초기화만 하고 공은 리셋하지 않음 (모달에서 선택에 따라 처리)
         this.isShotInProgress = false;
         this.hasScored = false;
         this.shotResetTimer = null;
         this.curveForceSystem.stopCurveShot();
         return;
+      } else {
+        // 최대 실패 횟수 초과 -> 게임오버
+        this.gameOver();
+        // gameOver() 내부에서 점수 초기화 등을 수행하지만,
+        // 모달을 띄우기 위해 이벤트를 발생시켜야 함.
+        // gameOver()는 로직 초기화만 담당하고, 모달은 여기서 띄움?
+        // 아니면 gameOver() 안에서 emit?
+        // gameOver()는 'RESTART_GAME' 등에서도 호출되므로, 
+        // 여기서 명시적으로 SHOW_GAME_OVER_MODAL을 emit하는 것이 좋음.
+        // 단, gameOver()가 호출되면 점수가 0이 되므로, 점수 초기화 전에 emit해야 함.
+        // 하지만 위 코드 흐름상 gameOver() 호출 전에 emit해야 함.
+        // Wait, gameOver() resets score to 0.
+        // So I should emit SHOW_GAME_OVER_MODAL with current score BEFORE calling gameOver().
+        // Actually, let's look at gameOver() implementation.
       }
     }
 
@@ -523,14 +568,12 @@ export class SnapShoot {
     this.difficultyManager.updateDifficulty(this.score, true);
     this.difficultyManager.setColliderDebugVisible(this.debugVisualizer.isDebugMode());
 
-    // 광고판 효과: 깜빡임 중지 + 기본 광고로 복원
     this.field.adBoard.stopBlinking();
     this.field.adBoard.switchAdSet('default');
 
-    // 터치 가이드 타이머 시작 (점수가 0일 때만, 1초 후 표시)
     if (this.score === 0) {
       this.touchGuideTimer = window.setTimeout(() => {
-        this.onShowTouchGuide(true);
+        gameEventBus.emit({ type: 'SHOW_TOUCH_GUIDE', show: true });
       }, GAME_CONFIG.timing.touchGuideDelayMs);
     }
   }
@@ -576,20 +619,15 @@ export class SnapShoot {
   public restartGame(): void {
     console.log('🔄 게임 재시작');
 
-    // 진행 중인 샷 타이머 정리
     if (this.shotResetTimer !== null) {
       clearTimeout(this.shotResetTimer);
       this.shotResetTimer = null;
     }
 
-    // 점수 초기화
     this.score = 0;
-    this.onScoreChange(this.score);
+    this.updateScore(this.score);
+    this.resetNewRecordFlag();
 
-    // 최고 기록 플래그 리셋
-    this.scoreDisplay.resetNewRecordFlag();
-
-    // 실패 카운트 리셋
     this.failCount = 0;
     this.savedGameState = undefined;
 
@@ -615,14 +653,16 @@ export class SnapShoot {
   public gameOver(): void {
     console.log('💀 게임오버');
 
-    // 점수 초기화
+    // 점수 저장 (모달 표시용)
+    const finalScore = this.score;
+
+    // 게임오버 모달 표시
+    gameEventBus.emit({ type: 'SHOW_GAME_OVER_MODAL', score: finalScore });
+
     this.score = 0;
-    this.onScoreChange(this.score);
+    this.updateScore(this.score);
+    this.resetNewRecordFlag();
 
-    // 최고 기록 플래그 리셋
-    this.scoreDisplay.resetNewRecordFlag();
-
-    // 실패 카운트 리셋
     this.failCount = 0;
     this.savedGameState = undefined;
 

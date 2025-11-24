@@ -1,10 +1,10 @@
-const keeperTextureUrl = new URL('../assets/keeper/wall.png', import.meta.url).toString();
-const woodTextureUrl = new URL('../assets/models/obstacle/wood.jpg', import.meta.url).toString();
-const whiteDroneTextureUrl = new URL('../assets/models/obstacle/whiteDrone.png', import.meta.url).toString();
-const cokeModelUrl = new URL('../assets/models/bottle/coke.glb', import.meta.url).toString();
-const drumModelUrl = new URL('../assets/models/drum.glb', import.meta.url).toString();
-const vanModelUrl = new URL('../assets/models/van.glb', import.meta.url).toString();
-const sharkModelUrl = new URL('../assets/models/shark.glb', import.meta.url).toString();
+const keeperTextureUrl = '/assets/keeper/wall.png';
+const woodTextureUrl = '/assets/models/obstacle/wood.jpg';
+const whiteDroneTextureUrl = '/assets/models/obstacle/whiteDrone.png';
+const cokeModelUrl = '/assets/models/bottle/coke.glb';
+const drumModelUrl = '/assets/models/drum.glb';
+const vanModelUrl = '/assets/models/van.glb';
+const sharkModelUrl = '/assets/models/shark.glb';
 
 
 export type Axis = 'x' | 'y' | 'z';

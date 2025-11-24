@@ -10,19 +10,19 @@
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import type { LoadingScreen } from '../ui/screens/LoadingScreen';
+import { gameEventBus } from '../../app/lib/gameEventBus';
 import { CategoryLogger } from '../utils/Logger';
 import { BALL_THEMES } from '../config/Ball';
 import { OBSTACLE_BLUEPRINTS } from '../config/Obstacles';
 
-const grassColorUrl = new URL('../assets/grass/Grass005_1K-JPG_Color.jpeg', import.meta.url).toString();
-const crowdTextureUrl = new URL('../assets/crowd/crowd.webp', import.meta.url).toString();
+const grassColorUrl = '/assets/grass/Grass005_1K-JPG_Color.jpeg';
+const crowdTextureUrl = '/assets/crowd/crowd.webp';
 
 /**
  * AssetLoader 생성자 매개변수
  */
 export interface AssetLoaderConfig {
-  loadingScreen: LoadingScreen | null;
+
   gameLog: CategoryLogger;
   onAllAssetsLoaded: () => void;
 }
@@ -31,7 +31,7 @@ export interface AssetLoaderConfig {
  * 에셋 로딩 관리 클래스
  */
 export class AssetLoader {
-  private readonly loadingScreen: LoadingScreen | null;
+
   private readonly gameLog: CategoryLogger;
   private readonly onAllAssetsLoaded: () => void;
 
@@ -40,7 +40,7 @@ export class AssetLoader {
   private isGameReady = false;
 
   constructor(config: AssetLoaderConfig) {
-    this.loadingScreen = config.loadingScreen;
+
     this.gameLog = config.gameLog;
     this.onAllAssetsLoaded = config.onAllAssetsLoaded;
   }
@@ -168,9 +168,7 @@ export class AssetLoader {
   private updateLoadingProgress(): void {
     // threeAssetsProgress는 이미 0~0.85 범위, audioProgress는 0~1 범위
     const combined = Math.min(this.threeAssetsProgress + this.audioProgress * 0.15, 1);
-    if (this.loadingScreen) {
-      this.loadingScreen.setProgress(combined);
-    }
+    gameEventBus.emit({ type: 'LOADING_PROGRESS', progress: combined });
 
     if (!this.isGameReady && this.threeAssetsProgress >= 0.85 && this.audioProgress >= 1) {
       this.handleAllAssetsLoaded();
@@ -183,6 +181,7 @@ export class AssetLoader {
   private handleAllAssetsLoaded(): void {
     this.isGameReady = true;
     this.gameLog.info('All assets loaded, game ready!');
+    gameEventBus.emit({ type: 'LOADING_COMPLETE' });
     this.onAllAssetsLoaded();
   }
 
