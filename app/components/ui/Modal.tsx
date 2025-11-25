@@ -66,6 +66,8 @@ export function Modal({
 
 // Layout Helper Components
 
+import { ArrowLeft } from '@phosphor-icons/react';
+
 export interface ModalHeaderProps {
   title: string;
   onBack?: () => void;
@@ -86,7 +88,7 @@ export function ModalHeader({ title, onBack, className = '' }: ModalHeaderProps)
           onClick={onBack}
           className="absolute left-8 z-[40] w-10 h-10 flex items-center justify-center text-white/90 hover:text-white transition-colors"
         >
-          <i className="ph ph-arrow-left text-3xl"></i>
+          <ArrowLeft className="text-3xl" />
         </button>
       )}
       

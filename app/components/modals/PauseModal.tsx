@@ -10,6 +10,8 @@ import { TOSS_CONFIG } from '@/../src/config/TossConfig';
 import { isTossGameCenterAvailable } from '@/../src/utils/TossEnvironment';
 import { Modal, ModalHeader, ModalContent, ModalFooter } from '@/components/ui/Modal';
 import { StyledIconButton } from '@/components/common/StyledIconButton';
+import { Ranking, Palette, Gear, ArrowClockwise, Play } from '@phosphor-icons/react';
+import { type ElementType } from 'react';
 
 export function PauseModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -115,19 +117,19 @@ export function PauseModal() {
         {view === 'pause' && (
           <div className="flex gap-6 w-full max-w-lg justify-center">
             <StyledIconButton 
-              icon="ph-ranking" 
+              Icon={Ranking} 
               label="랭킹보기" 
               variant="ranking"
               onClick={handleRanking}
             />
             <StyledIconButton 
-              icon="ph-palette" 
+              Icon={Palette} 
               label="테마 변경" 
               variant="theme"
               onClick={() => setView('customize')} 
             />
             <StyledIconButton 
-              icon="ph-gear" 
+              Icon={Gear} 
               label="설정" 
               variant="settings"
               onClick={() => setView('settings')} 
@@ -163,13 +165,13 @@ export function PauseModal() {
         <ModalFooter>
           <div className="flex items-center justify-center gap-6">
             <CircleButton 
-              icon="ph-arrow-clockwise" 
+              Icon={ArrowClockwise} 
               size="w-16 h-16" 
               iconSize="text-3xl"
               onClick={handleRestart}
             />
             <CircleButton 
-              icon="ph-play" 
+              Icon={Play} 
               size="w-20 h-20" 
               iconSize="text-4xl"
               isLarge 
@@ -184,7 +186,7 @@ export function PauseModal() {
 
 // Sub-components
 
-function CircleButton({ icon, size, iconSize, isLarge, onClick }: { icon: string; size: string; iconSize: string; isLarge?: boolean; onClick: () => void }) {
+function CircleButton({ Icon, size, iconSize, isLarge, onClick }: { Icon: ElementType; size: string; iconSize: string; isLarge?: boolean; onClick: () => void }) {
   return (
     <button
       onClick={onClick}
@@ -195,7 +197,7 @@ function CircleButton({ icon, size, iconSize, isLarge, onClick }: { icon: string
           : 'bg-gradient-to-br from-white/25 to-white/15 shadow-[0_6px_16px_rgba(0,0,0,0.25)] border-[2px] border-white/35'}
       `}
     >
-      <i className={`ph-fill ${icon} ${iconSize} text-white drop-shadow-md`}></i>
+      <Icon weight="fill" className={`${iconSize} text-white drop-shadow-md`} />
     </button>
   );
 }

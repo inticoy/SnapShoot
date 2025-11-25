@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import './styles/phosphor-icons.css';
+
 
 export const metadata: Metadata = {
   title: 'SnapShoot',

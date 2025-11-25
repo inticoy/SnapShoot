@@ -2,6 +2,8 @@
 
 import { gameEventBus } from '@/lib/gameEventBus';
 
+import { Pause } from '@phosphor-icons/react';
+
 export function PauseButton() {
   const handleClick = () => {
     gameEventBus.emit({ type: 'SHOW_PAUSE_MODAL', show: true });
@@ -35,7 +37,7 @@ export function PauseButton() {
         left: 'max(1rem, calc(env(safe-area-inset-left, 0px) + 1rem))'
       }}
     >
-      <i className="ph-fill ph-pause text-2xl text-white"></i>
+      <Pause weight="fill" className="text-2xl text-white" />
     </button>
   );
 }

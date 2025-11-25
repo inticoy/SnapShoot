@@ -9,6 +9,7 @@ import { TOSS_CONFIG } from '@/../src/config/TossConfig';
 import { isTossApp, isTossGameCenterAvailable } from '@/../src/utils/TossEnvironment';
 import { Modal, ModalHeader, ModalContent, ModalFooter } from '@/components/ui/Modal';
 import { StyledIconButton } from '@/components/common/StyledIconButton';
+import { ArrowClockwise, Ranking, Palette, ShareNetwork } from '@phosphor-icons/react';
 
 const SHARE_MESSAGES = [
   '스냅슛⚽️ {score}점! 따라올테면 따라와봐~!\\n\\n따라가기... 👇',
@@ -143,19 +144,19 @@ export function GameOverModal() {
             {/* Top Buttons */}
             <div className="flex gap-6 w-full max-w-lg justify-center">
               <StyledIconButton 
-                icon="ph-ranking" 
+                Icon={Ranking} 
                 label="랭킹보기" 
                 variant="ranking"
                 onClick={handleRanking} 
               />
               <StyledIconButton 
-                icon="ph-palette" 
+                Icon={Palette} 
                 label="테마 변경" 
                 variant="theme"
                 onClick={() => setView('customize')} 
               />
               <StyledIconButton 
-                icon="ph-share-network" 
+                Icon={ShareNetwork} 
                 label="공유하기" 
                 variant="share"
                 onClick={handleShare} 
@@ -189,7 +190,7 @@ export function GameOverModal() {
           >
             <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/30 to-transparent pointer-events-none"></div>
             <div className="relative z-[2] flex items-center gap-2">
-              <i className="ph-fill ph-arrow-clockwise text-2xl drop-shadow-md group-active:scale-90 transition-transform"></i>
+              <ArrowClockwise weight="fill" className="text-2xl drop-shadow-md group-active:scale-90 transition-transform" />
               <span>다시하기</span>
             </div>
           </button>
@@ -198,5 +199,3 @@ export function GameOverModal() {
     </Modal>
   );
 }
-
-// Reusing SquareIconButton from PauseModal logic (duplicated for independence or can be shared)

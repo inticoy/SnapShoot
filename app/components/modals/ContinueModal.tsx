@@ -5,6 +5,7 @@ import { useGameEvent } from '@/hooks/useGameEvent';
 import { gameEventBus } from '@/lib/gameEventBus';
 import { CircularTimerButton } from '@/components/common/CircularTimerButton';
 import { Modal, ModalHeader, ModalContent, ModalFooter } from '@/components/ui/Modal';
+import { XCircle } from '@phosphor-icons/react';
 
 export function ContinueModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -79,7 +80,7 @@ export function ContinueModal() {
         >
           <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/30 to-transparent pointer-events-none"></div>
           <div className="relative z-[2] flex items-center gap-2">
-            <i className="ph-fill ph-x-circle text-2xl drop-shadow-md group-active:scale-90 transition-transform"></i>
+            <XCircle weight="fill" className="text-2xl drop-shadow-md group-active:scale-90 transition-transform" />
             <span>포기하기</span>
           </div>
         </button>

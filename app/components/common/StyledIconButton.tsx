@@ -1,18 +1,18 @@
 'use client';
 
-import React from 'react';
+import React, { type ElementType } from 'react';
 
 type ButtonVariant = 'ranking' | 'theme' | 'settings' | 'share';
 
 interface StyledIconButtonProps {
-  icon: string;
+  Icon: ElementType;
   label: string;
   variant: ButtonVariant;
   onClick: () => void;
   className?: string;
 }
 
-export function StyledIconButton({ icon, label, variant, onClick, className = '' }: StyledIconButtonProps) {
+export function StyledIconButton({ Icon, label, variant, onClick, className = '' }: StyledIconButtonProps) {
   const getButtonStyles = () => {
     switch (variant) {
       case 'ranking':
@@ -77,7 +77,7 @@ export function StyledIconButton({ icon, label, variant, onClick, className = ''
         <div className={`absolute inset-0 rounded-2xl pointer-events-none z-[1] ${styles.highlight}`} />
 
         {/* Icon */}
-        <i className={`ph-fill ${icon} text-3xl text-white relative z-[2] ${styles.icon}`} aria-hidden="true"></i>
+        <Icon weight="fill" className={`text-3xl text-white relative z-[2] ${styles.icon}`} />
       </div>
       <span className="text-white/80 text-xs font-medium drop-shadow-md">{label}</span>
     </button>
