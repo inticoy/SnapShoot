@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { useGameEvent } from '@/hooks/useGameEvent';
 import { gameEventBus } from '@/lib/gameEventBus';
 import Image from 'next/image';
+import { getAssetPath } from '@/../src/utils/assetPath';
 
 const FOOTBALL_MESSAGES = [
   '양말 신는 중...',
@@ -146,7 +147,14 @@ export function LoadingScreen() {
         className="loading-screen__title mb-20 text-center animate-fade-in-down-large transition-all duration-800 ease-out"
         style={{ transform: titleTransform, opacity: titleTransform ? 0 : 1 }}
       >
-        <Image src="/assets/Snapshoot.png" alt="Snapshoot!" width={500} height={200} className="loading-screen__title-text mx-6 w-[80vw] max-w-[500px] h-auto" priority />
+        <Image
+          src={getAssetPath('/assets/Snapshoot.png')}
+          alt="Snapshoot!"
+          width={500}
+          height={200}
+          className="loading-screen__title-text mx-6 w-[80vw] max-w-[500px] h-auto"
+          priority
+        />
       </div>
 
       {/* Stage 1: Progress */}
@@ -189,7 +197,7 @@ export function LoadingScreen() {
         style={{ opacity: ballOpacity, pointerEvents: 'none' }}
       >
         <Image 
-          src="/assets/soccer_ball.png"
+          src={getAssetPath('/assets/soccer_ball.png')}
           width={72}
           height={72} 
           alt="Soccer Ball" 
@@ -216,10 +224,22 @@ export function LoadingScreen() {
       )}
 
       {/* Goalpost */}
-      <Image src="/assets/post.svg" alt="Goalpost" width={120} height={180} className="loading-goalpost" />
+      <Image
+        src={getAssetPath('/assets/post.svg')}
+        alt="Goalpost"
+        width={120}
+        height={180}
+        className="loading-goalpost"
+      />
 
       {/* Rating Badge */}
-      <Image src="/assets/GRAC_ALL.png" alt="Rating" width={60} height={60} className="loading-screen__rating-badge absolute right-[16px] bottom-[16px] w-[60px] h-[60px] opacity-90 animate-fade-in z-[25]" />
+      <Image
+        src={getAssetPath('/assets/GRAC_ALL.png')}
+        alt="Rating"
+        width={60}
+        height={60}
+        className="loading-screen__rating-badge absolute right-[16px] bottom-[16px] w-[60px] h-[60px] opacity-90 animate-fade-in z-[25]"
+      />
     </div>
   );
 }

@@ -1,13 +1,15 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { getAssetPath } from '@/../src/utils/assetPath';
 
+const iconPath = getAssetPath('/icon.svg');
 
 export const metadata: Metadata = {
   title: 'SnapShoot',
   description: 'Swipe up to SnapShoot!',
   icons: {
-    icon: '/icon.svg',
-    apple: '/icon.svg',
+    icon: iconPath,
+    apple: iconPath,
   },
 };
 
