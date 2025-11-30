@@ -12,10 +12,10 @@ import { StyledIconButton } from '@/components/common/StyledIconButton';
 import { ArrowClockwise, Ranking, Palette, ShareNetwork } from '@phosphor-icons/react';
 
 const SHARE_MESSAGES = [
-  '스냅슛⚽️ {score}점! 따라올테면 따라와봐~!\\n\\n따라가기... 👇',
-  '스냅슛⚽️ {score}점! 넌 나한테 안 되지...\\n\\n도전은 웰컴이야~ 👇',
-  '오늘 에임 미쳤다... 스냅슛⚽️ {score}점 나옴...\\n\\n나도 슈팅하기 👇',
-  '푸스카스급 감차가능ㅋㅋ 스냅슛⚽️ {score}점 찍음!\\n\\n푸스카스상 받기 👇'
+  '스냅슛⚽️ {score}점! 따라올테면 따라와봐~!\n\n따라가기... 👇',
+  '스냅슛⚽️ {score}점! 넌 나한테 안 되지...\n\n도전은 웰컴이야~ 👇',
+  '오늘 에임 미쳤다... 스냅슛⚽️ {score}점 나옴...\n\n나도 슈팅하기 👇',
+  '푸스카스급 감차가능ㅋㅋ 스냅슛⚽️ {score}점 찍음!\n\n푸스카스상 받기 👇'
 ] as const;
 
 export function getRandomShareMessage(score: number): string {

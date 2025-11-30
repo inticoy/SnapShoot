@@ -10,6 +10,7 @@ export const showToast = {
         color: '#fff',
         padding: '16px',
         borderRadius: '8px',
+        whiteSpace: 'pre-wrap',
       },
     });
   },
@@ -22,6 +23,7 @@ export const showToast = {
         color: '#fff',
         padding: '16px',
         borderRadius: '8px',
+        whiteSpace: 'pre-wrap',
       },
     });
   },
@@ -35,6 +37,7 @@ export const showToast = {
         color: '#fff',
         padding: '16px',
         borderRadius: '8px',
+        whiteSpace: 'pre-wrap',
       },
     });
   },
